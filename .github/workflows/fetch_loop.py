@@ -1072,6 +1072,13 @@ def fetch_binance(tr_cache):
     items.sort(key=lambda i: i["time"], reverse=True)
     return {"updated_at": iso_now(), "items": items}
 
+
+# -------------------------------------------------------------------- main
+# Job budget: keep the whole run comfortably under the 5-minute cron slot.
+JOB_BUDGET_S = 275
+FAST_TICK_S = 10
+
+
 def slow_lane(out_dir, state_dir, tr_cache, cache_path):
     """Runs once at job start. Returns (trench_tokens_all, tags)."""
     print("=== slow lane ===")
