@@ -171,9 +171,9 @@ a{color:var(--blue); text-decoration:none;}
 'use strict';
 /* ============ constants ============ */
 var PEOPLE=[
-  {key:'heyi', name:'何一'},
-  {key:'cz',   name:'赵长鹏'},
-  {key:'elon', name:'马斯克'}
+  {key:'heyi', name:'何一', color:'#ff6b81'},
+  {key:'cz',   name:'赵长鹏', color:'#F0B90B'},
+  {key:'elon', name:'马斯克', color:'#58a6ff'}
 ];
 var KIND_NAME={original:'原创', retweet:'转推', quote:'引用', reply:'回复'};
 var DEBOT_SLUG={sol:'solana', bsc:'bsc', robinhood:'robinhood'};
@@ -181,6 +181,7 @@ var CHAIN_ORDER=['BSC','Solana','Robinhood','OKX','Base','Arc','Ethereum'];
 var CHAIN_COLOR={BSC:'#F0B90B', Solana:'#A371FF', Robinhood:'#00C805'};
 var DY_LABEL={1:'新',3:'热',5:'首发',8:'独家',9:'挑战',16:'辟谣'};
 var BIN_TYPE={listing:'上市', delisting:'下架', alpha:'Alpha'};
+var LIQ_LABEL={volume:'交易量',buy_volume:'买入量',sell_volume:'卖出量',wallet_count:'钱包数',token_count:'代币数',token_created_count:'新建代币',token_migrated_count:'迁移代币',tx_count:'交易笔数',volume_change_pct:'量变幅(%)',avg_buy_per_wallet:'户均买入'};
 var XXAPI_WB='https://v2.xxapi.cn/api/weibohot';
 var XXAPI_DY='https://v2.xxapi.cn/api/douyinhot';
 /* Data lives on the "data" branch; raw.githubusercontent.com serves it
@@ -403,7 +404,7 @@ function htmlLiquidity(){
       h+=ordered.map(function(n){
         var c=byName[n],copen=!!UI.liqChains[n];
         var mrows=copen?'<div class="metrics">'+Object.keys(c.metrics||{}).map(function(k){
-          return '<div class="mrow"><span class="muted">'+esc(k)+'</span><span>'+fmtVal(c.metrics[k])+'</span></div>';
+          return '<div class="mrow"><span class="muted">'+esc(LIQ_LABEL[k]||k)+'</span><span>'+fmtVal(c.metrics[k])+'</span></div>';
         }).join('')+'</div>':'';
         return '<div class="chain"><div class="chainrow" data-act="toggle" data-key="liqchain:'+esc(n)+'">'
           +'<span class="chainname">'+esc(n)+'</span><span class="spacer"></span>'
@@ -442,7 +443,7 @@ function htmlChain(key,title,color){
     :d.tokens.map(function(t){return coinCard(t,false);}).join('');
   var src=(d&&d.source)?' <span class="src muted small">· '+esc(d.source)+'</span>':'';
   return '<div class="card"><div class="sect" style="color:'+color+'">'+esc(title)+src+'</div>'
-    +'<div class="coinlist" style="background:'+color+'0d">'+cards+'</div></div>';
+    +'<div class="coinlist" style="background:'+color+'26">'+cards+'</div></div>';
 }
 /* ============ 当日总结 ============ */
 function countCards(tws){
@@ -452,7 +453,7 @@ function countCards(tws){
     var c={original:0,retweet:0,quote:0,reply:0};
     mine.forEach(function(t){if(c[t.kind]!=null)c[t.kind]++;});
     var total=mine.length,open=UI.dailyPerson===p.key;
-    var face='<div class="cface-name">'+esc(p.name)+'</div>'
+    var face='<div class="cface-name"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+esc(p.color||'#8b949e')+';margin-right:6px"></span>'+esc(p.name)+'</div>'
       +'<div class="cface-total">共 '+total+' 条</div>'
       +'<div class="cbreak"><span>原创 '+c.original+'</span><span>转推 '+c.retweet+'</span>'
       +'<span>引用 '+c.quote+'</span><span>回复 '+c.reply+'</span>'
@@ -642,7 +643,6 @@ if(typeof globalThis.__TEST__==='undefined'){
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);
   else boot();
 }
-</script>
 </script>
 </body>
 </html>
