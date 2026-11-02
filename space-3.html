@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="referrer" content="no-referrer" />
+    <link rel="icon" href="data:," />
+    <title>手机热点监控-公开版</title>
+    <style>
+      :root{
+        --bg:#0a0d12; --card:#131922; --card2:#0f141d; --line:#232c3a;
+        --text:#e8ecf2; --text2:#9aa7ba; --text3:#64748c;
+        --red:#e8323f; --red-dk:#c22530; --orange:#f0762b; --gold:#f0b90b;
+        --green:#2ebd85; --blue:#4d8dff;
+        --chip:#1a2230;
+        color-scheme: dark;
+      }
+      *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+      html,body{margin:0; padding:0;}
+      body{
+        background:var(--bg); color:var(--text);
+        font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
+        font-size:15px; line-height:1.55;
+      }
+      a{color:inherit; text-decoration:none;}
+      button{font-family:inherit; cursor:pointer;}
+      .wrap{max-width:720px; margin:0 auto; padding:0 12px calc(28px + env(safe-area-inset-bottom));}
+
+      /* ---------- header ---------- */
+      header.top{
+        position:sticky; top:0; z-index:50;
+        background:rgba(10,13,18,.94); backdrop-filter:blur(8px);
+        border-bottom:1px solid var(--line);
+      }
+      .top-in{max-width:720px; margin:0 auto; padding:10px 12px 0;}
+      .title-row{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+      h1.app-title{font-size:21px; font-weight:800; margin:0; letter-spacing:.5px; white-space:nowrap;}
+      .at-btn{
+        background:var(--red); color:#fff; border:none; border-radius:999px;
+        font-size:13px; font-weight:700; padding:5px 12px; line-height:1.4;
+        display:inline-block; white-space:nowrap;
+      }
+      .at-btn:active{background:var(--red-dk);}
+      .top-right{margin-left:auto; display:flex; align-items:center; gap:8px;}
+      .upd-time{font-size:11.5px; color:var(--text3); white-space:nowrap;}
+      .refresh-btn{
+        width:36px; height:36px; border-radius:50%; border:1px solid var(--line);
+        background:var(--chip); color:var(--text); font-size:17px; line-height:1;
+        display:flex; align-items:center; justify-content:center; padding:0;
+      }
+      .refresh-btn.spinning{animation:spin .8s linear infinite;}
+      @keyframes spin{to{transform:rotate(360deg);}}
+      nav.tabs{display:flex; gap:8px; padding:10px 0; overflow-x:auto; scrollbar-width:none;}
+      nav.tabs::-webkit-scrollbar{display:none;}
+      .tab{
+        border:1px solid var(--line); background:var(--chip); color:var(--text2);
+        border-radius:999px; padding:7px 18px; font-size:14.5px; font-weight:600; white-space:nowrap;
+      }
+      .tab.active{background:var(--red); border-color:var(--red); color:#fff;}
+
+      /* ---------- sections & cards ---------- */
+      section{margin-top:20px;}
+      .sec-head{display:flex; align-items:baseline; gap:10px; margin:0 2px 10px;}
+      .sec-head h2{font-size:18px; font-weight:800; margin:0;}
+      .sec-head .sub{font-size:12.5px; color:var(--text3);}
+      .sec-head .stat{margin-left:auto; font-size:12px; color:var(--text3); white-space:nowrap;}
+      .sec-head .stat.err{color:var(--red);}
+      .card{
+        background:var(--card); border:1px solid var(--line); border-radius:14px;
+        padding:14px 14px 8px; margin-bottom:12px;
+      }
+      .card-head{display:flex; align-items:center; gap:7px; margin-bottom:6px;}
+      .dot{width:9px; height:9px; border-radius:50%; flex:none;}
+      .dot.red{background:var(--red);} .dot.light{background:#e8ecf2;} .dot.gold{background:var(--gold);}
+      .card-head h3{font-size:16px; font-weight:700; margin:0;}
+      .card-head .tag{font-size:12px; color:var(--text3);}
+      .card-head .src{margin-left:auto; font-size:11px; color:var(--text3); white-space:nowrap;}
+
+      /* hot list */
+      .hot-row{display:flex; align-items:center; gap:10px; padding:9px 2px; border-bottom:1px solid rgba(35,44,58,.55);}
+      .hot-row:last-of-type{border-bottom:none;}
+      .rank{width:22px; flex:none; text-align:center; font-weight:800; font-size:14.5px; color:var(--text3); font-style:italic;}
+      .rank.r1{color:var(--red);} .rank.r2{color:var(--orange);} .rank.r3{color:var(--gold);}
+      .hot-title{flex:1; min-width:0; font-size:14.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+      .hot-val{flex:none; font-size:12px; color:var(--text3);}
+      .flag{flex:none; font-size:10.5px; font-weight:700; border-radius:4px; padding:1px 5px; line-height:1.5;}
+      .flag.hot{background:rgba(232,50,63,.16); color:#ff6b76;}
+      .flag.new{background:rgba(46,189,133,.15); color:var(--green);}
+      .expand-btn{
+        display:block; width:100%; background:none; border:none; border-top:1px solid rgba(35,44,58,.55);
+        color:var(--blue); font-size:13.5px; padding:10px 0 6px; margin-top:2px;
+      }
+      .fail-box{padding:22px 8px 16px; text-align:center; color:var(--text2); font-size:13.5px;}
+      .fail-box .retry{display:inline-block; margin-top:8px; color:var(--blue); font-size:14.5px; background:none; border:none; padding:6px 10px;}
+
+      /* skeleton */
+      .skl{padding:6px 0 10px;}
+      .skl div{height:13px; border-radius:6px; background:#1b2331; margin:13px 0; animation:pulse 1.3s ease-in-out infinite;}
+      .skl div:nth-child(2){width:82%;} .skl div:nth-child(3){width:64%;} .skl div:nth-child(4){width:74%;}
+      @keyframes pulse{0%,100%{opacity:.55;} 50%{opacity:1;}}
+      .loading-note{font-size:12.5px; color:var(--text3); text-align:center; padding:0 0 10px;}
+
+      /* tweets */
+      .latest-grid{display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:12px;}
+      @media (min-width:560px){ .latest-grid{grid-template-columns:repeat(3,1fr);} }
+      .latest-card{background:var(--card); border:1px solid var(--line); border-left:3px solid var(--red); border-radius:12px; padding:11px 12px;}
+      .latest-card .lc-head{display:flex; align-items:center; gap:8px; margin-bottom:5px;}
+      .latest-card .lc-body{font-size:13px; color:var(--text2); display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; word-break:break-word;}
+      .latest-card .lc-time{font-size:11.5px; color:var(--text3); margin-top:5px;}
+      .avatar{width:34px; height:34px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; color:#fff;}
+      .av-elon{background:#3d4756;} .av-cz{background:#8a6d1f;} .av-heyi{background:#7c3540;}
+      .pname{font-weight:700; font-size:14.5px;}
+      .phandle{font-size:12px; color:var(--text3);}
+      .filter-row{display:flex; gap:8px; margin:0 2px 12px; flex-wrap:wrap;}
+      .chip{
+        border:1px solid var(--line); background:var(--chip); color:var(--text2);
+        border-radius:999px; padding:5px 14px; font-size:13px; font-weight:600;
+      }
+      .chip.active{background:var(--text); color:#0b0e13; border-color:var(--text);}
+      .tw-card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:13px 14px; margin-bottom:10px;}
+      .tw-head{display:flex; align-items:center; gap:9px;}
+      .tw-head .who{min-width:0;}
+      .tw-head .who .pname{white-space:nowrap;}
+      .tw-time{margin-left:auto; font-size:12px; color:var(--text3); white-space:nowrap; flex:none;}
+      .badge{flex:none; font-size:11px; font-weight:700; border-radius:5px; padding:2px 7px; line-height:1.5;}
+      .b-orig{background:rgba(77,141,255,.15); color:#8db4ff;}
+      .b-rt{background:rgba(46,189,133,.14); color:var(--green);}
+      .b-reply{background:rgba(240,185,11,.14); color:var(--gold);}
+      .b-quote{background:rgba(186,120,255,.15); color:#cfa2ff;}
+      .b-follow{background:rgba(46,189,133,.14); color:var(--green);}
+      .b-unfollow{background:rgba(232,50,63,.14); color:#ff6b76;}
+      .b-del{background:rgba(232,50,63,.14); color:#ff6b76;}
+      .tw-target{font-size:13px; color:var(--text2); margin-top:7px;}
+      .tw-target a{color:var(--blue); font-weight:600;}
+      .tw-body{font-size:14.5px; margin-top:7px; white-space:pre-wrap; word-break:break-word;}
+      .tw-body.clamped, .quote-text.clamped{display:-webkit-box; -webkit-line-clamp:6; -webkit-box-orient:vertical; overflow:hidden; white-space:normal;}
+      .quote-text.clamped{-webkit-line-clamp:4;}
+      .more-btn{background:none; border:none; color:var(--blue); font-size:13px; padding:4px 0 0;}
+      .quote-box{background:var(--card2); border:1px solid var(--line); border-radius:10px; padding:9px 11px; margin-top:9px;}
+      .quote-box .q-label{font-size:11.5px; color:var(--text3); margin-bottom:3px;}
+      .quote-text{font-size:13.5px; color:var(--text2); white-space:pre-wrap; word-break:break-word;}
+      .tw-media{margin-top:9px; display:grid; gap:6px;}
+      .tw-media img{width:100%; border-radius:10px; display:block; background:#0d1117;}
+      .tw-media video{width:100%; border-radius:10px; display:block; background:#000;}
+      .tw-foot{margin-top:9px; display:flex; gap:14px; align-items:center;}
+      .tw-foot a{color:var(--blue); font-size:13px; font-weight:600;}
+      .tw-foot .tg-link{color:var(--text3); font-weight:400;}
+      .empty-note{color:var(--text3); font-size:13.5px; text-align:center; padding:18px 0 12px;}
+
+      /* binance */
+      .ann-row{display:block; padding:10px 2px; border-bottom:1px solid rgba(35,44,58,.55);}
+      .ann-row:last-of-type{border-bottom:none;}
+      .ann-title{font-size:14.5px; line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+      .ann-date{font-size:12px; color:var(--text3); margin-top:3px;}
+      .alpha-row{padding:10px 2px; border-bottom:1px solid rgba(35,44,58,.55);}
+      .alpha-row:last-of-type{border-bottom:none;}
+      .alpha-top{display:flex; align-items:center; gap:8px;}
+      .alpha-top img{width:22px; height:22px; border-radius:50%; background:#0d1117;}
+      .alpha-sym{font-weight:800; font-size:15px;}
+      .alpha-name{font-size:12px; color:var(--text3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; min-width:0;}
+      .alpha-price{font-size:13.5px; font-weight:600; white-space:nowrap;}
+      .pct{font-size:12.5px; font-weight:700; white-space:nowrap;}
+      .pct.up{color:var(--green);} .pct.dn{color:var(--red);}
+      .alpha-sub{display:flex; align-items:center; gap:7px; margin-top:5px; font-size:12px; color:var(--text3); flex-wrap:wrap;}
+      .ca{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.5px;}
+      .copy-btn{background:var(--chip); border:1px solid var(--line); color:var(--text2); border-radius:6px; font-size:11.5px; padding:2px 9px;}
+      .copy-btn:active{color:#fff; border-color:var(--blue);}
+
+      .toast{
+        position:fixed; left:50%; bottom:calc(26px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(20px);
+        background:#222b3a; color:#fff; font-size:13.5px; padding:9px 18px; border-radius:999px;
+        opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; z-index:99; border:1px solid var(--line);
+      }
+      .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+      .foot-note{text-align:center; color:var(--text3); font-size:12px; margin-top:22px; line-height:1.7;}
+      @media (prefers-reduced-motion: reduce){
+        .skl div{animation:none;} .refresh-btn.spinning{animation:none;}
+        .toast{transition:none;}
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="top-in">
+        <div class="title-row">
+          <h1 class="app-title">热点监控</h1>
+          <a class="at-btn" id="atCz" href="#" target="_blank" rel="noopener">@赵长鹏</a>
+          <a class="at-btn" id="atHeyi" href="#" target="_blank" rel="noopener">@何一</a>
+          <div class="top-right">
+            <span class="upd-time" id="updTime">加载中…</span>
+            <button class="refresh-btn" id="btnRefresh" type="button" aria-label="刷新">↻</button>
+          </div>
+        </div>
+        <nav class="tabs" id="tabs">
+          <button class="tab active" type="button" data-tab="all">全部</button>
+          <button class="tab" type="button" data-tab="hot">热搜</button>
+          <button class="tab" type="button" data-tab="tweets">大佬推文</button>
+          <button class="tab" type="button" data-tab="binance">币安动态</button>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <!-- 热搜 -->
+      <section id="sec-hot">
+        <div class="sec-head"><h2>热搜榜</h2><span class="sub">微博 · 抖音</span></div>
+        <div class="card" id="card-weibo">
+          <div class="card-head"><span class="dot red"></span><h3>微博热搜</h3><span class="tag">Top 20</span><span class="src" data-role="src"></span></div>
+          <div data-role="body"></div>
+        </div>
+        <div class="card" id="card-douyin">
+          <div class="card-head"><span class="dot light"></span><h3>抖音热榜</h3><span class="tag">Top 20</span><span class="src" data-role="src"></span></div>
+          <div data-role="body"></div>
+        </div>
+      </section>
+
+      <!-- 大佬推文 -->
+      <section id="sec-tweets">
+        <div class="sec-head"><h2>大佬推文</h2><span class="sub">马斯克 · CZ · 何一</span><span class="stat" id="twStatus">加载中…</span></div>
+        <div style="font-size:13px; font-weight:700; color:var(--text2); margin:0 2px 8px;">📌 最新一条</div>
+        <div class="latest-grid" id="latestRow"></div>
+        <div class="filter-row" id="twFilter">
+          <button class="chip active" type="button" data-f="all">全部</button>
+          <button class="chip" type="button" data-f="elon">马斯克</button>
+          <button class="chip" type="button" data-f="cz">CZ</button>
+          <button class="chip" type="button" data-f="heyi">何一</button>
+        </div>
+        <div id="twFeed"></div>
+      </section>
+
+      <!-- 币安动态 -->
+      <section id="sec-binance">
+        <div class="sec-head"><h2>币安动态</h2><span class="sub">上币 · 下架 · Alpha</span></div>
+        <div class="card" id="card-list">
+          <div class="card-head"><span class="dot gold"></span><h3>上币公告</h3><span class="src" data-role="src"></span></div>
+          <div data-role="body"></div>
+        </div>
+        <div class="card" id="card-delist">
+          <div class="card-head"><span class="dot red"></span><h3>下架公告</h3><span class="src" data-role="src"></span></div>
+          <div data-role="body"></div>
+        </div>
+        <div class="card" id="card-alpha">
+          <div class="card-head"><span class="dot gold"></span><h3>Alpha 新币</h3><span class="tag">按上线时间</span><span class="src" data-role="src"></span></div>
+          <div data-role="body"></div>
+        </div>
+      </section>
+
+      <p class="foot-note">数据由浏览器直连公开接口抓取 · 每 30 秒自动刷新<br/>推文优先读定时抓取的同源数据，无数据时直连 TG 公开频道；点「查看原文」跳 X（需 VPN）</p>
+    </div>
+
+    <div class="toast" id="toast">已复制</div>
+
+    <script>
+    'use strict';
+    /* ================= 工具 ================= */
+    function $(s, r){ return (r||document).querySelector(s); }
+    function $$(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+    function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+    function pad(n){ return (n<10?'0':'')+n; }
+    function fmtClock(d){ return pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()); }
+    function fmtDateTime(ts){ var d=new Date(ts); return pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes()); }
+    function relTime(ts){
+      var diff = Date.now()-ts;
+      if (diff < 60000) return '刚刚';
+      if (diff < 3600000) return Math.floor(diff/60000)+'分钟前';
+      if (diff < 86400000) return Math.floor(diff/3600000)+'小时前';
+      if (diff < 172800000) return '昨天 '+pad(new Date(ts).getHours())+':'+pad(new Date(ts).getMinutes());
+      return fmtDateTime(ts);
+    }
+    function fmtHot(v){
+      if (v==null || v==='') return '';
+      var s = String(v);
+      if (/万|亿|热度/.test(s)) return s;
+      var n = parseFloat(s);
+      if (!isFinite(n)) return s;
+      if (n >= 10000) return Math.round(n/1000)/10 + '万';
+      return s;
+    }
+    function fmtPrice(p){
+      var n = parseFloat(p);
+      if (!isFinite(n)) return '—';
+      if (n >= 100) return '$'+n.toFixed(2);
+      if (n >= 1) return '$'+n.toFixed(4);
+      if (n >= 0.01) return '$'+n.toFixed(5);
+      return '$'+n.toPrecision(3);
+    }
+    function shortCA(ca){ return ca && ca.length>14 ? ca.slice(0,6)+'…'+ca.slice(-4) : (ca||''); }
+    var toastTimer = null;
+    function toast(msg){
+      var t = $('#toast'); t.textContent = msg; t.classList.add('show');
+      clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 1600);
+    }
+    function copyText(txt){
+      function done(){ toast('CA 已复制'); }
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(done, function(){ fallback(); });
+      } else fallback();
+      function fallback(){
+        var ta = document.createElement('textarea');
+        ta.value = txt; ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch(e){ toast('复制失败，长按手动复制'); }
+        document.body.removeChild(ta);
+      }
+    }
+
+    /* ================= 网络层：多级兜底 =================
+       顺序（按实测可用性）：直连 → codetabs → corsproxy.io → cors.eu.org → cors.lol → allorigins(最后) */
+    var PROXIES = [
+      function(u){ return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u); },
+      function(u){ return 'https://corsproxy.io/?url=' + encodeURIComponent(u); },
+      function(u){ return 'https://cors.eu.org/' + u; },
+      function(u){ return 'https://api.cors.lol/?url=' + encodeURIComponent(u); },
+      function(u){ return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); }
+    ];
+    function fetchWithTimeout(url, ms){
+      var ctrl = ('AbortController' in window) ? new AbortController() : null;
+      var timer = setTimeout(function(){ if (ctrl) ctrl.abort(); }, ms);
+      return fetch(url, ctrl ? {signal: ctrl.signal} : {}).then(function(r){
+        clearTimeout(timer);
+        if (!r.ok) throw new Error('HTTP '+r.status);
+        return r;
+      }, function(e){ clearTimeout(timer); throw e; });
+    }
+    function fetchText(url, ms){ return fetchWithTimeout(url, ms||8000).then(function(r){ return r.text(); }); }
+    function fetchJSON(url, ms){ return fetchWithTimeout(url, ms||8000).then(function(r){ return r.json(); }); }
+    /* 依次尝试一组 (url, 解析函数)，任意一个解析出有效结果即返回 */
+    function tryChain(attempts){
+      var i = 0;
+      function next(){
+        if (i >= attempts.length) return Promise.reject(new Error('all failed'));
+        var a = attempts[i++];
+        var p = a.json ? fetchJSON(a.url, a.ms) : fetchText(a.url, a.ms);
+        return p.then(function(data){
+          var out = a.parse(data);
+          if (!out) throw new Error('empty');
+          return {data: out, via: a.via};
+        }).catch(function(){ return next(); });
+      }
+      return next();
+    }
+
+    /* ================= 卡片状态渲染 ================= */
+    function setSkeleton(card, note){
+      $('[data-role="body"]', card).innerHTML =
+        '<div class="skl"><div></div><div></div><div></div><div></div></div>' +
+        (note ? '<div class="loading-note">'+esc(note)+'</div>' : '');
+      $('[data-role="src"]', card).textContent = '';
+    }
+    function setFail(card, retryFn){
+      $('[data-role="body"]', card).innerHTML =
+        '<div class="fail-box">暂时抓不到数据（网络或接口跨域限制）<br/><button class="retry" type="button">点此重试</button></div>';
+      $('[data-role="src"]', card).textContent = '抓取失败';
+      $('.retry', card).addEventListener('click', retryFn);
+    }
+
+    /* ================= 1) 热搜 ================= */
+    function wbSearchUrl(t){ return 'https://s.weibo.com/weibo?q=' + encodeURIComponent(t); }
+    function dySearchUrl(t){ return 'https://www.douyin.com/search/' + encodeURIComponent(t) + '?type=general'; }
+    function normHotItem(it, kind){
+      var title = it.title || it.word || it.desc || it.name || '';
+      if (!title) return null;
+      var hot = it.hot != null ? it.hot : (it.hot_value != null ? it.hot_value : (it.desc_extr != null ? it.desc_extr : ''));
+      var url = it.url || it.scheme || it.mobilUrl || '';
+      if (!/^https?:\/\//.test(url)) url = (kind==='weibo' ? wbSearchUrl(title) : dySearchUrl(title));
+      var flag = '';
+      var raw = (it.icon_desc || it.label || it.icon || '');
+      if (/热/.test(String(raw))) flag = '热'; else if (/新/.test(String(raw))) flag = '新';
+      if (it.label === 3 || it.label === '3') flag = '热'; else if (it.label === 1 || it.label === '1') flag = '新';
+      return {title: title, hot: fmtHot(hot), url: url, flag: flag};
+    }
+    function parseHotList(j, kind){
+      var arr = null;
+      if (j && Array.isArray(j.data)) arr = j.data;
+      else if (j && Array.isArray(j.list)) arr = j.list;
+      else if (j && Array.isArray(j.word_list)) arr = j.word_list;
+      else if (j && j.data && j.data.cards && j.data.cards[0] && Array.isArray(j.data.cards[0].card_group)) arr = j.data.cards[0].card_group;
+      if (!arr) return null;
+      var out = [];
+      for (var i=0;i<arr.length;i++){ var n = normHotItem(arr[i], kind); if (n) out.push(n); if (out.length>=20) break; }
+      return out.length >= 5 ? out : null;
+    }
+    var HOT_DEFS = {
+      weibo: {
+        card: '#card-weibo', kind: 'weibo',
+        direct: [
+          {url:'https://v2.xxapi.cn/api/weibohot', via:'xxapi'},
+          {url:'https://uapis.cn/api/v1/misc/hotboard?type=weibo', via:'uapis'},
+          {url:'https://m.weibo.cn/api/container/getIndex?containerid=106003type%3D25%26t%3D3%26disable_hot%3D1%26filter_type%3Drealtimehot', via:'微博官方'},
+          {url:'https://api.vvhan.com/api/hotlist/wbHot', via:'vvhan'}
+        ],
+        proxyTargets: ['https://v2.xxapi.cn/api/weibohot', 'https://m.weibo.cn/api/container/getIndex?containerid=106003type%3D25%26t%3D3%26disable_hot%3D1%26filter_type%3Drealtimehot']
+      },
+      douyin: {
+        card: '#card-douyin', kind: 'douyin',
+        direct: [
+          {url:'https://v2.xxapi.cn/api/douyinhot', via:'xxapi'},
+          {url:'https://uapis.cn/api/v1/misc/hotboard?type=douyin', via:'uapis'},
+          {url:'https://www.iesdouyin.com/web/api/v2/hotsearch/billboard/word/', via:'抖音官方'},
+          {url:'https://api.vvhan.com/api/hotlist/dyHot', via:'vvhan'}
+        ],
+        proxyTargets: ['https://v2.xxapi.cn/api/douyinhot', 'https://www.iesdouyin.com/web/api/v2/hotsearch/billboard/word/']
+      }
+    };
+    var hotState = { weibo:{expanded:false, items:null}, douyin:{expanded:false, items:null} };
+    function hotAttempts(def){
+      var list = [];
+      def.direct.forEach(function(s){
+        list.push({url: s.url, json: true, ms: 7000, via: s.via, parse: function(j){ return parseHotList(j, def.kind); }});
+      });
+      def.proxyTargets.forEach(function(t){
+        PROXIES.forEach(function(p){
+          list.push({url: p(t), json: true, ms: 9000, via: '代理', parse: function(j){ return parseHotList(j, def.kind); }});
+        });
+      });
+      return list;
+    }
+    function renderHot(key){
+      var def = HOT_DEFS[key], st = hotState[key], card = $(def.card);
+      var body = $('[data-role="body"]', card);
+      if (!st.items){ return; }
+      var show = st.expanded ? st.items : st.items.slice(0, 10);
+      var html = show.map(function(it, i){
+        return '<a class="hot-row" href="'+esc(it.url)+'" target="_blank" rel="noopener">' +
+          '<span class="rank'+(i<3?' r'+(i+1):'')+'">'+(i+1)+'</span>' +
+          '<span class="hot-title">'+esc(it.title)+'</span>' +
+          (it.flag ? '<span class="flag '+(it.flag==='热'?'hot':'new')+'">'+it.flag+'</span>' : '') +
+          (it.hot ? '<span class="hot-val">'+esc(it.hot)+'</span>' : '') +
+          '</a>';
+      }).join('');
+      if (st.items.length > 10){
+        html += '<button class="expand-btn" type="button" data-act="toggle">' + (st.expanded ? '收起 ↑' : '展开全部 '+st.items.length+' 条 ↓') + '</button>';
+      }
+      body.innerHTML = html;
+      var btn = $('[data-act="toggle"]', body);
+      if (btn) btn.addEventListener('click', function(){ st.expanded = !st.expanded; renderHot(key); });
+    }
+    function loadHot(key){
+      var def = HOT_DEFS[key], card = $(def.card), st = hotState[key];
+      setSkeleton(card, '多源轮询抓取中…');
+      return tryChain(hotAttempts(def)).then(function(res){
+        lastOkTs = Date.now();
+        st.items = res.data;
+        $('[data-role="src"]', card).textContent = '来源 ' + res.via;
+        renderHot(key);
+      }).catch(function(){
+        st.items = null;
+        setFail(card, function(){ loadHot(key); });
+      });
+    }
+
+    /* ================= 2) 币安动态 ================= */
+    function bapiUrl(catId){ return 'https://www.binance.com/bapi/composite/v1/public/cms/article/list/query?type=1&catalogId='+catId+'&pageNo=1&pageSize=10'; }
+    var ALPHA_URL = 'https://www.binance.com/bapi/defi/v1/public/wallet-direct/buw/wallet/cex/alpha/all/token/list';
+    function parseAnn(j){
+      try {
+        var arts = j.data.catalogs[0].articles;
+        if (!arts || !arts.length) return null;
+        return arts.map(function(a){
+          return { title: a.title, date: a.releaseDate,
+                   url: 'https://www.binance.com/zh-CN/support/announcement/detail/' + a.code };
+        });
+      } catch(e){ return null; }
+    }
+    function parseAlpha(j){
+      try {
+        var arr = j.data;
+        if (!Array.isArray(arr) || !arr.length) return null;
+        return arr.filter(function(t){ return t.listingTime; })
+          .sort(function(a,b){ return b.listingTime - a.listingTime; })
+          .slice(0, 12)
+          .map(function(t){
+            return { sym: t.symbol, name: t.name, chain: t.chainName, icon: t.iconUrl,
+                     price: t.price, pct: parseFloat(t.percentChange24h),
+                     time: t.listingTime, ca: t.contractAddress };
+          });
+      } catch(e){ return null; }
+    }
+    function bapiAttempts(url, parse){
+      var list = [{url: url, json: true, ms: 8000, via: '币安官方', parse: parse}];
+      PROXIES.forEach(function(p){ list.push({url: p(url), json: true, ms: 9000, via: '代理', parse: parse}); });
+      return list;
+    }
+    function renderAnn(card, items){
+      $('[data-role="body"]', card).innerHTML = items.map(function(a){
+        return '<a class="ann-row" href="'+esc(a.url)+'" target="_blank" rel="noopener">' +
+          '<div class="ann-title">'+esc(a.title)+'</div>' +
+          '<div class="ann-date">'+fmtDateTime(a.date)+'</div></a>';
+      }).join('');
+    }
+    function loadAnn(cardSel, catId){
+      var card = $(cardSel);
+      setSkeleton(card);
+      return tryChain(bapiAttempts(bapiUrl(catId), parseAnn)).then(function(res){
+        lastOkTs = Date.now();
+        $('[data-role="src"]', card).textContent = fmtClock(new Date());
+        renderAnn(card, res.data);
+      }).catch(function(){ setFail(card, function(){ loadAnn(cardSel, catId); }); });
+    }
+    function loadAlpha(){
+      var card = $('#card-alpha');
+      setSkeleton(card);
+      return tryChain(bapiAttempts(ALPHA_URL, parseAlpha)).then(function(res){
+        lastOkTs = Date.now();
+        $('[data-role="src"]', card).textContent = fmtClock(new Date());
+        $('[data-role="body"]', card).innerHTML = res.data.map(function(t, i){
+          var pctCls = isFinite(t.pct) ? (t.pct >= 0 ? 'up' : 'dn') : '';
+          var pctTxt = isFinite(t.pct) ? ((t.pct>=0?'+':'') + t.pct.toFixed(2) + '%') : '';
+          return '<div class="alpha-row"><div class="alpha-top">' +
+            (t.icon ? '<img src="'+esc(t.icon)+'" alt="" loading="lazy" onerror="this.style.display=\'none\'"/>' : '') +
+            '<span class="alpha-sym">'+esc(t.sym)+'</span>' +
+            '<span class="alpha-name">'+esc(t.name)+'</span>' +
+            '<span class="alpha-price">'+fmtPrice(t.price)+'</span>' +
+            (pctTxt ? '<span class="pct '+pctCls+'">'+pctTxt+'</span>' : '') +
+            '</div><div class="alpha-sub">' +
+            '<span>'+esc(t.chain||'')+'</span><span>·</span><span>上线 '+fmtDateTime(t.time)+'</span>' +
+            (t.ca ? '<span class="ca">'+esc(shortCA(t.ca))+'</span><button class="copy-btn" type="button" data-ca="'+esc(t.ca)+'">复制CA</button>' : '') +
+            '</div></div>';
+        }).join('');
+        $$('.copy-btn', card).forEach(function(b){
+          b.addEventListener('click', function(){ copyText(b.getAttribute('data-ca')); });
+        });
+      }).catch(function(){ setFail(card, function(){ loadAlpha(); }); });
+    }
+
+    /* ================= 3) 大佬推文（同目录 JSON 优先，其次 TG 公开频道） ================= */
+    var PEOPLE = {
+      elon: {key:'elon', name:'Elon Musk', short:'马斯克', handle:'elonmusk', av:'av-elon', ini:'M'},
+      cz:   {key:'cz',   name:'赵长鹏 CZ', short:'CZ',    handle:'cz_binance', av:'av-cz', ini:'CZ'},
+      heyi: {key:'heyi', name:'何一',     short:'何一',   handle:'heyibinance', av:'av-heyi', ini:'何'}
+    };
+    var HANDLE2KEY = {elonmusk:'elon', cz_binance:'cz', heyibinance:'heyi'};
+    var TG_CHANNELS = [
+      {url:'https://t.me/s/TechMelonElonMusk', def:'elon'},
+      {url:'https://t.me/s/TechMelonCzHeyi', def:null}
+    ];
+    var ACTION_MAP = [
+      {re:/新增关注/, type:'follow', label:'关注', cls:'b-follow', verb:'关注了'},
+      {re:/取消关注|取关/, type:'unfollow', label:'取关', cls:'b-unfollow', verb:'取关了'},
+      {re:/转推/, type:'rt', label:'转推', cls:'b-rt', verb:'转推了'},
+      {re:/回复/, type:'reply', label:'回复', cls:'b-reply', verb:'回复了'},
+      {re:/引用/, type:'quote', label:'引用', cls:'b-quote', verb:'引用了'},
+      {re:/删除/, type:'deleted', label:'删推', cls:'b-del', verb:''}
+    ];
+    function tgAttempts(url){
+      var list = [{url: url, json: false, ms: 9000, via: '直连', parse: function(t){ return (t && t.indexOf('data-post') > -1) ? t : null; }}];
+      PROXIES.forEach(function(p){
+        list.push({url: p(url), json: false, ms: 11000, via: '代理', parse: function(t){ return (t && t.indexOf('data-post') > -1) ? t : null; }});
+      });
+      return list;
+    }
+    function elToLines(textEl){
+      var clone = textEl.cloneNode(true);
+      var brs = clone.querySelectorAll('br');
+      for (var i=0;i<brs.length;i++){ brs[i].parentNode.replaceChild(document.createTextNode('\n'), brs[i]); }
+      var raw = clone.textContent || '';
+      return raw.split('\n').map(function(s){ return s.replace(/\s+/g,' ').trim(); }).filter(function(s){ return s.length; });
+    }
+    function stripHandleSuffix(txt, handle){
+      if (!txt) return '';
+      var idx = txt.indexOf('@'+handle);
+      return (idx > -1 ? txt.slice(0, idx) : txt).trim();
+    }
+    function parseTGMessage(msgEl, channelDef){
+      var postId = msgEl.getAttribute('data-post') || '';
+      var textEl = msgEl.querySelector('.js-message_text');
+      if (!textEl) return null;
+      var lines = elToLines(textEl);
+      if (!lines.length) return null;
+      var anchors = $$('a', textEl).map(function(a){
+        return {href: a.getAttribute('href') || '', text: (a.textContent||'').replace(/\s+/g,' ').trim()};
+      }).filter(function(a){ return a.href.indexOf('x.com/') > -1; });
+      function handleOf(href){ var m = href.match(/x\.com\/([A-Za-z0-9_]+)/); return m ? m[1] : ''; }
+      /* 动作类型 */
+      var head = lines[0] || '';
+      var action = {type:'orig', label:'原创', cls:'b-orig', verb:''};
+      for (var i=0;i<ACTION_MAP.length;i++){ if (ACTION_MAP[i].re.test(head)) { action = ACTION_MAP[i]; break; } }
+      /* 本人 */
+      var actorA = anchors[0] || null;
+      var actorHandle = actorA ? handleOf(actorA.href) : '';
+      var actorName = actorA ? stripHandleSuffix(actorA.text, actorHandle) : '';
+      var key = HANDLE2KEY[actorHandle] || channelDef;
+      if (!key || !PEOPLE[key]) return null;
+      /* 对象（转推/回复/引用/关注的人） */
+      var target = null;
+      var targetLineIdx = -1;
+      for (var j=0;j<lines.length;j++){
+        if (/(转推了|回复了|关注了|取关了|引用了)/.test(lines[j])) { targetLineIdx = j; break; }
+      }
+      if (targetLineIdx > -1 && anchors[1]){
+        var th = handleOf(anchors[1].href);
+        if (th && th !== actorHandle) target = {name: stripHandleSuffix(anchors[1].text, th), handle: th};
+      }
+      if (!target && targetLineIdx > -1){
+        var mm = lines[targetLineIdx].match(/@([A-Za-z0-9_]+)/);
+        if (mm) target = {name: '', handle: mm[1]};
+      }
+      /* 时间：优先正文里的「推文时间」（北京时间），否则 TG 发布时间 */
+      var ts = 0;
+      for (var k=0;k<lines.length;k++){
+        var tm = lines[k].match(/推文时间[:：]\s*(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?/);
+        if (tm){ ts = Date.UTC(+tm[1], +tm[2]-1, +tm[3], +tm[4]-8, +tm[5], +(tm[6]||0)); break; }
+      }
+      if (!ts){
+        var timeEl = msgEl.querySelector('time[datetime]');
+        if (timeEl) ts = Date.parse(timeEl.getAttribute('datetime')) || 0;
+      }
+      if (!ts) ts = Date.now();
+      /* X 原文链接 */
+      var xUrl = '';
+      for (var q=0;q<anchors.length;q++){ if (anchors[q].text.indexOf('查看原文') > -1) { xUrl = anchors[q].href; break; } }
+      if (!xUrl){ for (var q2=0;q2<anchors.length;q2++){ if (/\/status\//.test(anchors[q2].href)) { xUrl = anchors[q2].href; break; } } }
+      if (!xUrl) xUrl = 'https://x.com/' + PEOPLE[key].handle;
+      /* 正文：头部行之后、时间行之前；拆出「原推」引用部分；有中文翻译时取译文 */
+      var startIdx = 0;
+      for (var s=0;s<lines.length;s++){ if (lines[s].indexOf('👤') === 0 || s === targetLineIdx) startIdx = s+1; }
+      var bodyLines = [], quoteLines = [], inQuote = false;
+      for (var b=startIdx;b<lines.length;b++){
+        var L = lines[b];
+        if (/推文时间/.test(L) || L.indexOf('🔗') === 0) break;
+        if (/^💬\s*原推/.test(L)) { inQuote = true; continue; }
+        if (/原类型/.test(L)) continue;
+        if (inQuote) quoteLines.push(L); else bodyLines.push(L);
+      }
+      var sepIdx = -1;
+      for (var s2=0;s2<bodyLines.length;s2++){ if (/中文翻译/.test(bodyLines[s2])) sepIdx = s2; }
+      if (sepIdx > -1) bodyLines = bodyLines.slice(sepIdx+1);
+      bodyLines = bodyLines.filter(function(L){ return L !== '——' && !/^—+$/.test(L); });
+      /* 媒体 */
+      var media = [];
+      $$('.tgme_widget_message_photo_wrap', msgEl).forEach(function(pw){
+        var st = pw.getAttribute('style') || '';
+        var m = st.match(/url\(['"]?([^'")]+)['"]?\)/);
+        if (m) media.push({type:'img', src: m[1]});
+      });
+      $$('video', msgEl).forEach(function(v){
+        var src = v.getAttribute('src') || '';
+        if (src) media.push({type:'video', src: src, poster: v.getAttribute('poster') || ''});
+      });
+      return {
+        id: postId, key: key, type: action.type, label: action.label, cls: action.cls, verb: action.verb,
+        actorName: actorName || PEOPLE[key].name, target: target,
+        body: bodyLines.join('\n').trim(), quote: quoteLines.join('\n').trim(),
+        ts: ts, xUrl: xUrl, media: media,
+        tgUrl: 'https://t.me/' + postId
+      };
+    }
+    function parseTGChannel(html, channelDef){
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var msgs = $$('.tgme_widget_message[data-post]', doc);
+      var out = [];
+      msgs.forEach(function(m){ var p = parseTGMessage(m, channelDef); if (p) out.push(p); });
+      return out;
+    }
+    var twPosts = [], twFilter = 'all', twOk = false, lastOkTs = 0;
+    /* ---------- 最优先数据源：同目录 JSON（GitHub Actions 定时抓取生成，同源无跨域） ---------- */
+    function mapJsonAction(a){
+      var orig = {type:'orig', label:'原创', cls:'b-orig', verb:''};
+      if (!a) return orig;
+      if (typeof a === 'object'){
+        for (var i=0;i<ACTION_MAP.length;i++){ if (ACTION_MAP[i].type === a.type) return ACTION_MAP[i]; }
+        if (a.label) return {type: a.type || 'orig', label: a.label, cls: a.cls || 'b-orig', verb: a.verb || ''};
+        return orig;
+      }
+      var s = String(a);
+      for (var j=0;j<ACTION_MAP.length;j++){ if (ACTION_MAP[j].re.test(s) || ACTION_MAP[j].type === s || ACTION_MAP[j].label === s) return ACTION_MAP[j]; }
+      return orig;
+    }
+    function jsonPostKey(p, groupKey){
+      var h = String(p.handle || p.authorHandle || p.author || p.user || '').replace(/^@/, '').toLowerCase();
+      if (HANDLE2KEY[h]) return HANDLE2KEY[h];
+      if (p.key && PEOPLE[p.key]) return p.key;
+      if (p.person && PEOPLE[p.person]) return p.person;
+      var nm = String(p.name || '');
+      if (/何一|Yi He/i.test(nm)) return 'heyi';
+      if (/赵长鹏|CZ/i.test(nm)) return 'cz';
+      if (/Elon|Musk|马斯克/i.test(nm)) return 'elon';
+      return groupKey;
+    }
+    function normJsonPost(p, groupKey){
+      if (!p || typeof p !== 'object') return null;
+      var key = jsonPostKey(p, groupKey);
+      if (!key || !PEOPLE[key]) return null;
+      var body = String(p.text || p.body || '').trim();
+      var quote = String(p.quote || '').trim();
+      var imgs = p.images || p.media || [];
+      if (!body && !quote && !(Array.isArray(imgs) && imgs.length)) return null;
+      var ts = 0;
+      var tv = (p.time != null ? p.time : (p.ts != null ? p.ts : p.timestamp));
+      if (typeof tv === 'number') ts = tv < 1e12 ? tv * 1000 : tv;
+      else if (tv) ts = Date.parse(tv) || 0;
+      if (!ts) ts = Date.now();
+      var act = mapJsonAction(p.action || p.type);
+      var media = [];
+      if (Array.isArray(imgs)) imgs.forEach(function(im){
+        if (typeof im === 'string') media.push({type:'img', src: im});
+        else if (im && im.src) media.push({type: im.type === 'video' ? 'video' : 'img', src: im.src, poster: im.poster || ''});
+      });
+      return {
+        id: String(p.id || (key + '-' + ts + '-' + body.slice(0, 24))),
+        key: key, type: act.type, label: act.label, cls: act.cls, verb: act.verb,
+        actorName: p.name || PEOPLE[key].name, target: null,
+        body: body, quote: quote, ts: ts,
+        xUrl: p.link || p.xUrl || p.url || ('https://x.com/' + PEOPLE[key].handle),
+        media: media,
+        tgUrl: p.tgUrl || p.tg || (key === 'elon' ? 'https://t.me/TechMelonElonMusk' : 'https://t.me/TechMelonCzHeyi')
+      };
+    }
+    /* 兼容 {"elon":{"posts":[...]},"cz":{"posts":[...]}} 与单个 {"posts":[...]} */
+    function extractJsonPosts(j, groupKey){
+      var out = [];
+      if (!j || typeof j !== 'object') return out;
+      function pushArr(arr, gk){
+        if (Array.isArray(arr)) arr.forEach(function(p){ var n = normJsonPost(p, gk); if (n) out.push(n); });
+      }
+      if (Array.isArray(j.posts)) pushArr(j.posts, groupKey);
+      ['elon','cz','heyi'].forEach(function(k){ if (j[k]) pushArr(j[k].posts, k); });
+      return out;
+    }
+    function fetchJsonFile(name){
+      /* 带时间戳参数防 GitHub Pages 缓存旧 JSON；文件不存在时返回 null */
+      return fetchJSON(name + '?t=' + Date.now(), 6000).catch(function(){ return null; });
+    }
+    function loadTweetsFromJSON(){
+      return fetchJsonFile('tweets.json').then(function(j){
+        var posts = extractJsonPosts(j, null);
+        if (posts.length) return posts;
+        return Promise.all([fetchJsonFile('tweets-elon.json'), fetchJsonFile('tweets-cz.json')]).then(function(rs){
+          return extractJsonPosts(rs[0], 'elon').concat(extractJsonPosts(rs[1], 'cz'));
+        });
+      }).catch(function(){ return []; });
+    }
+    function loadTweets(){
+      var st = $('#twStatus'); st.textContent = '抓取中…'; st.classList.remove('err');
+      return loadTweetsFromJSON().then(function(posts){
+        if (posts && posts.length){
+          var seen = {}, all = [];
+          posts.forEach(function(p){ if (!seen[p.id]) { seen[p.id] = 1; all.push(p); } });
+          all.sort(function(a, b){ return b.ts - a.ts; });
+          twOk = true; lastOkTs = Date.now();
+          twPosts = all.slice(0, 40);
+          st.textContent = '更新于 ' + fmtClock(new Date()) + ' · 定时数据';
+          renderTweets();
+          return;
+        }
+        return loadTweetsFromTG();
+      });
+    }
+    function loadTweetsFromTG(){
+      var st = $('#twStatus');
+      var jobs = TG_CHANNELS.map(function(ch){
+        return tryChain(tgAttempts(ch.url)).then(function(res){ return parseTGChannel(res.data, ch.def); })
+          .catch(function(){ return null; });
+      });
+      return Promise.all(jobs).then(function(results){
+        var any = false, seen = {}, all = [];
+        results.forEach(function(r){
+          if (r) { any = true; r.forEach(function(p){ if (!seen[p.id]) { seen[p.id] = 1; all.push(p); } }); }
+        });
+        if (!any){
+          twOk = false;
+          st.textContent = '抓取失败'; st.classList.add('err');
+          if (!twPosts.length) renderTweets();
+          return;
+        }
+        twOk = true; lastOkTs = Date.now();
+        all.sort(function(a,b){ return b.ts - a.ts; });
+        twPosts = all.slice(0, 40);
+        st.textContent = '更新于 ' + fmtClock(new Date());
+        renderTweets();
+      });
+    }
+    function avatarHtml(p){ return '<span class="avatar '+PEOPLE[p.key].av+'">'+PEOPLE[p.key].ini+'</span>'; }
+    function clampBlock(text, cls){
+      var long = text.length > 260;
+      return '<div class="'+cls+(long?' clamped':'')+'">'+esc(text)+'</div>' + (long ? '<button class="more-btn" type="button" data-act="more">展开全文</button>' : '');
+    }
+    function renderLatest(){
+      var row = $('#latestRow');
+      var html = '';
+      ['elon','cz','heyi'].forEach(function(k){
+        var p = null;
+        for (var i=0;i<twPosts.length;i++){ if (twPosts[i].key === k) { p = twPosts[i]; break; } }
+        var bodyTxt = p ? (p.body || (p.target ? (p.verb + ' ' + (p.target.name || '@'+p.target.handle)) : '（无文字内容）')) : (twOk ? '暂无动态' : '抓取失败');
+        html += '<div class="latest-card"><div class="lc-head">' + avatarHtml({key:k}) +
+          '<div><div class="pname">'+PEOPLE[k].name+'</div><div class="phandle">@'+PEOPLE[k].handle+'</div></div>' +
+          (p ? '<span class="badge '+p.cls+'" style="margin-left:auto;">'+p.label+'</span>' : '') +
+          '</div><div class="lc-body">'+esc(bodyTxt)+'</div>' +
+          (p ? '<div class="lc-time">📌 最新一条 · '+relTime(p.ts)+' · <a href="'+esc(p.xUrl)+'" target="_blank" rel="noopener" style="color:var(--blue);">看原文</a></div>' : '<div class="lc-time">'+(twOk ? '📌 最新一条' : '抓取失败，点下方重试')+'</div>') +
+          '</div>';
+      });
+      row.innerHTML = html;
+    }
+    function renderTweets(){
+      renderLatest();
+      var feed = $('#twFeed');
+      if (!twPosts.length){
+        feed.innerHTML = '<div class="card"><div class="fail-box">' + (twOk ? '暂时没有动态' : '推文抓取失败：TG 频道需经代理或 VPN 直连') +
+          '<br/><button class="retry" type="button" id="twRetry">点此重试</button></div></div>';
+        var rb = $('#twRetry'); if (rb) rb.addEventListener('click', loadTweets);
+        return;
+      }
+      var list = twPosts.filter(function(p){ return twFilter === 'all' || p.key === twFilter; });
+      if (!list.length){ feed.innerHTML = '<div class="empty-note">该筛选下暂无动态</div>'; return; }
+      feed.innerHTML = list.map(function(p){
+        var P = PEOPLE[p.key];
+        var h = '<article class="tw-card"><div class="tw-head">' + avatarHtml(p) +
+          '<div class="who"><div class="pname">'+esc(P.name)+'</div><div class="phandle">@'+P.handle+'</div></div>' +
+          '<span class="badge '+p.cls+'">'+p.label+'</span>' +
+          '<span class="tw-time">'+relTime(p.ts)+'</span></div>';
+        if (p.target){
+          h += '<div class="tw-target">'+esc(p.verb || '互动')+' <a href="https://x.com/'+esc(p.target.handle)+'" target="_blank" rel="noopener">'+esc(p.target.name || '')+' @'+esc(p.target.handle)+'</a></div>';
+        }
+        if (p.body) h += clampBlock(p.body, 'tw-body');
+        if (p.quote) h += '<div class="quote-box"><div class="q-label">原推</div>' + clampBlock(p.quote, 'quote-text') + '</div>';
+        if (p.media && p.media.length){
+          h += '<div class="tw-media">' + p.media.map(function(m){
+            if (m.type === 'img') return '<img src="'+esc(m.src)+'" alt="推文配图" loading="lazy"/>';
+            return '<video src="'+esc(m.src)+'"'+(m.poster?' poster="'+esc(m.poster)+'"':'')+' controls preload="none" playsinline></video>';
+          }).join('') + '</div>';
+        }
+        h += '<div class="tw-foot"><a href="'+esc(p.xUrl)+'" target="_blank" rel="noopener">查看原文 →</a>' +
+          '<a class="tg-link" href="'+esc(p.tgUrl)+'" target="_blank" rel="noopener">TG 频道</a></div></article>';
+        return h;
+      }).join('');
+      $$('[data-act="more"]', feed).forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var blk = btn.previousElementSibling;
+          if (blk){ blk.classList.toggle('clamped'); btn.textContent = blk.classList.contains('clamped') ? '展开全文' : '收起'; }
+        });
+      });
+    }
+    $('#twFilter').addEventListener('click', function(e){
+      var btn = e.target.closest('[data-f]'); if (!btn) return;
+      twFilter = btn.getAttribute('data-f');
+      $$('#twFilter .chip').forEach(function(c){ c.classList.toggle('active', c === btn); });
+      renderTweets();
+    });
+
+    /* ================= 4) 顶部 X 快捷按钮 ================= */
+    function setXButtons(){
+      var d = new Date(); d.setDate(d.getDate() - 1);
+      var ymd = d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+      $('#atCz').href = 'https://x.com/search?q=' + encodeURIComponent('@cz_binance since:' + ymd) + '&src=typed_query&f=top';
+      $('#atHeyi').href = 'https://x.com/search?q=' + encodeURIComponent('@heyibinance since:' + ymd) + '&src=typed_query&f=top';
+    }
+
+    /* ================= 5) 导航切换 ================= */
+    $('#tabs').addEventListener('click', function(e){
+      var btn = e.target.closest('[data-tab]'); if (!btn) return;
+      $$('#tabs .tab').forEach(function(t){ t.classList.toggle('active', t === btn); });
+      var v = btn.getAttribute('data-tab');
+      $('#sec-hot').style.display = (v === 'all' || v === 'hot') ? '' : 'none';
+      $('#sec-tweets').style.display = (v === 'all' || v === 'tweets') ? '' : 'none';
+      $('#sec-binance').style.display = (v === 'all' || v === 'binance') ? '' : 'none';
+    });
+
+    /* ================= 6) 刷新调度（30 秒） ================= */
+    var refreshing = false, lastDone = 0;
+    function refreshAll(){
+      if (refreshing) return;
+      refreshing = true;
+      var okBefore = lastOkTs;
+      var btn = $('#btnRefresh'); btn.classList.add('spinning');
+      var jobs = [
+        loadHot('weibo'), loadHot('douyin'), loadTweets(),
+        loadAnn('#card-list', 48), loadAnn('#card-delist', 161), loadAlpha()
+      ];
+      Promise.all(jobs.map(function(p){ return p && p.then ? p.catch(function(){}) : p; })).then(function(){
+        refreshing = false; lastDone = Date.now();
+        btn.classList.remove('spinning');
+        if (lastOkTs > okBefore) $('#updTime').textContent = '更新于 ' + fmtClock(new Date(lastOkTs));
+        else if (lastOkTs) $('#updTime').textContent = '更新于 ' + fmtClock(new Date(lastOkTs)) + '（本次失败）';
+        else $('#updTime').textContent = fmtClock(new Date()) + '（更新失败）';
+      });
+    }
+    $('#btnRefresh').addEventListener('click', refreshAll);
+    document.addEventListener('visibilitychange', function(){
+      if (!document.hidden && Date.now() - lastDone > 30000) refreshAll();
+    });
+    setXButtons();
+    refreshAll();
+    setInterval(function(){ if (!document.hidden) refreshAll(); }, 30000);
+    </script>
+  </body>
+</html>
