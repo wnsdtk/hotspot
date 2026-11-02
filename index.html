@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>手机热点监控</title>
+<style>
+:root{
+  --bg:#0d1117; --card:#161b22; --card2:#1c2330; --border:#262d36;
+  --text:#e6edf3; --muted:#8b949e; --accent:#1f6feb;
+  --green:#00C805; --red:#e5484d; --yellow:#F0B90B; --purple:#A371FF; --orange:#f0883e; --blue:#58a6ff;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+body{margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:14px; line-height:1.5; max-width:560px; margin-left:auto; margin-right:auto;
+  padding-bottom:40px;}
+a{color:var(--blue); text-decoration:none;}
+.muted{color:var(--muted);} .small{font-size:12px;} .spacer{flex:1;}
+.empty{color:var(--muted); text-align:center; padding:18px 8px; font-size:13px;}
+/* top bar */
+.topbar{position:sticky; top:0; z-index:50; display:flex; align-items:center; gap:8px;
+  padding:10px 12px; background:#0d1117f2; border-bottom:1px solid var(--border); flex-wrap:wrap;}
+.brand{font-size:17px; font-weight:700;}
+.xbtn{background:var(--red); color:#fff; font-size:12px; padding:4px 10px; border-radius:14px;
+  font-weight:600; white-space:nowrap;}
+.upd{font-size:12px; color:var(--muted); white-space:nowrap;}
+.iconbtn{background:var(--card2); color:var(--text); border:1px solid var(--border);
+  border-radius:8px; font-size:16px; width:32px; height:30px; cursor:pointer;}
+/* tabs */
+.tabs{position:sticky; top:51px; z-index:49; display:flex; background:#0d1117f2;
+  border-bottom:1px solid var(--border);}
+.tabs button{flex:1; background:none; border:none; color:var(--muted); font-size:14px;
+  padding:11px 0; cursor:pointer; border-bottom:2px solid transparent;}
+.tabs button.active{color:var(--text); font-weight:700; border-bottom-color:var(--red);}
+.tabpane[hidden]{display:none !important;}
+/* cards & sections */
+.card{background:var(--card); border:1px solid var(--border); border-radius:10px;
+  margin:10px 10px; padding:12px;}
+.sect{font-size:15px; font-weight:700; margin-bottom:10px;}
+.sect.tog{cursor:pointer; display:flex; align-items:center; gap:6px;}
+.chev{color:var(--muted); font-size:12px; margin-left:auto;}
+.subhead{font-size:13px; font-weight:700; color:var(--muted); margin:12px 0 6px;}
+/* mini latest cards */
+.minirow{display:flex; gap:8px; margin-bottom:10px;}
+.mini{flex:1; min-width:0; background:var(--card2); border:1px solid var(--border);
+  border-radius:8px; padding:8px; cursor:pointer;}
+.mini-name{font-size:13px; font-weight:700; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.mini-text{font-size:12px; color:var(--muted); display:-webkit-box; -webkit-line-clamp:3;
+  -webkit-box-orient:vertical; overflow:hidden;}
+/* chips */
+.chips{display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;}
+.chip{background:var(--card2); color:var(--muted); border:1px solid var(--border);
+  border-radius:14px; padding:4px 12px; font-size:12px; cursor:pointer;}
+.chip.on{background:var(--red); border-color:var(--red); color:#fff; font-weight:700;}
+/* tweet cards */
+.tweet{background:var(--card2); border:1px solid var(--border); border-radius:8px;
+  padding:10px; margin-bottom:10px; cursor:pointer;}
+.thead{display:flex; align-items:center; gap:8px; margin-bottom:6px;}
+.avatar{width:30px; height:30px; border-radius:50%; background:var(--accent); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex:none;}
+.tname{font-weight:700; font-size:13px;} .thandle{font-size:12px;}
+.tbody{font-size:13px;}
+.kbadge{display:inline-block; font-size:11px; padding:1px 7px; border-radius:9px; margin-right:6px;
+  background:#2d333b; color:var(--blue); border:1px solid var(--border); vertical-align:1px;}
+.ttext{word-break:break-word;}
+.zh{margin-top:8px; padding:8px; background:#0d1117; border-left:3px solid var(--accent);
+  border-radius:4px; font-size:13px; color:#c9d4de;}
+.zhtag{display:inline-block; background:var(--accent); color:#fff; font-size:10px; border-radius:4px;
+  padding:0 5px; margin-right:6px;}
+.tmedia{margin-top:8px; display:flex; flex-wrap:wrap; gap:6px;}
+.timg{max-width:100%; max-height:220px; border-radius:8px; border:1px solid var(--border);}
+.tlink{margin-top:8px; font-size:12px; color:var(--blue);}
+/* hot rows */
+.hrow{display:flex; align-items:center; gap:8px; padding:9px 4px; border-bottom:1px solid var(--border);
+  cursor:pointer;}
+.hrow:last-child{border-bottom:none;}
+.idx{color:var(--muted); font-size:12px; width:20px; flex:none; text-align:center;}
+.word{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px;}
+.hotv{color:var(--muted); font-size:12px; flex:none;}
+.badge{font-size:11px; padding:1px 7px; border-radius:9px; flex:none; white-space:nowrap;}
+.badge.green{background:#0f2c1a; color:var(--green); border:1px solid #1c5c33;}
+.badge.red{background:#3a1414; color:#ff7b72; border:1px solid #7a2d2d;}
+.badge.orange{background:#3a2410; color:var(--orange); border:1px solid #7a4d1f;}
+.badge.blue{background:#0f2743; color:var(--blue); border:1px solid #1f4d7a;}
+.badge.gray{background:#2d333b; color:var(--muted); border:1px solid var(--border);}
+.go{color:var(--muted); flex:none;}
+.morebtn{display:block; width:100%; margin-top:8px; background:var(--card2); color:var(--blue);
+  border:1px solid var(--border); border-radius:8px; padding:8px; font-size:13px; cursor:pointer;}
+/* liquidity */
+.chain{border:1px solid var(--border); border-radius:8px; margin-bottom:8px; background:var(--card2);}
+.chainrow{display:flex; align-items:center; gap:8px; padding:10px; cursor:pointer;}
+.chainname{font-weight:700;} .chev{margin-left:8px;}
+.metrics{padding:0 10px 10px;}
+.mrow{display:flex; justify-content:space-between; padding:5px 0; font-size:13px;
+  border-top:1px dashed var(--border);}
+/* tags */
+.tagrow{padding:9px 4px; border-bottom:1px solid var(--border); font-size:13px;}
+.tagrow:last-child{border-bottom:none;}
+.tagrow.link{cursor:pointer; display:flex; align-items:center; gap:8px;}
+.tagtext{flex:1;} .coinsym{color:var(--yellow); font-size:12px; font-weight:700;}
+/* coin cards */
+.coinlist{border-radius:8px; padding:8px;}
+.coin{background:var(--card2); border:1px solid var(--border); border-radius:8px;
+  padding:10px; margin-bottom:8px;}
+.chead{display:flex; align-items:center; gap:8px; margin-bottom:6px;}
+.icon{width:28px; height:28px; border-radius:50%; background:#2d333b; flex:none;
+  display:flex; align-items:center; justify-content:center; overflow:hidden; font-size:12px; color:var(--muted);}
+.icon img{width:100%; height:100%; object-fit:cover;}
+.cname{font-weight:700; font-size:14px; cursor:pointer; color:var(--text);}
+.smart{margin-left:auto; font-size:11px; color:var(--yellow); border:1px solid #6b5a17;
+  background:#2c250e; padding:1px 8px; border-radius:9px; white-space:nowrap; flex:none;}
+.cinfo{font-size:12px; color:var(--muted); margin-bottom:4px;}
+.cnarr{font-size:12px; color:var(--blue); margin-bottom:6px;}
+.hist{font-size:12px; color:var(--orange); margin-bottom:6px;}
+.btnrow{display:flex; gap:6px; flex-wrap:wrap;}
+.cbtn{background:#0d1117; color:var(--text); border:1px solid var(--border); border-radius:7px;
+  padding:6px 10px; font-size:12px; cursor:pointer; white-space:nowrap;}
+.cbtn.ca{color:var(--blue); max-width:150px; overflow:hidden; text-overflow:ellipsis;}
+.cbtn:active{background:#2d333b;}
+.src{font-weight:400;}
+/* summary */
+.countcards{display:flex; gap:8px; margin-bottom:4px;}
+.ccard{flex:1; min-width:0; background:var(--card2); border:1px solid var(--border);
+  border-radius:8px; padding:10px 8px; cursor:pointer; text-align:center;}
+.ccard.open{border-color:var(--red);}
+.cface-name{font-weight:700; font-size:14px; margin-bottom:4px;}
+.cface-total{font-size:12px; color:var(--muted); margin-bottom:6px;}
+.cbreak{display:flex; flex-wrap:wrap; gap:3px 6px; justify-content:center; font-size:10px; color:var(--muted);}
+.chist{margin-top:6px; text-align:left; border-top:1px solid var(--border); padding-top:8px;}
+.histitem{padding:8px 0; border-bottom:1px dashed var(--border); font-size:13px;}
+.histitem:last-child{border-bottom:none;}
+.htime{color:var(--muted); font-size:11px; margin-right:6px;}
+.datehead{font-size:14px; font-weight:700; margin-bottom:10px;}
+.dayrow{display:flex; align-items:center; padding:9px 4px; border-bottom:1px solid var(--border);
+  cursor:pointer; font-size:13px;}
+.daytags{padding:4px 4px 8px;}
+.binitem{padding:10px 4px; border-bottom:1px solid var(--border); cursor:pointer;}
+.binitem:last-child{border-bottom:none;}
+.btype{font-size:11px; padding:1px 8px; border-radius:9px; margin-right:8px; white-space:nowrap;}
+.btype.listing{background:#0f2c1a; color:var(--green); border:1px solid #1c5c33;}
+.btype.delisting{background:#3a1414; color:#ff7b72; border:1px solid #7a2d2d;}
+.btype.alpha{background:#2c250e; color:var(--yellow); border:1px solid #6b5a17;}
+.btitle{font-size:13px; font-weight:600;}
+.ben{font-size:12px; color:var(--muted); margin-top:2px;}
+.btime{font-size:11px; color:var(--muted); margin-top:4px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">热点监控</div>
+  <a id="xbtn-heyi" class="xbtn" target="_blank" rel="noopener">@何一</a>
+  <a id="xbtn-zb" class="xbtn" target="_blank" rel="noopener">@赵长鹏</a>
+  <div class="spacer"></div>
+  <div class="upd">更新于 <span id="upd-time">—</span></div>
+  <button class="iconbtn" data-act="refresh" title="刷新">⟳</button>
+</header>
+<nav class="tabs">
+  <button data-act="tab" data-tab="all" class="active">全部</button>
+  <button data-act="tab" data-tab="hot">热搜</button>
+  <button data-act="tab" data-tab="trench">战壕</button>
+  <button data-act="tab" data-tab="summary">📝 当日总结</button>
+</nav>
+<main>
+  <section id="tab-all" class="tabpane"></section>
+  <section id="tab-hot" class="tabpane" hidden></section>
+  <section id="tab-trench" class="tabpane" hidden></section>
+  <section id="tab-summary" class="tabpane" hidden></section>
+</main>
+<script>
+'use strict';
+/* ============ constants ============ */
+var PEOPLE=[
+  {key:'heyi', name:'何一'},
+  {key:'cz',   name:'赵长鹏'},
+  {key:'elon', name:'马斯克'}
+];
+var KIND_NAME={original:'原创', retweet:'转推', quote:'引用', reply:'回复'};
+var DEBOT_SLUG={sol:'solana', bsc:'bsc', robinhood:'robinhood'};
+var CHAIN_ORDER=['BSC','Solana','Robinhood','OKX','Base','Arc','Ethereum'];
+var CHAIN_COLOR={BSC:'#F0B90B', Solana:'#A371FF', Robinhood:'#00C805'};
+var DY_LABEL={1:'新',3:'热',5:'首发',8:'独家',9:'挑战',16:'辟谣'};
+var BIN_TYPE={listing:'上市', delisting:'下架', alpha:'Alpha'};
+var XXAPI_WB='https://v2.xxapi.cn/api/weibohot';
+var XXAPI_DY='https://v2.xxapi.cn/api/douyinhot';
+/* Data lives on the "data" branch; raw.githubusercontent.com serves it
+   immediately after push (no Pages rebuild wait) with CORS *. */
+var DATA_BASE='https://raw.githubusercontent.com/wnsdtk/hotspot/data/';
+var DATA_FILES=[
+  ['tweets','tweets.json'],['bsc','trench-bsc.json'],['sol','trench-sol.json'],
+  ['rb','trench-rb.json'],['consensus','consensus.json'],['liquidity','liquidity.json'],
+  ['douyin','douyin.json'],['tags','tags-halfhour.json'],['daily','summary-daily.json'],
+  ['binance','binance.json']
+];
+function dataUrl(f){return DATA_BASE+f+'?t='+Date.now();}
+var POLL_MS=15000;
+/* ============ state ============ */
+var S={data:{}, wb:null, dy:null, prevHotlist:null, hotlistRows:null, douyinOk:false};
+var UI={tab:'all', filter:'all', expanded:{}, liqChains:{}, dyN:10, wbN:10, dailyPerson:null, days:{}};
+/* ============ helpers ============ */
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function nl2br(s){return s.replace(/\n/g,'<br>');}
+function trunc(s,n){s=String(s||'');return s.length>n?s.slice(0,n)+'…':s;}
+function trim1(x){return String(Math.round(x*10)/10);}
+function fmtMoney(v){
+  if(v==null||v===''||isNaN(Number(v))) return '—';
+  var n=Number(v), an=Math.abs(n), sign=n<0?'-':'';
+  if(an>=10000) return sign+'$'+trim1(an/10000)+'万';
+  if(an>=1000) return sign+'$'+Math.round(an).toLocaleString('en-US');
+  return sign+'$'+Math.round(an);
+}
+function fmtHot(v){var n=Number(v);if(isNaN(n))return '';if(n>=10000)return trim1(n/10000)+'万';return String(Math.round(n));}
+function fmtVal(v){
+  if(typeof v==='number'){var an=Math.abs(v);return an>=10000?fmtMoney(v):v.toLocaleString('en-US');}
+  return esc(v);
+}
+function relTime(iso){
+  var t=Date.parse(iso);if(isNaN(t))return '';
+  var s=Math.max(0,Math.floor((Date.now()-t)/1000));
+  if(s<60)return '刚刚';
+  var m=Math.floor(s/60);if(m<60)return m+'分钟前';
+  var h=Math.floor(m/60);if(h<24)return h+'小时前';
+  return Math.floor(h/24)+'天前';
+}
+function bjDate(d){d=d instanceof Date?d:new Date(d);if(isNaN(d))return '';
+  return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(d);}
+function todayBj(){return bjDate(new Date());}
+function fmtBj(iso){var d=new Date(iso);if(isNaN(d))return '';
+  return new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(d).replace(/\//g,'-');}
+function yesterdayStr(){var d=new Date();d.setDate(d.getDate()-1);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function personByKey(k){for(var i=0;i<PEOPLE.length;i++)if(PEOPLE[i].key===k)return PEOPLE[i];return {key:k,name:k};}
+function kindBadge(kind){var n=KIND_NAME[kind]||kind;return '<span class="kbadge">'+esc(n)+'</span>';}
+function debotUrl(chain,ca){var slug=DEBOT_SLUG[String(chain||'').toLowerCase()]||String(chain||'').toLowerCase();return 'https://debot.ai/token/'+slug+'/'+(ca||'');}
+function xSearch(q){return 'https://x.com/search?q='+encodeURIComponent(q)+'&f=top';}
+function douyinSearch(w){return 'https://www.douyin.com/search/'+encodeURIComponent(w)+'?type=general';}
+function weiboSearch(t){return 'https://s.weibo.com/weibo?q='+encodeURIComponent(t);}
+/* ============ fetch ============ */
+function fetchJson(url){
+  return fetch(url,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
+    .catch(function(){return null;});
+}
+function freshestStamp(){
+  var best=null,bt=0;
+  DATA_FILES.forEach(function(j){
+    var d=S.data[j[0]];if(!d)return;
+    ['updated_at','generated_at'].forEach(function(k){
+      if(d[k]){var t=Date.parse(d[k]);if(!isNaN(t)&&t>bt){bt=t;best=d[k];}}
+    });
+  });
+  return best;
+}
+/* ============ 全部：大佬推文 ============ */
+function tweetCard(tw){
+  var p=personByKey(tw.person);
+  var zh=tw.text_zh?'<div class="zh"><span class="zhtag">译</span>'+nl2br(esc(tw.text_zh))+'</div>':'';
+  var media=(tw.media||[]).map(function(m){return '<img class="timg" loading="lazy" src="'+esc(m.url)+'" alt="">';}).join('');
+  return '<div class="tweet" data-act="open-url" data-url="'+esc(tw.url||'')+'">'
+    +'<div class="thead"><span class="avatar">'+esc((p.name||'?').charAt(0))+'</span>'
+    +'<span class="tname">'+esc(p.name)+'</span>'
+    +'<span class="thandle muted">'+esc(tw.handle||'')+'</span>'
+    +'<span class="spacer"></span><span class="muted small">'+relTime(tw.time)+'</span></div>'
+    +'<div class="tbody">'+kindBadge(tw.kind)+'<span class="ttext">'+nl2br(esc(tw.text||''))+'</span></div>'
+    +zh+(media?'<div class="tmedia">'+media+'</div>':'')
+    +'<div class="tlink">查看X原文 →</div></div>';
+}
+function htmlTweets(){
+  var d=S.data.tweets;
+  if(!d||!Array.isArray(d.tweets)||!d.tweets.length)
+    return '<div class="card"><div class="sect">大佬推文 · 最新</div><div class="empty">暂无数据</div></div>';
+  var tws=d.tweets.slice().sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);});
+  var mini=PEOPLE.map(function(p){
+    var t=null;
+    for(var i=0;i<tws.length;i++)if(tws[i].person===p.key){t=tws[i];break;}
+    if(!t)return '<div class="mini"><div class="mini-name">'+esc(p.name)+'</div><div class="empty">暂无数据</div></div>';
+    return '<div class="mini" data-act="open-url" data-url="'+esc(t.url||'')+'">'
+      +'<div class="mini-name">📌 '+esc(p.name)+' <span class="muted small">'+relTime(t.time)+'</span></div>'
+      +'<div class="mini-text">'+esc(trunc(t.text||'',70))+'</div></div>';
+  }).join('');
+  var chips=[{k:'all',t:'全部'}].concat(PEOPLE.map(function(p){return {k:p.key,t:p.name};})).map(function(f){
+    return '<button class="chip'+(UI.filter===f.k?' on':'')+'" data-act="tweet-filter" data-f="'+f.k+'">'+esc(f.t)+'</button>';
+  }).join('');
+  var list=tws.filter(function(t){return UI.filter==='all'||t.person===UI.filter;}).map(tweetCard).join('');
+  return '<div class="card"><div class="sect">大佬推文 · 最新</div>'
+    +'<div class="minirow">'+mini+'</div>'
+    +'<div class="chips">'+chips+'</div>'
+    +'<div class="tlist">'+(list||'<div class="empty">暂无数据</div>')+'</div></div>';
+}
+/* ============ 热搜（4 节） ============ */
+function diffHotlist(prev,curr){
+  var pm={};prev.forEach(function(t){pm[t.word]=Number(t.hot_value)||0;});
+  var fresh=[],cand=[];
+  curr.forEach(function(t){
+    if(!(t.word in pm))fresh.push(t);
+    else{var g=(Number(t.hot_value)||0)-pm[t.word];if(g>0)cand.push({t:t,g:g});}
+  });
+  cand.sort(function(a,b){return b.g-a.g;});
+  var rows=[];
+  fresh.slice(0,10).forEach(function(t){rows.push({t:t,badge:'new'});});
+  cand.slice(0,5).forEach(function(x){
+    var dup=rows.some(function(r){return r.t.word===x.t.word;});
+    if(!dup)rows.push({t:x.t,badge:'hot'});
+  });
+  return rows;
+}
+function htmlDyTrend(){
+  var dj=S.data.douyin;
+  var tr=(dj&&Array.isArray(dj.trending))?dj.trending.slice(0,5):null;
+  var h='<div class="card"><div class="sect">📈 抖音实时上升热点</div>';
+  if(!dj||!tr)h+='<div class="empty">暂无数据</div>';
+  else if(!tr.length)h+='<div class="empty">暂无数据</div>';
+  else h+=tr.map(function(t){
+    var url=t.url||douyinSearch(t.word||'');
+    return '<div class="hrow" data-act="open-url" data-url="'+esc(url)+'">'
+      +'<span class="word">'+esc(t.word||'')+'</span>'
+      +'<span class="badge green">↑上升中</span><span class="badge blue">抖音</span><span class="go">→</span></div>';
+  }).join('');
+  return h+'</div>';
+}
+function htmlDyRise(){
+  var h='<div class="card"><div class="sect">🚀 刚上榜 / 飙升</div>';
+  if(!S.douyinOk)h+='<div class="empty">暂无数据</div>';
+  else if(!S.hotlistRows)h+='<div class="empty">等待下一轮对比出数据</div>';
+  else if(!S.hotlistRows.length)h+='<div class="empty">本轮无新上榜/飙升词</div>';
+  else h+=S.hotlistRows.map(function(r){
+    var t=r.t,url=t.url||douyinSearch(t.word||'');
+    var b=r.badge==='new'?'<span class="badge red">新上榜</span>':'<span class="badge orange">飙升</span>';
+    return '<div class="hrow" data-act="open-url" data-url="'+esc(url)+'">'
+      +'<span class="word">'+esc(t.word||'')+'</span>'+b+'<span class="go">→</span></div>';
+  }).join('');
+  return h+'</div>';
+}
+function htmlDyList(){
+  var dyList=(S.dy&&S.dy.code===200&&Array.isArray(S.dy.data))?S.dy.data:[];
+  var h='<div class="card"><div class="sect">抖音热榜</div>';
+  if(!dyList.length)h+='<div class="empty">暂无数据</div>';
+  else{
+    h+=dyList.slice(0,UI.dyN).map(function(it,i){
+      var lb=DY_LABEL[it.label]?'<span class="badge gray">'+esc(DY_LABEL[it.label])+'</span>':'';
+      return '<div class="hrow" data-act="open-url" data-url="'+esc(douyinSearch(it.word||''))+'">'
+        +'<span class="idx">'+(i+1)+'</span><span class="word">'+esc(it.word||'')+'</span>'+lb
+        +'<span class="hotv">'+fmtHot(it.hot_value)+'</span><span class="go">→</span></div>';
+    }).join('');
+    if(dyList.length>10)h+='<button class="morebtn" data-act="dy-more">'+(UI.dyN>=20?'收起':'展开更多（20条）')+'</button>';
+  }
+  return h+'</div>';
+}
+function htmlWbList(){
+  var wbList=(S.wb&&S.wb.code===200&&Array.isArray(S.wb.data))?S.wb.data:[];
+  var h='<div class="card"><div class="sect">微博热搜</div>';
+  if(!wbList.length)h+='<div class="empty">暂无数据</div>';
+  else{
+    h+=wbList.slice(0,UI.wbN).map(function(it,i){
+      return '<div class="hrow" data-act="open-url" data-url="'+esc(weiboSearch(it.title||''))+'">'
+        +'<span class="idx">'+(i+1)+'</span><span class="word">'+esc(it.title||'')+'</span>'
+        +'<span class="hotv">'+esc(it.hot||'')+'</span><span class="go">→</span></div>';
+    }).join('');
+    if(wbList.length>10)h+='<button class="morebtn" data-act="wb-more">'+(UI.wbN>=20?'收起':'展开更多（20条）')+'</button>';
+  }
+  return h+'</div>';
+}
+/* ============ 战壕 ============ */
+function coinCard(t,showHist){
+  t=t||{};
+  var url=debotUrl(t.chain,t.ca);
+  var smart=esc(t.smart_label||'聪明钱')+'×'+(t.smart_count==null?'—':esc(t.smart_count));
+  var ca=t.ca||'';
+  var caTrunc=ca.length>12?ca.slice(0,6)+'…'+ca.slice(-4):(ca||'—');
+  var xNarr=t.x_url||xSearch(t.name||t.symbol||'');
+  var hist=(showHist&&t.history_highest_mcap!=null&&t.history_highest_mcap!=='')
+    ?'<div class="hist">历史最高 '+fmtMoney(t.history_highest_mcap)+'</div>':'';
+  var narr=t.narrative?'<div class="cnarr">#'+esc(t.narrative)+'</div>':'';
+  var iconHtml=t.icon?'<img loading="lazy" src="'+esc(t.icon)+'" alt="" onerror="this.remove()">':esc((t.symbol||t.name||'?').charAt(0));
+  return '<div class="coin">'
+    +'<div class="chead"><span class="icon">'+iconHtml+'</span>'
+    +'<span class="cname" data-act="open-url" data-url="'+esc(url)+'">'+esc(t.name||t.symbol||'—')+'</span>'
+    +'<span class="smart">'+smart+'</span></div>'
+    +'<div class="cinfo">市值 '+fmtMoney(t.market_cap)+' · 流动性 '+fmtMoney(t.liquidity)+' · 1h量 '+fmtMoney(t.vol_1h)+' · '+esc(t.age_text||'')+'</div>'
+    +narr+hist
+    +'<div class="btnrow">'
+    +'<button class="cbtn ca" data-act="copy" data-ca="'+esc(ca)+'" title="点击复制">'+esc(caTrunc)+'</button>'
+    +'<button class="cbtn" data-act="copy" data-ca="'+esc(ca)+'">复制</button>'
+    +'<button class="cbtn" data-act="open-url" data-url="'+esc(xSearch(ca||''))+'">🔍搜合约</button>'
+    +'<button class="cbtn" data-act="open-url" data-url="'+esc(xNarr)+'">X 叙事</button>'
+    +'</div></div>';
+}
+function tagRow(g){
+  g=g||{};
+  var inner='<span class="tagtext">'+esc(g.text||'')+'</span>'
+    +(g.coin_symbol?'<span class="coinsym">'+esc(g.coin_symbol)+'</span>':'');
+  if(g.coin_ca)return '<div class="tagrow link" data-act="open-url" data-url="'+esc(debotUrl(g.coin_chain,g.coin_ca))+'">'+inner+'<span class="go">→</span></div>';
+  return '<div class="tagrow">'+inner+'</div>';
+}
+function htmlLiquidity(){
+  var d=S.data.liquidity,open=!!UI.expanded.liq;
+  var h='<div class="card"><div class="sect tog" data-act="toggle" data-key="liq">💧 公链流动性 <span class="chev">'+(open?'▲':'▼')+'</span></div>';
+  if(open){
+    if(!d||!Array.isArray(d.chains)||!d.chains.length)h+='<div class="empty">暂无数据</div>';
+    else{
+      var byName={};d.chains.forEach(function(c){byName[c.chain]=c;});
+      var ordered=CHAIN_ORDER.filter(function(n){return byName[n];}).concat(
+        d.chains.filter(function(c){return CHAIN_ORDER.indexOf(c.chain)<0;}).map(function(c){return c.chain;}));
+      h+=ordered.map(function(n){
+        var c=byName[n],copen=!!UI.liqChains[n];
+        var mrows=copen?'<div class="metrics">'+Object.keys(c.metrics||{}).map(function(k){
+          return '<div class="mrow"><span class="muted">'+esc(k)+'</span><span>'+fmtVal(c.metrics[k])+'</span></div>';
+        }).join('')+'</div>':'';
+        return '<div class="chain"><div class="chainrow" data-act="toggle" data-key="liqchain:'+esc(n)+'">'
+          +'<span class="chainname">'+esc(n)+'</span><span class="spacer"></span>'
+          +'<span class="muted small">净流入</span> <b>'+fmtMoney(c.net_inflow)+'</b>'
+          +'<span class="chev">'+(copen?'▲':'▼')+'</span></div>'+mrows+'</div>';
+      }).join('');
+    }
+  }
+  return h+'</div>';
+}
+function htmlTags(){
+  var tg=S.data.tags;
+  var h='<div class="card"><div class="sect">📋 半小时热度总结</div>';
+  if(!tg||!Array.isArray(tg.tags)||!tg.tags.length)h+='<div class="empty">暂无数据</div>';
+  else h+=tg.tags.map(tagRow).join('');
+  return h+'</div>';
+}
+function htmlConsensus(){
+  var d=S.data.consensus,open=!!UI.expanded.consensus;
+  var h='<div class="card"><div class="sect tog" data-act="toggle" data-key="consensus">🎯 聪明钱共识 <span class="chev">'+(open?'▲':'▼')+'</span></div>';
+  if(open){
+    if(!d)h+='<div class="empty">暂无数据</div>';
+    else{
+      h+='<div class="subhead">💰 市值3万以下</div>';
+      h+=((d.lowcap||[]).map(function(t){return coinCard(t,true);}).join('')||'<div class="empty">暂无数据</div>');
+      h+='<div class="subhead">🎯 其余聪明钱标的</div>';
+      h+=((d.rest||[]).map(function(t){return coinCard(t,false);}).join('')||'<div class="empty">暂无数据</div>');
+    }
+  }
+  return h+'</div>';
+}
+function htmlChain(key,title,color){
+  var d=S.data[key];
+  var cards=(!d||!Array.isArray(d.tokens)||!d.tokens.length)
+    ?'<div class="empty">暂无数据</div>'
+    :d.tokens.map(function(t){return coinCard(t,false);}).join('');
+  var src=(d&&d.source)?' <span class="src muted small">· '+esc(d.source)+'</span>':'';
+  return '<div class="card"><div class="sect" style="color:'+color+'">'+esc(title)+src+'</div>'
+    +'<div class="coinlist" style="background:'+color+'0d">'+cards+'</div></div>';
+}
+/* ============ 当日总结 ============ */
+function countCards(tws){
+  var today=todayBj();
+  return PEOPLE.map(function(p){
+    var mine=tws.filter(function(t){return t.person===p.key;});
+    var c={original:0,retweet:0,quote:0,reply:0};
+    mine.forEach(function(t){if(c[t.kind]!=null)c[t.kind]++;});
+    var total=mine.length,open=UI.dailyPerson===p.key;
+    var face='<div class="cface-name">'+esc(p.name)+'</div>'
+      +'<div class="cface-total">共 '+total+' 条</div>'
+      +'<div class="cbreak"><span>原创 '+c.original+'</span><span>转推 '+c.retweet+'</span>'
+      +'<span>引用 '+c.quote+'</span><span>回复 '+c.reply+'</span>'
+      +'<span>关注 0</span><span>取关 0</span></div>'
+      +'<div class="small muted" style="margin-top:4px">'+(open?'收起 ▲':'展开 ▼')+'</div>';
+    var hist='';
+    if(open){
+      var todays=mine.filter(function(t){return bjDate(t.time)===today;})
+        .sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);});
+      hist='<div class="chist">'+(todays.length?todays.map(function(t){
+        var zh=t.text_zh?'<div class="zh" style="margin-top:6px"><span class="zhtag">译</span>'+nl2br(esc(t.text_zh))+'</div>':'';
+        return '<div class="histitem"><span class="htime">'+fmtBj(t.time)+'</span>'+kindBadge(t.kind)
+          +'<div style="margin-top:4px">'+nl2br(esc(t.text||''))+'</div>'+zh
+          +'<div class="tlink" data-act="open-url" data-url="'+esc(t.url||'')+'">查看X原文 →</div></div>';
+      }).join(''):'<div class="empty">今日暂无动态</div>')+'</div>';
+    }
+    return '<div class="ccard'+(open?' open':'')+'" data-act="daily-person" data-p="'+p.key+'">'+face+hist+'</div>';
+  }).join('');
+}
+function htmlCounts(){
+  var d=S.data.tweets;
+  var tws=(d&&Array.isArray(d.tweets))?d.tweets.slice().sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);}):[];
+  return '<div class="card"><div class="sect">📝 当日总结</div>'
+    +'<div class="datehead">'+esc(todayBj())+'</div>'
+    +'<div class="countcards">'+countCards(tws)+'</div></div>';
+}
+function htmlDaily(){
+  var dd=S.data.daily;
+  var h='<div class="card"><div class="sect">📋 今日链上热度总结</div>';
+  if(!dd)h+='<div class="empty">今晚 22:00 生成正式版</div>';
+  else{
+    h+='<div class="small muted" style="margin-bottom:6px">'+esc(dd.date||'')+'</div>';
+    var tags=Array.isArray(dd.tags)?dd.tags:[];
+    h+=tags.length?tags.map(tagRow).join(''):'<div class="empty">暂无数据</div>';
+    var days=Object.keys(dd.history||{}).sort().reverse();
+    if(days.length){
+      h+='<div class="subhead">历史</div>';
+      h+=days.map(function(day){
+        var open=!!UI.days[day];
+        var dtags=(dd.history[day]&&Array.isArray(dd.history[day].tags))?dd.history[day].tags:[];
+        return '<div class="dayrow" data-act="day" data-d="'+esc(day)+'"><span>'+esc(day)+'</span>'
+          +'<span class="spacer"></span><span class="chev">'+(open?'▲':'▼')+'</span></div>'
+          +(open?'<div class="daytags">'+(dtags.length?dtags.map(tagRow).join(''):'<div class="empty">暂无数据</div>')+'</div>':'');
+      }).join('');
+    }
+  }
+  return h+'</div>';
+}
+function htmlBinance(){
+  var bn=S.data.binance;
+  var h='<div class="card"><div class="sect">🟡 近一周币安动态</div>';
+  if(!bn||!Array.isArray(bn.items)||!bn.items.length)h+='<div class="empty">暂无数据</div>';
+  else h+=bn.items.map(function(it){
+    var bcls=it.type==='listing'?'listing':(it.type==='delisting'?'delisting':'alpha');
+    var bt=BIN_TYPE[it.type]||it.type;
+    return '<div class="binitem" data-act="open-url" data-url="'+esc(it.url||'')+'">'
+      +'<div><span class="btype '+bcls+'">'+esc(bt)+'</span><span class="btitle">'+esc(it.title_zh||'')+'</span></div>'
+      +(it.title_en?'<div class="ben">'+esc(it.title_en)+'</div>':'')
+      +'<div class="btime">'+fmtBj(it.time)+'</div></div>';
+  }).join('');
+  return h+'</div>';
+}
+/* ============ surgical section updates ============
+   Each section has a stable container id. On every poll we compute a
+   signature from the section's data slice + relevant UI state (timestamps
+   excluded). Only sections whose signature changed get their innerHTML
+   replaced — never a full-page rewrite. Scroll position is preserved and
+   expanded/collapsed states survive because they live in UI, not in DOM. */
+function sigData(d){
+  if(!d||typeof d!=='object')return String(d);
+  var c={};
+  for(var k in d)if(Object.prototype.hasOwnProperty.call(d,k)&&k!=='updated_at'&&k!=='generated_at')c[k]=d[k];
+  return JSON.stringify(c);
+}
+var SECTIONS=[
+  {id:'sec-tweets',  sig:function(){return sigData(S.data.tweets)+'|'+UI.filter;}, html:htmlTweets},
+  {id:'sec-dy-trend',sig:function(){var d=S.data.douyin;return JSON.stringify((d&&d.trending)||null);}, html:htmlDyTrend},
+  {id:'sec-dy-rise', sig:function(){return (S.douyinOk?'1':'0')+'|'+JSON.stringify(S.hotlistRows);}, html:htmlDyRise},
+  {id:'sec-dy-list', sig:function(){return JSON.stringify(S.dy)+'|'+UI.dyN;}, html:htmlDyList},
+  {id:'sec-wb-list', sig:function(){return JSON.stringify(S.wb)+'|'+UI.wbN;}, html:htmlWbList},
+  {id:'sec-liq',     sig:function(){return sigData(S.data.liquidity)+'|'+(UI.expanded.liq?'1':'0')+'|'+JSON.stringify(UI.liqChains);}, html:htmlLiquidity},
+  {id:'sec-tags',    sig:function(){return sigData(S.data.tags);}, html:htmlTags},
+  {id:'sec-cons',    sig:function(){return sigData(S.data.consensus)+'|'+(UI.expanded.consensus?'1':'0');}, html:htmlConsensus},
+  {id:'sec-bsc',     sig:function(){return sigData(S.data.bsc);}, html:function(){return htmlChain('bsc','BSC战壕',CHAIN_COLOR.BSC);}},
+  {id:'sec-sol',     sig:function(){return sigData(S.data.sol);}, html:function(){return htmlChain('sol','Solana战壕',CHAIN_COLOR.Solana);}},
+  {id:'sec-rb',      sig:function(){return sigData(S.data.rb);}, html:function(){return htmlChain('rb','Robinhood战壕',CHAIN_COLOR.Robinhood);}},
+  {id:'sec-counts',  sig:function(){return sigData(S.data.tweets)+'|'+(UI.dailyPerson||'');}, html:htmlCounts},
+  {id:'sec-daily',   sig:function(){return sigData(S.data.daily)+'|'+JSON.stringify(UI.days);}, html:htmlDaily},
+  {id:'sec-binance', sig:function(){return sigData(S.data.binance);}, html:htmlBinance}
+];
+var SEEN_SIG={};
+function setHtml(id,html){var n=document.getElementById(id);if(n)n.innerHTML=html;}
+function buildShell(){
+  setHtml('tab-all','<div id="sec-tweets"></div>');
+  setHtml('tab-hot','<div id="sec-dy-trend"></div><div id="sec-dy-rise"></div><div id="sec-dy-list"></div><div id="sec-wb-list"></div>');
+  setHtml('tab-trench','<div id="sec-liq"></div><div id="sec-tags"></div><div id="sec-cons"></div><div id="sec-bsc"></div><div id="sec-sol"></div><div id="sec-rb"></div>');
+  setHtml('tab-summary','<div id="sec-counts"></div><div id="sec-daily"></div><div id="sec-binance"></div>');
+}
+function updateSections(){
+  var sy=(typeof window.scrollY==='number')?window.scrollY:(document.documentElement.scrollTop||0);
+  for(var i=0;i<SECTIONS.length;i++){
+    var s=SECTIONS[i],sig;
+    try{sig=s.sig();}catch(e){sig='err';}
+    if(SEEN_SIG[s.id]!==sig){
+      SEEN_SIG[s.id]=sig;
+      var n=document.getElementById(s.id);
+      if(n){try{n.innerHTML=s.html();}catch(e){n.innerHTML='<div class="empty">渲染异常</div>';}}
+    }
+  }
+  var st=freshestStamp();
+  var un=document.getElementById('upd-time');
+  if(un)un.textContent=st?new Date(st).toLocaleTimeString('zh-CN',{hour12:false}):'—';
+  var ny=(typeof window.scrollY==='number')?window.scrollY:(document.documentElement.scrollTop||0);
+  if(Math.abs(ny-sy)>1)window.scrollTo(0,sy);
+}
+/* ============ events ============ */
+function switchTab(tab){
+  UI.tab=tab;
+  var btns=document.querySelectorAll('.tabs button');
+  for(var i=0;i<btns.length;i++)btns[i].classList.toggle('active',btns[i].getAttribute('data-tab')===tab);
+  ['all','hot','trench','summary'].forEach(function(t){
+    var n=document.getElementById('tab-'+t);if(n)n.hidden=(t!==tab);
+  });
+}
+function copyText(t,el){
+  function done(){if(el){var old=el.innerHTML;el.innerHTML='已复制';setTimeout(function(){el.innerHTML=old;},1200);}}
+  function legacy(){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta);done();}
+  if(t&&navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,legacy);
+  else legacy();
+}
+function handleAct(act,el){
+  switch(act){
+    case 'tab':switchTab(el.getAttribute('data-tab'));break;
+    case 'tweet-filter':UI.filter=el.getAttribute('data-f');updateSections();break;
+    case 'open-url':{var u=el.getAttribute('data-url');if(u)window.open(u,'_blank','noopener');break;}
+    case 'copy':copyText(el.getAttribute('data-ca')||'',el);break;
+    case 'toggle':{
+      var k=el.getAttribute('data-key');
+      if(k.indexOf('liqchain:')===0){var c=k.slice(9);UI.liqChains[c]=!UI.liqChains[c];}
+      else UI.expanded[k]=!UI.expanded[k];
+      updateSections();break;}
+    case 'dy-more':UI.dyN=UI.dyN>=20?10:20;updateSections();break;
+    case 'wb-more':UI.wbN=UI.wbN>=20?10:20;updateSections();break;
+    case 'daily-person':{var p=el.getAttribute('data-p');UI.dailyPerson=(UI.dailyPerson===p?null:p);updateSections();break;}
+    case 'day':{var dd2=el.getAttribute('data-d');UI.days[dd2]=!UI.days[dd2];updateSections();break;}
+    case 'refresh':refresh();break;
+  }
+}
+/* ============ refresh / boot ============ */
+function refresh(){
+  var jobs=DATA_FILES.map(function(j){return fetchJson(dataUrl(j[1])).then(function(d){return [j[0],d];});});
+  jobs.push(fetchJson(XXAPI_WB).then(function(d){return ['wb',d];}));
+  jobs.push(fetchJson(XXAPI_DY).then(function(d){return ['dy',d];}));
+  return Promise.all(jobs).then(function(results){
+    var data={},wb=null,dy=null;
+    results.forEach(function(r){
+      if(r[0]==='wb')wb=r[1];else if(r[0]==='dy')dy=r[1];else data[r[0]]=r[1];
+    });
+    S.data=data;S.wb=wb;S.dy=dy;
+    var dj=data.douyin;
+    S.douyinOk=!!(dj&&Array.isArray(dj.hotlist));
+    if(S.douyinOk){
+      if(S.prevHotlist)S.hotlistRows=diffHotlist(S.prevHotlist,dj.hotlist);
+      S.prevHotlist=dj.hotlist;
+    }
+    updateSections();
+  });
+}
+function boot(){
+  var y=yesterdayStr();
+  var a=document.getElementById('xbtn-heyi');
+  if(a)a.href='https://x.com/search?q=%40heyibinance%20since:'+y+'&f=top';
+  var b=document.getElementById('xbtn-zb');
+  if(b)b.href='https://x.com/search?q=%40cz_binance%20since:'+y+'&f=top';
+  buildShell();
+  updateSections();
+  refresh();
+  setInterval(refresh,POLL_MS);
+}
+document.addEventListener('click',function(e){
+  var el=e.target&&e.target.closest?e.target.closest('[data-act]'):null;
+  if(el)handleAct(el.getAttribute('data-act'),el);
+});
+if(typeof globalThis.__TEST__==='undefined'){
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);
+  else boot();
+}
+</script>
+</script>
+</body>
+</html>
