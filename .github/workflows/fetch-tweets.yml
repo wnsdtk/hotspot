@@ -1,0 +1,46 @@
+name: Fetch Tweets and Fix Index
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install requests beautifulsoup4
+
+      - name: Fetch TG channels
+        run: python .github/workflows/fetch_tweets.py
+
+      - name: Normalize index.html
+        run: |
+          # Find the main HTML file (not index.html) and copy to index.html
+          for f in *.html; do
+            if [ "$f" != "index.html" ] && [ "$f" != "a.html.html" ]; then
+              echo "Copying $f to index.html"
+              cp "$f" index.html
+              break
+            fi
+          done
+          # Also handle the mangled a.html.html case
+          if [ -f "a.html.html" ] && [ ! -f "index.html" ]; then
+            cp "a.html.html" index.html
+          fi
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add
