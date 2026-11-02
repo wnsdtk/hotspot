@@ -88,6 +88,12 @@ a{color:var(--blue); text-decoration:none;}
 .badge.new{background:#0f2743; color:#58a6ff; border:1px solid #1f4d7a; font-weight:700;}
 /* v9: person tint backgrounds for tweet cards */
 .tweet.pt-heyi{background:rgba(255,107,129,.07); border-color:rgba(255,107,129,.25);}
+.lcard.pt-heyi{background:rgba(255,107,129,.06); border-color:rgba(255,107,129,.22);}
+.lcard.pt-cz{background:rgba(240,185,11,.06); border-color:rgba(240,185,11,.22);}
+.lcard.pt-elon{background:rgba(88,166,255,.06); border-color:rgba(88,166,255,.22);}
+.histitem.pt-heyi{background:rgba(255,107,129,.05); border-radius:6px; padding:8px; margin-bottom:6px;}
+.histitem.pt-cz{background:rgba(240,185,11,.05); border-radius:6px; padding:8px; margin-bottom:6px;}
+.histitem.pt-elon{background:rgba(88,166,255,.05); border-radius:6px; padding:8px; margin-bottom:6px;}
 .tweet.pt-cz{background:rgba(240,185,11,.07); border-color:rgba(240,185,11,.25);}
 .tweet.pt-elon{background:rgba(88,166,255,.07); border-color:rgba(88,166,255,.25);}
 .ccard.pt-heyi{background:rgba(255,107,129,.08); border-color:rgba(255,107,129,.3);}
@@ -296,6 +302,25 @@ function freshestStamp(){
   });
   return best;
 }
+/* ============ 全部：聪明钱异动 (NEW) ============ */
+function htmlSmartMoves(){
+  var allToks=[];
+  ['bsc','sol','rb'].forEach(function(k){
+    var d=S.data[k];
+    if(d&&Array.isArray(d.tokens))d.tokens.forEach(function(t){
+      var sc=Number(t.smart_count)||0;
+      var vol=Number(t.vol_1h)||0;
+      if(sc>=3&&vol>0)allToks.push(t);
+    });
+  });
+  if(!allToks.length)return '';
+  // Sort by smart_count desc, take top 5
+  allToks.sort(function(a,b){return (Number(b.smart_count)||0)-(Number(a.smart_count)||0);});
+  var top=allToks.slice(0,5);
+  var h='<div class="card"><div class="sect">⚡ 聪明钱异动 <span class="muted" style="font-weight:400;font-size:11px">· 10秒更新</span></div>';
+  h+=top.map(function(t){return coinCard(t,false,null,true);}).join('');
+  return h+'</div>';
+}
 /* ============ 全部：大佬推文 ============ */
 function tweetCard(tw){
   var p=personByKey(tw.person);
@@ -305,7 +330,7 @@ function tweetCard(tw){
     +'<div class="thead"><span class="avatar">'+esc((p.name||'?').charAt(0))+'</span>'
     +'<span class="tname">'+esc(p.name)+'</span>'
     +'<span class="thandle muted">'+esc(tw.handle||'')+'</span>'
-    +'<span class="spacer"></span><span class="muted small">'+fmtBj(tw.time)+'</span></div>'
+    +'<span class="spacer"></span><span class="muted small">'+fmtBj(tw.time)+' · '+relTime(tw.time)+'</span></div>'
     +'<div class="tbody">'+kindBadge(tw.kind)+'<span class="ttext">'+nl2br(esc(tw.text||''))+'</span></div>'
     +zh+(media?'<div class="tmedia">'+media+'</div>':'')
     +'<div class="tlink">查看X原文 →</div></div>';
@@ -319,12 +344,12 @@ function htmlTweets(){
     var t=null;
     for(var i=0;i<tws.length;i++)if(tws[i].person===p.key){t=tws[i];break;}
     var av='<span class="lavatar" style="background:'+p.color+'22;color:'+p.color+'">'+esc(p.name.charAt(0))+'</span>';
-    if(!t)return '<div class="lcard">'+ '<div class="lhead">'+av+'<span class="lname">'+esc(p.name)+'</span></div><div class="empty">暂无数据</div></div>';
+    if(!t)return '<div class="lcard pt-'+p.key+'">'+ '<div class="lhead">'+av+'<span class="lname">'+esc(p.name)+'</span></div><div class="empty">暂无数据</div></div>';
     var kn=KIND_NAME[t.kind]||t.kind||'';
-    return '<div class="lcard" data-act="open-url" data-url="'+esc(t.url||'')+'">'
+    return '<div class="lcard pt-'+p.key+'" data-act="open-url" data-url="'+esc(t.url||'')+'">'
       +'<div class="lhead">'+av
       +'<span><div><span class="lname">'+esc(p.name)+'</span> <span class="thandle muted">'+esc(t.handle||'')+'</span> <span class="badge red">最新</span></div>'
-      +'<div class="muted small">'+fmtBj(t.time)+'</div></span>'
+      +'<div class="muted small">'+fmtBj(t.time)+' · '+relTime(t.time)+'</div></span>'
       +'<span class="spacer"></span><span class="kbadge" style="background:'+p.color+'22;color:'+p.color+';border-color:'+p.color+'55;margin-right:0">'+esc(kn)+'</span></div>'
       +'<div class="lbody">'+nl2br(esc(t.text||''))+'</div></div>';
   }).join('');
@@ -434,7 +459,8 @@ function chainBadge(chain){
 function coinCard(t,showHist,color,showChain){
   t=t||{};
   var url=debotUrl(t.chain,t.ca);
-  var smart=esc(t.smart_label||'聪明钱')+'×'+(t.smart_count==null?'—':esc(t.smart_count));
+  var _sc=t.smart_count,_sl=String(t.smart_label||'聪明钱');
+  var smart=(_sl.indexOf('×')>=0)?esc(_sl):(esc(_sl)+'×'+(_sc==null?'—':esc(_sc)));
   var ca=t.ca||'';
   var caTrunc=ca.length>12?ca.slice(0,6)+'…'+ca.slice(-4):(ca||'—');
   var xNarr=t.x_url||xSearch(t.name||t.symbol||'');
@@ -532,24 +558,121 @@ function htmlLiquidity(){
   }
   return h+'</div>';
 }
+function buildLocalTags(){
+  // Generate narrative tags from trench data (gmgn-style, at least 5)
+  var tags=[];
+  var allToks=[];
+  ['bsc','sol','rb'].forEach(function(k){
+    var d=S.data[k];
+    if(d&&Array.isArray(d.tokens))d.tokens.forEach(function(t){t._chain=k;allToks.push(t);});
+  });
+  if(!allToks.length)return tags;
+  // Group by narrative
+  var byNarr={};
+  allToks.forEach(function(t){
+    var n=t.narrative||'';
+    if(n){if(!byNarr[n])byNarr[n]=[];byNarr[n].push(t);}
+  });
+  Object.keys(byNarr).forEach(function(n){
+    if(byNarr[n].length>=2){
+      var top=byNarr[n].sort(function(a,b){return (b.smart_count||0)-(a.smart_count||0);})[0];
+      tags.push({text:'#'+n+'持续发酵', coin_symbol:'$'+(top.symbol||''), coin_ca:top.ca, coin_chain:top.chain});
+    }
+  });
+  // New coin surge
+  var newCoins=allToks.filter(function(t){
+    var cts=Number(t.creation_timestamp)||0;
+    return cts>0&&(Date.now()-cts*1000)<2*3600*1000;
+  });
+  if(newCoins.length>=3)tags.push({text:'#新币发行加速'});
+  // BSC density
+  var bscNew=allToks.filter(function(t){
+    var cts=Number(t.creation_timestamp)||0;
+    return t._chain==='bsc'&&cts>0&&(Date.now()-cts*1000)<2*3600*1000;
+  });
+  if(bscNew.length>=2)tags.push({text:'#BSC链新币最密集'});
+  // Smart money pile
+  var smartPile=allToks.filter(function(t){return (Number(t.smart_count)||0)>=10;});
+  if(smartPile.length>=2){
+    var tp=smartPile.sort(function(a,b){return (b.smart_count||0)-(a.smart_count||0);})[0];
+    tags.push({text:'#聪明钱扎堆', coin_symbol:'$'+(tp.symbol||''), coin_ca:tp.ca, coin_chain:tp.chain});
+  }
+  // Person mentions (from narratives or names)
+  return tags.slice(0,8);
+}
 function htmlTags(){
   var tg=S.data.tags;
   var h='<div class="card"><div class="sect">📋 20分钟热度总结 <span class="muted" style="font-weight:400;font-size:11px">· 每 20 分钟更新</span></div>';
   (function(){var tu=(S.data.tags_halfhour&&S.data.tags_halfhour.updated_at)||(S.data.tags&&S.data.tags.updated_at)||'';if(tu){var d=new Date(tu);var s=(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);h+='<div class="muted" style="font-size:11px;padding:0 12px 6px">更新于 '+s+' 北京时间 · 每 20 分钟按最新战壕数据更新</div>';}})();
-  if(!tg||!Array.isArray(tg.tags)||!tg.tags.length)h+='<div class="empty">暂无数据</div>';
-  else h+=tg.tags.map(tagRow).join('');
+  var tags=(tg&&Array.isArray(tg.tags))?tg.tags.slice():[];
+  // Supplement with local tags if fewer than 5
+  if(tags.length<5){
+    var local=buildLocalTags();
+    var seen={};
+    tags.forEach(function(t){seen[t.text]=1;});
+    local.forEach(function(t){
+      if(tags.length<8&&!seen[t.text]){seen[t.text]=1;tags.push(t);}
+    });
+  }
+  if(!tags.length)h+='<div class="empty">暂无数据</div>';
+  else h+=tags.map(tagRow).join('');
   return h+'</div>';
 }
+function buildLocalConsensus(){
+  var allToks=[];
+  ['bsc','sol','rb'].forEach(function(k){
+    var d=S.data[k];
+    if(d&&Array.isArray(d.tokens))d.tokens.forEach(function(t){allToks.push(t);});
+  });
+  // Filter: smart_count >= 5
+  var qualified=allToks.filter(function(t){return (Number(t.smart_count)||0)>=5;});
+  var now=Date.now();
+  // Group 1: fallen from high ATH to < $30k, within 2 days
+  var fallen=qualified.filter(function(t){
+    var mc=Number(t.market_cap)||0, ath=Number(t.history_highest_mcap)||0;
+    var cts=Number(t.creation_timestamp)||0;
+    var ageOk=cts>0&&(now-cts*1000)<2*86400*1000;
+    return mc>0&&mc<=30000&&ath>mc*3&&ageOk;
+  }).sort(function(a,b){return (Number(b.smart_count)||0)-(Number(a.smart_count)||0);}).slice(0,3);
+  // Group 2: high hotness within 5 days (any MC)
+  var fallenIds={};fallen.forEach(function(t){fallenIds[t.ca||t.address]=1;});
+  var hot=qualified.filter(function(t){
+    var cts=Number(t.creation_timestamp)||0;
+    var ageOk=cts>0&&(now-cts*1000)<5*86400*1000;
+    return ageOk&&!fallenIds[t.ca||t.address];
+  }).sort(function(a,b){
+    var sa=(Number(b.smart_count)||0)-(Number(a.smart_count)||0);
+    if(sa!==0)return sa;
+    return (Number(b.vol_1h)||0)-(Number(a.vol_1h)||0);
+  }).slice(0,2);
+  return {fallen:fallen, hot:hot};
+}
 function htmlConsensus(){
-  var d=S.data.consensus,open=!!UI.expanded.consensus;
+  var open=!!UI.expanded.consensus;
   var h='<div class="card"><div class="sect tog" data-act="toggle" data-key="consensus">🎯 聪明钱共识 <span class="chev">'+(open?'▲':'▼')+'</span></div>';
   if(open){
-    if(!d)h+='<div class="empty">暂无数据</div>';
-    else{
-      h+='<div class="subhead">💰 市值3万以下</div>';
-      h+=((d.lowcap||[]).map(function(t){return coinCard(t,true,null,true);}).join('')||'<div class="empty">暂无数据</div>');
-      h+='<div class="subhead">🎯 其余聪明钱标的</div>';
-      h+=((d.rest||[]).map(function(t){return coinCard(t,false,null,true);}).join('')||'<div class="empty">暂无数据</div>');
+    var lc=buildLocalConsensus();
+    var hasData=(lc.fallen.length+lc.hot.length)>0;
+    // Fallback to GitHub data if no local
+    if(!hasData){
+      var d=S.data.consensus;
+      if(d){
+        h+='<div class="subhead">💰 市值3万以下</div>';
+        h+=((d.lowcap||[]).slice(0,3).map(function(t){return coinCard(t,true,null,true);}).join('')||'<div class="empty">暂无数据</div>');
+        h+='<div class="subhead">🎯 其余聪明钱标的</div>';
+        h+=((d.rest||[]).slice(0,2).map(function(t){return coinCard(t,false,null,true);}).join('')||'<div class="empty">暂无数据</div>');
+      }else{
+        h+='<div class="empty">暂无数据</div>';
+      }
+    }else{
+      if(lc.fallen.length){
+        h+='<div class="subhead">💰 高位回落 · 市值3万以下</div>';
+        h+=lc.fallen.map(function(t){return coinCard(t,true,null,true);}).join('');
+      }
+      if(lc.hot.length){
+        h+='<div class="subhead">🔥 5天内高热门</div>';
+        h+=lc.hot.map(function(t){return coinCard(t,false,null,true);}).join('');
+      }
     }
   }
   return h+'</div>';
@@ -557,12 +680,15 @@ function htmlConsensus(){
 function htmlChain(key,title,color){
   var d=S.data[key];
   var toks=(d&&Array.isArray(d.tokens))?d.tokens:[];
-  var fresh=toks.filter(isNewCoin), rest=toks.filter(function(t){return !isNewCoin(t);});
+  // 5+5 structure: first 5 = 2h new coins, last 5 = 2d hot coins
+  var fresh=toks.filter(isNewCoin).slice(0,5);
+  var rest=toks.filter(function(t){return !isNewCoin(t);}).slice(0,5);
   var cards='';
   if(!toks.length)cards='<div class="empty">暂无数据</div>';
   else{
     if(fresh.length)cards+='<div class="subhead" style="color:var(--green)">🆕 2 小时内新币 · 热度优先</div>'+fresh.map(function(t){return coinCard(t,false,color);}).join('');
     if(rest.length)cards+='<div class="subhead" style="color:var(--orange)">🔥 2 天内热门</div>'+rest.map(function(t){return coinCard(t,false,color);}).join('');
+    if(!fresh.length&&!rest.length)cards='<div class="empty">暂无数据</div>';
   }
   var meta=toks.length+' 个币'+((d&&d.source)?' · 数据源 '+esc(d.source):'');
   return '<div class="card"><div class="sect" style="color:'+color+'">'+esc(title)+' <span class="muted small" style="color:var(--muted);font-weight:400">'+meta+'</span></div>'
@@ -578,8 +704,7 @@ function countCards(tws){
     var face='<div class="cface-name"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+esc(p.color||'#8b949e')+';margin-right:6px"></span>'+esc(p.name)+'</div>'
       +'<div class="cface-total">共 '+total+' 条</div>'
       +'<div class="cbreak"><span>原创 '+c.original+'</span><span>转推 '+c.retweet+'</span>'
-      +'<span>引用 '+c.quote+'</span><span>回复 '+c.reply+'</span>'
-      +'<span>关注 0</span><span>取关 0</span></div>'
+      +'<span>引用 '+c.quote+'</span><span>回复 '+c.reply+'</span></div>'
       +'<div class="small muted" style="margin-top:4px">'+(open?'收起 ▲':'展开 ▼')+'</div>';
     return '<div class="ccard pt-'+p.key+(open?' open':'')+'" data-act="daily-person" data-p="'+p.key+'">'+face+'</div>';
   }).join('');
@@ -599,7 +724,7 @@ function dailyDetail(tws){
   }).sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);});
   var items=todays.length?todays.map(function(t){
     var zh=t.text_zh?'<div class="zh"><span class="zhtag">译</span>'+nl2br(esc(t.text_zh))+'</div>':'';
-    return '<div class="histitem"><span class="htime">'+fmtBj(t.time)+'</span>'+kindBadge(t.kind)
+    return '<div class="histitem pt-'+key+'"><span class="htime">'+fmtBj(t.time)+' · '+relTime(t.time)+'</span>'+kindBadge(t.kind)
       +'<div style="margin-top:4px">'+nl2br(esc(t.text||''))+'</div>'+zh
       +'<div class="tlink" data-act="open-url" data-url="'+esc(t.url||'')+'">查看X原文 →</div></div>';
   }).join(''):'<div class="empty">今日暂无动态</div>';
@@ -667,6 +792,7 @@ function sigData(d){
   return JSON.stringify(c);
 }
 var SECTIONS=[
+  {id:'sec-moves',   sig:function(){return sigData(S.data.bsc)+sigData(S.data.sol)+sigData(S.data.rb);}, html:htmlSmartMoves},
   {id:'sec-tweets',  sig:function(){return sigData(S.data.tweets)+'|'+UI.filter;}, html:htmlTweets},
   {id:'sec-dy-trend',sig:function(){var d=S.data.douyin;return JSON.stringify((d&&d.trending)||null);}, html:htmlDyTrend},
   {id:'sec-dy-rise', sig:function(){return (S.douyinOk?'1':'0')+'|'+JSON.stringify(S.hotlistRows);}, html:htmlDyRise},
@@ -685,7 +811,7 @@ var SECTIONS=[
 var SEEN_SIG={};
 function setHtml(id,html){var n=document.getElementById(id);if(n)n.innerHTML=html;}
 function buildShell(){
-  setHtml('tab-all','<div id="sec-tweets"></div>');
+  setHtml('tab-all','<div id="sec-moves"></div><div id="sec-tweets"></div>');
   setHtml('tab-hot','<div id="sec-dy-trend"></div><div id="sec-dy-rise"></div><div id="sec-dy-list"></div><div id="sec-wb-list"></div>');
   setHtml('tab-trench','<div id="sec-liq"></div><div id="sec-tags"></div><div id="sec-cons"></div><div id="sec-bsc"></div><div id="sec-sol"></div><div id="sec-rb"></div>');
   setHtml('tab-summary','<div id="sec-counts"></div><div id="sec-daily"></div><div id="sec-binance"></div>');
@@ -775,9 +901,18 @@ function parseWorkerTweets(html, channel, defaultPerson){
         }
         var idMatch=url.match(/\/status\/(\d+)/);
         var id=idMatch?idMatch[1]:'tg_'+channel+'_'+time.replace(/[^0-9]/g,'').slice(0,14);
-        // person from channel
+        // person: split heyi/cz by content (TechMelonCzHeyi has both)
         var person=defaultPerson;
-        var handle=defaultPerson==='heyi'?'@heyibinance':(defaultPerson==='cz'?'@cz_binance':'@elonmusk');
+        if(channel==='TechMelonCzHeyi'){
+          var low=text.toLowerCase();
+          if(low.indexOf('@heyibinance')>=0||text.indexOf('何一')>=0||low.indexOf('yi he')>=0){
+            person='heyi';
+          }else if(low.indexOf('@cz_binance')>=0||text.indexOf('赵长鹏')>=0||/^cz\b/.test(low)){
+            person='cz';
+          }
+          // default to heyi if unclear (channel is primarily heyi)
+        }
+        var handle=person==='heyi'?'@heyibinance':(person==='cz'?'@cz_binance':'@elonmusk');
         // Clean text: take first meaningful lines, skip headers
         var cleanLines=lines.filter(function(l){
           return l!=='中文翻译 ——'&&l!=='💬'&&l!=='🌐'&&l!=='🕒'&&!l.startsWith('推文时间:')&&l.length>1;
@@ -816,31 +951,83 @@ function fetchWorkerTweets(){
     return {updated_at:new Date().toISOString(), tweets:uniq.slice(0,60)};
   });
 }
+function guessNarrative(symbol,name){
+  var s=((symbol||'')+' '+(name||'')).toLowerCase();
+  if(/doge|shib|pepe|wif|bonk|floki|meme/.test(s))return 'Meme币';
+  if(/pepe|frog/.test(s))return '动物Meme';
+  if(/dog|cat|bear|bull|pig|mouse/.test(s))return '动物Meme';
+  if(/ai|gpt|agent|bot/.test(s))return 'AI概念';
+  if(/gta|game|play/.test(s))return '游戏概念';
+  if(/trump|musk|elon|cz|heyi/.test(s))return '人物币';
+  if(/usd|usdt|usdc/.test(s))return '稳定币';
+  if(/binance|bnb|okx|coinbase/.test(s))return '平台币';
+  return '';
+}
+function normGmgnToken(t,chain){
+  var mc=Number(t.market_cap)||0;
+  var ath=Number(t.history_highest_market_cap)||0;
+  var cts=Number(t.creation_timestamp)||0;
+  var ageTx='';
+  if(cts>0){
+    var mins=Math.floor((Date.now()-cts*1000)/60000);
+    if(mins<60)ageTx=mins+'分钟前上线';
+    else if(mins<1440)ageTx=Math.floor(mins/60)+'小时前上线';
+    else ageTx=Math.floor(mins/1440)+'天前上线';
+  }
+  return {
+    address:t.address||'', symbol:t.symbol||'', name:t.name||'',
+    icon:t.logo||'', chain:chain,
+    market_cap:mc, history_highest_mcap:ath,
+    liquidity:Number(t.liquidity)||0,
+    vol_1h:Number(t.volume)||0,
+    smart_count:Number(t.smart_degen_count)||0,
+    smart_label:'聪明钱',
+    age_text:ageTx, creation_timestamp:cts,
+    twitter:t.twitter_username||'', website:t.website||'',
+    narrative:guessNarrative(t.symbol,t.name),
+    ca:t.address||'', x_url:t.twitter_username?('https://x.com/'+t.twitter_username):''
+  };
+}
+function normDebotToken(t,chain){
+  var mi=t.market_info||{}, psi=t.pair_summary_info||{}, si=t.social_info||{};
+  return {
+    address:t.address||'', symbol:t.symbol||'', name:t.name||'',
+    icon:t.logo||'', chain:t.chain||chain,
+    market_cap:Number(mi.mkt_cap)||0,
+    liquidity:Number(psi.liquidity)||0,
+    vol_1h:Number(mi.volume)||0,
+    smart_count:Number(t.kol_count)||0,
+    smart_label:'KOL',
+    age_text:'', creation_timestamp:Number(t.creation_timestamp)||0,
+    twitter:si.dx_twitter||'', website:t.website||'',
+    narrative:guessNarrative(t.symbol,t.name),
+    ca:t.address||''
+  };
+}
 function fetchWorkerTrench(chain){
-  var cmap={bsc:'bsc', sol:'solana', rb:'robinhood'};
-  var url='https://debot.ai/api/dashboard/chain/recommend/hot_token?chain='+(cmap[chain]||chain);
-  return fetch(workerUrl(url),{cache:'no-store'})
-    .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
+  var gmap={bsc:'bsc', sol:'sol', rb:'robinhood'};
+  var dmap={bsc:'bsc', sol:'solana', rb:'robinhood'};
+  var gurl='https://gmgn.ai/defi/quotation/v1/rank/'+(gmap[chain]||chain)+'/swaps/1h';
+  var durl='https://debot.ai/api/dashboard/chain/recommend/hot_token?chain='+(dmap[chain]||chain);
+  // Try gmgn first, fallback to debot
+  return fetch(workerUrl(gurl),{cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('gmgn http '+r.status);return r.json();})
     .then(function(d){
-      var arr=(d&&d.data)||[];
-      var tokens=arr.map(function(t){
-        var mi=t.market_info||{}, psi=t.pair_summary_info||{}, si=t.social_info||{};
-        return {
-          address:t.address||'', symbol:t.symbol||'', name:t.name||'',
-          icon:t.logo||'', chain:t.chain||chain,
-          market_cap:Number(mi.mkt_cap)||0,
-          liquidity:Number(psi.liquidity)||0,
-          vol_1h:Number(mi.volume)||0,
-          smart_count:Number(t.kol_count)||0,
-          smart_label:'KOL×'+(Number(t.kol_count)||0),
-          age_text:'', creation_timestamp:Number(t.creation_timestamp)||0,
-          twitter:si.dx_twitter||'', website:t.website||'',
-          narrative:'', ca:t.address||''
-        };
-      });
-      return {updated_at:new Date().toISOString(), tokens:tokens.slice(0,30), source:'debot'};
+      var rank=(d&&d.data&&d.data.rank)||[];
+      if(!rank.length)throw new Error('gmgn empty');
+      var tokens=rank.map(function(t){return normGmgnToken(t,chain);});
+      return {updated_at:new Date().toISOString(), tokens:tokens.slice(0,10), source:'gmgn'};
     })
-    .catch(function(){return null;});
+    .catch(function(){
+      return fetch(workerUrl(durl),{cache:'no-store'})
+        .then(function(r){if(!r.ok)throw new Error('debot http '+r.status);return r.json();})
+        .then(function(d){
+          var arr=(d&&d.data)||[];
+          var tokens=arr.map(function(t){return normDebotToken(t,chain);});
+          return {updated_at:new Date().toISOString(), tokens:tokens.slice(0,10), source:'debot'};
+        })
+        .catch(function(){return null;});
+    });
 }
 function pollWorkerFast(){
   // Tweets every 10s
@@ -887,11 +1074,65 @@ function fetchWorkerDouyin(){
     })
     .catch(function(){return null;});
 }
+function fetchWorkerLiquidity(){
+  return fetch(workerUrl('https://debot.ai/api/edge/launchpad/stats/latest?interval=1h'),{cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
+    .then(function(d){
+      if(!d||d.code!==0)throw new Error('debot code');
+      var chains=[];
+      var byKey={};
+      ((d.data||{}).chains||[]).forEach(function(ch){
+        if(ch&&ch.chain)byKey[ch.chain]=ch;
+      });
+      var cmap={bsc:'bsc',solana:'solana',robinhood:'robinhood',okx:'okx',base:'base',arc:'arc',ethereum:'ethereum'};
+      var clabel={bsc:'BSC',solana:'Solana',robinhood:'Robinhood',okx:'OKX',base:'Base',arc:'Arc',ethereum:'Ethereum'};
+      Object.keys(cmap).forEach(function(k){
+        var ch=byKey[k];if(!ch)return;
+        var s=ch.summary||{}, p=ch.prev_summary||{};
+        var buy=Number(s.buy_volume)||0, sell=Number(s.sell_volume)||0;
+        var vol=Number(s.volume)||0, pvol=Number(p.volume)||0;
+        var metrics={
+          volume:vol, buy_volume:buy, sell_volume:sell,
+          wallet_count:Number(s.wallet_count)||0,
+          token_count:Number(s.token_count)||0,
+          token_created_count:Number(s.token_created_count)||0,
+          token_migrated_count:Number(s.token_migrated_count)||0,
+          tx_count:Number(s.tx_count)||0
+        };
+        if(pvol>0)metrics.volume_change_pct=Math.round((vol-pvol)/pvol*10000)/100;
+        var wc=Number(s.wallet_count)||0;
+        if(wc>0)metrics.avg_buy_per_wallet=Math.round(buy/wc*100)/100;
+        chains.push({
+          chain:clabel[k]||k,
+          net_inflow:buy-sell,
+          metrics:metrics,
+          top_tokens:[]
+        });
+      });
+      return {updated_at:new Date().toISOString(), chains:chains};
+    })
+    .catch(function(){return null;});
+}
 function pollWorkerSlow(){
   // Douyin every 5 min via Worker
   fetchWorkerDouyin().then(function(d){
     if(d&&d.hotlist&&d.hotlist.length){
       S.data.douyin=d;
+      S.douyinOk=true;
+      try{
+        var prevSnap=JSON.parse(localStorage.getItem('dy_hotlist_snap')||'null');
+        if(prevSnap&&Array.isArray(prevSnap)&&prevSnap.length){
+          S.hotlistRows=diffHotlist(prevSnap,d.hotlist);
+        }
+        localStorage.setItem('dy_hotlist_snap',JSON.stringify(d.hotlist));
+      }catch(e){}
+      updateSections();
+    }
+  });
+  // Liquidity every 5 min via Worker
+  fetchWorkerLiquidity().then(function(d){
+    if(d&&d.chains&&d.chains.length){
+      S.data.liquidity=d;
       updateSections();
     }
   });
@@ -911,7 +1152,13 @@ function refresh(){
     var dj=data.douyin;
     S.douyinOk=!!(dj&&Array.isArray(dj.hotlist));
     if(S.douyinOk){
-      if(S.prevHotlist)S.hotlistRows=diffHotlist(S.prevHotlist,dj.hotlist);
+      try{
+        var prevSnap=JSON.parse(localStorage.getItem('dy_hotlist_snap')||'null');
+        if(prevSnap&&Array.isArray(prevSnap))S.hotlistRows=diffHotlist(prevSnap,dj.hotlist);
+        localStorage.setItem('dy_hotlist_snap',JSON.stringify(dj.hotlist));
+      }catch(e){
+        if(S.prevHotlist)S.hotlistRows=diffHotlist(S.prevHotlist,dj.hotlist);
+      }
       S.prevHotlist=dj.hotlist;
     }
     updateSections();
