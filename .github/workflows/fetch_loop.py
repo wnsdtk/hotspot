@@ -650,27 +650,7 @@ def fetch_liquidity(trench_files=None):
                 metrics["volume_change_pct"] = round((vol - pvol) / pvol * 100, 2)
             if num(s.get("wallet_count")) > 0:
                 metrics["avg_buy_per_wallet"] = round(buy / num(s.get("wallet_count")), 2)
-            # top 3 tokens by 1h volume from trench data (for App-style token cards)
-            top_tokens = []
-            try:
-                tf_key = _TRENCH_MAP.get(key)
-                tdata = (trench_files or {}).get(tf_key) or {}
-                toks = tdata.get("tokens") or []
-                toks = sorted(toks, key=lambda t: num(t.get("vol_1h")), reverse=True)[:3]
-                for t in toks:
-                    mc = num(t.get("market_cap"))
-                    top_tokens.append({
-                        "name": t.get("name") or "",
-                        "symbol": t.get("symbol") or "",
-                        "icon": t.get("icon") or "",
-                        "price": mc,
-                        "change_pct": 0,
-                        "buy_volume": 0,
-                        "net_inflow": 0,
-                        "sell_volume": 0,
-                    })
-            except Exception:
-                top_tokens = []
+            # top_tokens: 暂时留空（trench 数据没有真实的流动性字段，硬填是乱码）
             chains.append({
                 "chain": label,
                 "net_inflow": buy - sell,
