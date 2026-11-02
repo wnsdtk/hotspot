@@ -325,7 +325,7 @@ def fetch_tweets(state_dir, tr_cache):
     for key, channel, default_person in CHANNELS:
         try:
             r = http.get(
-                f"https://t.me/s/{channel}",
+                f"https://snowy-mud-3037.rj982946925.workers.dev/?u=https://t.me/s/{channel}",
                 headers={"User-Agent": UA_IPHONE},
                 timeout=30,
             )
@@ -1018,92 +1018,59 @@ def gloss_title(title):
 
 
 def fetch_binance(tr_cache):
+    """Binance 公告走 TG 官方频道 binance_announcements（bapi 被墙）"""
     items = []
     cutoff = now_sh() - timedelta(days=7)
-
-    def fresh_enough(ms):
-        try:
-            dt = datetime.fromtimestamp(ms / 1000, tz=timezone.utc).astimezone(SH)
-        except Exception:
-            return None
-        return dt if dt >= cutoff else None
-
-    for catalog_id, itype in ((48, "listing"), (161, "delisting")):
-        try:
-            r = http.get(
-                "https://www.binance.com/bapi/composite/v1/public/cms/article/list/query",
-                params={"type": 1, "catalogId": catalog_id, "pageNo": 1, "pageSize": 20},
-                timeout=25,
-            )
-            r.raise_for_status()
-            d = r.json()
-            if not d.get("success"):
-                raise ValueError("not success")
-            cats = (d.get("data") or {}).get("catalogs") or []
-            cat = next((c for c in cats if c.get("catalogId") == catalog_id), cats[0] if cats else None)
-            arts = (cat or {}).get("articles") or []
-            n = 0
-            for a in arts:
-                title = (a.get("title") or "").strip()
-                code = (a.get("code") or "").strip()
-                dt = fresh_enough(a.get("releaseDate") or 0)
-                if not title or not code or not dt:
-                    continue
-                title_zh = gloss_title(title) or translate(
-                    title, "bn:" + hashlib.md5(title.encode()).hexdigest(), tr_cache)
-                items.append({
-                    "type": itype,
-                    "title_zh": title_zh,
-                    "title_en": title,
-                    "time": dt.isoformat(),
-                    "url": f"https://www.binance.com/en/support/announcement/detail/{code}",
-                })
-                n += 1
-            print(f"  [binance] {itype}: {n} items (7d)")
-        except Exception as e:
-            print(f"  [binance] {itype} FAILED: {e}", file=sys.stderr)
-
+    WORKER = "https://snowy-mud-3037.rj982946925.workers.dev"
     try:
-        r = http.get(
-            "https://www.binance.com/bapi/defi/v1/public/wallet-direct/buw/wallet/cex/alpha/all/token/list",
-            timeout=25,
-        )
+        r = http.get(f"{WORKER}/?u=https://t.me/s/binance_announcements", timeout=25)
         r.raise_for_status()
-        toks = (r.json().get("data") or [])
+        html = r.text
+        blocks = re.findall(
+            r'<div class="tgme_widget_message_wrap[^"]*"[^>]*>.*?'
+            r'<time[^>]+datetime="([^"]+)"[^>]*>.*?</time>.*?'
+            r'<div class="tgme_widget_message_text[^"]*"[^>]*>(.*?)</div>',
+            html, re.S)
+        links = re.findall(
+            r'href="(https://t\.me/binance_announcements/\d+)"',
+            html)
         n = 0
-        for t in toks:
-            if t.get("offline") or not t.get("listingTime"):
+        for i, (dt_str, txt_html) in enumerate(blocks):
+            try:
+                dt = datetime.fromisoformat(dt_str.replace('Z', '+00:00')).astimezone(SH)
+            except Exception:
                 continue
-            dt = fresh_enough(t.get("listingTime"))
-            if not dt:
+            if dt < cutoff:
                 continue
-            symbol = (t.get("symbol") or "").strip()
-            name = (t.get("name") or "").strip() or symbol
-            chain = (t.get("chainName") or "").strip()
-            contract = (t.get("contractAddress") or "").strip()
-            slug = ALPHA_CHAIN_SLUG.get(chain.lower(), "")
-            title_en = f"Binance Alpha Will List {name} ({symbol})"
+            text = re.sub(r'<br\s*/?>', '\n', txt_html)
+            text = re.sub(r'<[^>]+>', '', text)
+            text = re.sub(r'\s+', ' ', text).strip()
+            if not text:
+                continue
+            title = text.split('\n')[0].strip()[:150]
+            low = title.lower()
+            if 'will list' in low or 'will add' in low or 'listing' in low:
+                itype = 'listing'
+            elif 'delist' in low or 'removal' in low or 'remove' in low:
+                itype = 'delisting'
+            else:
+                itype = 'other'
+            title_zh = gloss_title(title) or translate(
+                title, "bn:" + hashlib.md5(title.encode()).hexdigest(), tr_cache)
+            url = links[i] if i < len(links) else "https://t.me/s/binance_announcements"
             items.append({
-                "type": "alpha",
-                "title_zh": gloss_title(title_en),
-                "title_en": title_en,
+                "type": itype,
+                "title_zh": title_zh,
+                "title_en": title,
                 "time": dt.isoformat(),
-                "url": f"https://www.binance.com/en/alpha/{slug}/{contract}" if slug and contract else "",
+                "url": url,
             })
             n += 1
-        print(f"  [binance] alpha: {n} items (7d)")
+        print(f"  [binance] TG channel: {n} items (7d)")
     except Exception as e:
-        print(f"  [binance] alpha FAILED: {e}", file=sys.stderr)
-
+        print(f"  [binance] TG FAILED: {e}", file=sys.stderr)
     items.sort(key=lambda i: i["time"], reverse=True)
     return {"updated_at": iso_now(), "items": items}
-
-
-# -------------------------------------------------------------------- main
-# Job budget: keep the whole run comfortably under the 5-minute cron slot.
-JOB_BUDGET_S = 275
-FAST_TICK_S = 10
-
 
 def slow_lane(out_dir, state_dir, tr_cache, cache_path):
     """Runs once at job start. Returns (trench_tokens_all, tags)."""
