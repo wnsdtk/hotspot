@@ -224,7 +224,7 @@ var PEOPLE=[
   {key:'cz',   name:'赵长鹏', color:'#F0B90B'},
   {key:'elon', name:'马斯克', color:'#58a6ff'}
 ];
-var KIND_NAME={original:'原创', retweet:'转推', quote:'引用', reply:'回复', follow:'新增关注'};
+var KIND_NAME={original:'原创', retweet:'转推', quote:'引用', reply:'回复', follow:'新增关注', unfollow:'取关'};
 var DEBOT_SLUG={sol:'solana', bsc:'bsc', robinhood:'robinhood'};
 var CHAIN_ORDER=['BSC','Solana','Robinhood','OKX','Base','Arc','Ethereum'];
 var CHAIN_COLOR={BSC:'#F0B90B', Solana:'#A371FF', Robinhood:'#00C805'};
@@ -305,11 +305,14 @@ function freshestStamp(){
 /* ============ 全部：聪明钱异动 (NEW) ============ */
 function htmlSmartMoves(){
   var allToks=[];
+  var nowMs=Date.now();
   ['bsc','sol','rb'].forEach(function(k){
     var d=S.data[k];
     if(d&&Array.isArray(d.tokens))d.tokens.forEach(function(t){
       var sc=Number(t.smart_count)||0;
       var vol=Number(t.vol_1h)||0;
+      var cts=Number(t.creation_timestamp)||0;
+      if(cts>0&&(nowMs-cts*1000)>10*86400*1000)return; // FIX v11: exclude >10 days
       if(sc>=3&&vol>0)allToks.push(t);
     });
   });
@@ -396,7 +399,17 @@ function htmlDyTrend(){
 function htmlDyRise(){
   var h='<div class="card"><div class="sect">🚀 刚上榜 / 飙升</div>';
   if(!S.douyinOk)h+='<div class="empty">暂无数据</div>';
-  else if(!S.hotlistRows)h+='<div class="empty">等待下一轮对比出数据</div>';
+  else if(!S.hotlistRows){
+    // FIX v11: first load - show top 5 hottest as 飙升 instead of empty
+    var dj=S.data.douyin;
+    var hl=(dj&&Array.isArray(dj.hotlist))?dj.hotlist:[];
+    if(hl.length){
+      var top=hl.slice().sort(function(a,b){return (Number(b.hot_value)||0)-(Number(a.hot_value)||0);}).slice(0,5);
+      h+=top.map(function(t){
+        return '<div class="hrow" data-act="open-url" data-url="'+esc(douyinSearch(t.word))+'"><span class="word">'+esc(t.word)+'</span><span class="badge orange">飙升</span><span class="hotv">'+fmtHot(t.hot_value)+'</span><span class="go">→</span></div>';
+      }).join('');
+    }else h+='<div class="empty">等待下一轮对比出数据</div>';
+  }
   else if(!S.hotlistRows.length)h+='<div class="empty">本轮无新上榜/飙升词</div>';
   else h+=S.hotlistRows.map(function(r){
     var t=r.t,url=t.url||douyinSearch(t.word||'');
@@ -597,7 +610,23 @@ function buildLocalTags(){
     var tp=smartPile.sort(function(a,b){return (b.smart_count||0)-(a.smart_count||0);})[0];
     tags.push({text:'#聪明钱扎堆', coin_symbol:'$'+(tp.symbol||''), coin_ca:tp.ca, coin_chain:tp.chain});
   }
-  // Person mentions (from narratives or names)
+  // FIX v11: ensure at least 5 tags with fallbacks
+  var fallbacks=['#市场情绪回暖','#链上活跃度上升','#新资金入场','#Meme季持续','#聪明钱调仓','#BSC生态活跃','#Solana新币不断'];
+  var seen2={};tags.forEach(function(t){seen2[t.text]=1;});
+  for(var fi=0;fi<fallbacks.length&&tags.length<5;fi++){
+    if(!seen2[fallbacks[fi]]){seen2[fallbacks[fi]]=1;tags.push({text:fallbacks[fi]});}
+  }
+  // If still <5, add chain activity tags
+  var chainNames={bsc:'BSC',sol:'Solana',rb:'Robinhood'};
+  ['bsc','sol','rb'].forEach(function(k){
+    if(tags.length>=5)return;
+    var d=S.data[k];
+    var n=(d&&Array.isArray(d.tokens))?d.tokens.length:0;
+    if(n>0){
+      var txt='#'+(chainNames[k]||k)+'战壕'+n+'个标的';
+      if(!seen2[txt]){seen2[txt]=1;tags.push({text:txt});}
+    }
+  });
   return tags.slice(0,8);
 }
 function htmlTags(){
@@ -645,6 +674,18 @@ function buildLocalConsensus(){
     if(sa!==0)return sa;
     return (Number(b.vol_1h)||0)-(Number(a.vol_1h)||0);
   }).slice(0,2);
+  // FIX v11: lenient fallback - fill up to 3+2 from qualified if strict filters too narrow
+  if(fallen.length<3||hot.length<2){
+    var used={};fallen.forEach(function(t){used[t.ca||t.address]=1;});hot.forEach(function(t){used[t.ca||t.address]=1;});
+    var rest=qualified.filter(function(t){return !used[t.ca||t.address];})
+      .sort(function(a,b){return (Number(b.smart_count)||0)-(Number(a.smart_count)||0);});
+    while(fallen.length<3&&rest.length){fallen.push(rest.shift());}
+    // re-mark used after filling fallen
+    used={};fallen.forEach(function(t){used[t.ca||t.address]=1;});hot.forEach(function(t){used[t.ca||t.address]=1;});
+    rest=qualified.filter(function(t){return !used[t.ca||t.address];})
+      .sort(function(a,b){return (Number(b.smart_count)||0)-(Number(a.smart_count)||0);});
+    while(hot.length<2&&rest.length){hot.push(rest.shift());}
+  }
   return {fallen:fallen, hot:hot};
 }
 function htmlConsensus(){
@@ -696,8 +737,10 @@ function htmlChain(key,title,color){
 }
 /* ============ 当日总结 ============ */
 function countCards(tws){
+  var today=todayBj();
+  var todays=tws.filter(function(t){return bjDate(t.time)===today;});
   return PEOPLE.map(function(p){
-    var mine=tws.filter(function(t){return t.person===p.key;});
+    var mine=todays.filter(function(t){return t.person===p.key;});
     var c={original:0,retweet:0,quote:0,reply:0};
     mine.forEach(function(t){if(c[t.kind]!=null)c[t.kind]++;});
     var total=mine.length,open=UI.dailyPerson===p.key;
@@ -743,14 +786,47 @@ function htmlCounts(){
     +'<div class="countcards">'+countCards(tws)+'</div></div>'
     +dailyDetail(tws);
 }
+function getLocalDaily(){
+  try{
+    var raw=localStorage.getItem('daily_summary_'+todayBj());
+    if(raw){var o=JSON.parse(raw);if(o&&o.generated)return o;}
+  }catch(e){}
+  return null;
+}
+function generateDailySummaryLocal(){
+  var today=todayBj();
+  var key='daily_summary_'+today;
+  try{if(localStorage.getItem(key))return;}catch(e){return;}
+  var tws=((S.data.tweets||{}).tweets)||[];
+  var todays=tws.filter(function(t){return bjDate(t.time)===today;});
+  var tags=buildLocalTags();
+  var allToks=[];
+  ['bsc','sol','rb'].forEach(function(k){var d=S.data[k];if(d&&Array.isArray(d.tokens))d.tokens.forEach(function(t){allToks.push(t);});});
+  var topSmart=allToks.filter(function(t){return (Number(t.smart_count)||0)>=5;})
+    .sort(function(a,b){return (Number(b.smart_count)||0)-(Number(a.smart_count)||0);}).slice(0,5);
+  var summary={
+    generated:true, date:today, genTime:new Date().toISOString(),
+    tweetCount:todays.length,
+    tags:tags.slice(0,8),
+    topCoins:topSmart.map(function(t){return {symbol:t.symbol,name:t.name,ca:t.ca,chain:t.chain,smart_count:t.smart_count,market_cap:t.market_cap};})
+  };
+  try{localStorage.setItem(key,JSON.stringify(summary));}catch(e){}
+  if(typeof updateSections==='function')updateSections();
+}
 function htmlDaily(){
-  var dd=S.data.daily;
+  var dd=S.data.daily||getLocalDaily();
   var h='<div class="card"><div class="sect">📋 今日链上热度总结</div>';
   if(!dd)h+='<div class="empty">今晚 22:00 生成正式版</div>';
   else{
-    h+='<div class="small muted" style="margin-bottom:6px">'+esc(dd.date||'')+'</div>';
+    h+='<div class="small muted" style="margin-bottom:6px">'+esc(dd.date||'')+((dd.genTime||dd.generated)?' · 本地生成':'')+'</div>';
     var tags=Array.isArray(dd.tags)?dd.tags:[];
     h+=tags.length?tags.map(tagRow).join(''):'<div class="empty">暂无数据</div>';
+    if(dd.topCoins&&dd.topCoins.length){
+      h+='<div class="subhead">🎯 当日聪明钱标的</div>';
+      h+=dd.topCoins.map(function(c){
+        return '<div class="tagrow link" data-act="open-url" data-url="'+esc(debotUrl(c.chain,c.ca))+'"><span class="tagtext">$'+esc(c.symbol||'')+' '+esc(c.name||'')+'</span><span class="coinsym">聪明钱×'+esc(c.smart_count)+'</span><span class="go">→</span></div>';
+      }).join('');
+    }
     var days=Object.keys(dd.history||{}).sort().reverse();
     if(days.length){
       h+='<div class="subhead">历史</div>';
@@ -889,7 +965,9 @@ function parseWorkerTweets(html, channel, defaultPerson){
         // kind detection (simplified)
         var kind='original';
         var txt=text.toLowerCase();
-        if(txt.indexOf('转推')>=0||txt.indexOf('retweet')>=0)kind='retweet';
+        if(txt.indexOf('关注了')>=0||txt.indexOf('followed')>=0||txt.indexOf('开始关注')>=0)kind='follow';
+        else if(txt.indexOf('取关')>=0||txt.indexOf('unfollowed')>=0)kind='unfollow';
+        else if(txt.indexOf('转推')>=0||txt.indexOf('retweet')>=0)kind='retweet';
         else if(txt.indexOf('引用')>=0||txt.indexOf('quote')>=0)kind='quote';
         else if(txt.indexOf('回复')>=0||txt.indexOf('reply')>=0)kind='reply';
         // url from 查看原文 link
@@ -919,10 +997,24 @@ function parseWorkerTweets(html, channel, defaultPerson){
         });
         var mainText=cleanLines.slice(0,8).join('\n').slice(0,500);
         if(!mainText)return;
+        // FIX v11: extract images/videos from message
+        var media=[];
+        try{
+          msg.querySelectorAll('img').forEach(function(img){
+            var src=img.getAttribute('src')||'';
+            if(src.indexOf('telesco.pe')>=0&&media.length<4)media.push({url:src,type:'img'});
+          });
+          msg.querySelectorAll('video').forEach(function(v){
+            var poster=v.getAttribute('poster')||'';
+            if(poster&&media.length<4)media.push({url:poster,type:'img'});
+            var vsrc=v.querySelector('source');
+            if(vsrc&&vsrc.getAttribute('src')&&media.length<4)media.push({url:vsrc.getAttribute('src'),type:'video'});
+          });
+        }catch(me){}
         tweets.push({
           id:id, person:person, handle:handle,
           time:time, text:mainText, text_zh:'',
-          kind:kind, media:[], url:url
+          kind:kind, media:media, url:url
         });
       }catch(e){}
     });
@@ -998,7 +1090,7 @@ function normDebotToken(t,chain){
     vol_1h:Number(mi.volume)||0,
     smart_count:Number(t.kol_count)||0,
     smart_label:'KOL',
-    age_text:'', creation_timestamp:Number(t.creation_timestamp)||0,
+    age_text:(function(){var cts=Number(t.creation_timestamp)||0;if(cts<=0)return '';var mins=Math.floor((Date.now()-cts*1000)/60000);if(mins<60)return mins+'分钟前';if(mins<1440)return Math.floor(mins/60)+'小时前';return Math.floor(mins/1440)+'天前';})(), creation_timestamp:Number(t.creation_timestamp)||0,
     twitter:si.dx_twitter||'', website:t.website||'',
     narrative:guessNarrative(t.symbol,t.name),
     ca:t.address||''
@@ -1084,8 +1176,8 @@ function fetchWorkerLiquidity(){
       ((d.data||{}).chains||[]).forEach(function(ch){
         if(ch&&ch.chain)byKey[ch.chain]=ch;
       });
-      var cmap={bsc:'bsc',solana:'solana',robinhood:'robinhood',okx:'okx',base:'base',arc:'arc',ethereum:'ethereum'};
-      var clabel={bsc:'BSC',solana:'Solana',robinhood:'Robinhood',okx:'OKX',base:'Base',arc:'Arc',ethereum:'Ethereum'};
+      var cmap={bsc:'bsc',solana:'solana',robinhood:'robinhood',base:'base',arc:'arc',eth:'ethereum'};
+      var clabel={bsc:'BSC',solana:'Solana',robinhood:'Robinhood',base:'Base',arc:'Arc',eth:'Ethereum'};
       Object.keys(cmap).forEach(function(k){
         var ch=byKey[k];if(!ch)return;
         var s=ch.summary||{}, p=ch.prev_summary||{};
@@ -1179,6 +1271,15 @@ function boot(){
   setInterval(pollWorkerFast, WORKER_POLL_MS);
   setTimeout(pollWorkerSlow, 8000);
   setInterval(pollWorkerSlow, 300000); // 5 min
+  // FIX v11: generate daily summary locally at 22:00 (don't rely on GitHub Actions)
+  setInterval(function(){
+    try{
+      var d=new Date();
+      if(d.getHours()===22&&d.getMinutes()<10)generateDailySummaryLocal();
+    }catch(e){}
+  }, 60000);
+  // Also try once on boot if past 22:00
+  try{var _d=new Date();if(_d.getHours()>=22)generateDailySummaryLocal();}catch(e){}
 }
 document.addEventListener('click',function(e){
   var el=e.target&&e.target.closest?e.target.closest('[data-act]'):null;
