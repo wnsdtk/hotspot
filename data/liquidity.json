@@ -1,117 +1,217 @@
 {
-  "updated_at": "2026-11-02T19:51:46.425782+08:00",
+  "updated_at": "2026-11-02T20:24:58.771367+08:00",
   "chains": [
     {
       "chain": "BSC",
-      "net_inflow": 109779.55114637758,
+      "net_inflow": 61273.01620174665,
       "metrics": {
-        "volume": 2959729.4840865303,
-        "buy_volume": 1534754.5176164538,
-        "sell_volume": 1424974.9664700762,
-        "wallet_count": 10649.0,
-        "token_count": 1327.0,
-        "token_created_count": 625.0,
+        "volume": 3093052.0770235015,
+        "buy_volume": 1577162.546612624,
+        "sell_volume": 1515889.5304108774,
+        "wallet_count": 13441.0,
+        "token_count": 1381.0,
+        "token_created_count": 568.0,
         "token_migrated_count": 7.0,
-        "tx_count": 36191.0,
-        "volume_change_pct": 3.63,
-        "avg_buy_per_wallet": 144.12
-      }
+        "tx_count": 52443.0,
+        "volume_change_pct": -0.16,
+        "avg_buy_per_wallet": 117.34
+      },
+      "top_tokens": [
+        {
+          "name": "网上南宁",
+          "symbol": "$网上南宁",
+          "icon": "https://sgrs.debot.ai/logo/bafkreif7zxuxh5nrbobecouzog33uiriid2qoczzksccc4uebhqoptqnvy.png",
+          "price": 12652.203870000001,
+          "change_pct": 0,
+          "buy_volume": 0,
+          "net_inflow": 0,
+          "sell_volume": 0
+        },
+        {
+          "name": "Binance Pepe",
+          "symbol": "$BEPE",
+          "icon": "https://sgrs.debot.ai/logo/bafkreia6jhnux3uhiytrpi7yxmyaymaborvnxpaspvvvg5gxj6tbmb5n3u.webp",
+          "price": 22015.24183,
+          "change_pct": 0,
+          "buy_volume": 0,
+          "net_inflow": 0,
+          "sell_volume": 0
+        },
+        {
+          "name": "Rootline Agents",
+          "symbol": "$Rootline",
+          "icon": "https://sgrs.debot.ai/logo/a09a64ddc0b869b00dbbe745d4839ed8.png",
+          "price": 2740.115837,
+          "change_pct": 0,
+          "buy_volume": 0,
+          "net_inflow": 0,
+          "sell_volume": 0
+        }
+      ]
     },
     {
       "chain": "Solana",
-      "net_inflow": -1897220.3934617117,
+      "net_inflow": -705876.6366379466,
       "metrics": {
-        "volume": 18927123.904362537,
-        "buy_volume": 8514951.755450413,
-        "sell_volume": 10412172.148912124,
-        "wallet_count": 48771.0,
-        "token_count": 4393.0,
-        "token_created_count": 1396.0,
-        "token_migrated_count": 37.0,
-        "tx_count": 254530.0,
-        "volume_change_pct": 46.99,
-        "avg_buy_per_wallet": 174.59
-      }
+        "volume": 17498656.957080998,
+        "buy_volume": 8396390.160221525,
+        "sell_volume": 9102266.796859471,
+        "wallet_count": 46158.0,
+        "token_count": 4661.0,
+        "token_created_count": 1535.0,
+        "token_migrated_count": 46.0,
+        "tx_count": 270464.0,
+        "volume_change_pct": 5.65,
+        "avg_buy_per_wallet": 181.91
+      },
+      "top_tokens": [
+        {
+          "name": "MAMESUKE",
+          "symbol": "$MAMESUKE",
+          "icon": "https://sgrs.debot.ai/logo/1d1a10849664695a3f4da283cbe2fe5f.webp",
+          "price": 545768.0173998778,
+          "change_pct": 0,
+          "buy_volume": 0,
+          "net_inflow": 0,
+          "sell_volume": 0
+        },
+        {
+          "name": "Nations",
+          "symbol": "$NATIONS",
+          "icon": "https://sgrs.debot.ai/logo/bb39a8916291403ec90a08caf49f5109.webp",
+          "price": 7142.709212092717,
+          "change_pct": 0,
+          "buy_volume": 0,
+          "net_inflow": 0,
+          "sell_volume": 0
+        },
+        {
+          "name": "Anakin Skywalker",
+          "symbol": "$Anakin",
+          "icon": "https://sgrs.debot.ai/logo/e747cd004dd14b2813a2dcc851376345.png",
+          "price": 2448840.805274249,
+          "change_pct": 0,
+          "buy_volume": 0,
+          "net_inflow": 0,
+          "sell_volume": 0
+        }
+      ]
     },
     {
       "chain": "Robinhood",
-      "net_inflow": -118647.85073232342,
+      "net_inflow": 101164.47226194525,
       "metrics": {
-        "volume": 848778.5172325622,
-        "buy_volume": 365065.33325011935,
-        "sell_volume": 483713.1839824428,
-        "wallet_count": 2971.0,
-        "token_count": 600.0,
-        "token_created_count": 120.0,
+        "volume": 1002517.8414289879,
+        "buy_volume": 551841.1568454666,
+        "sell_volume": 450676.68458352133,
+        "wallet_count": 3246.0,
+        "token_count": 570.0,
+        "token_created_count": 100.0,
         "token_migrated_count": 0.0,
-        "tx_count": 6666.0,
-        "volume_change_pct": 2.19,
-        "avg_buy_per_wallet": 122.88
-      }
+        "tx_count": 7435.0,
+        "volume_change_pct": 30.5,
+        "avg_buy_per_wallet": 170.01
+      },
+      "top_tokens": [
+        {
+          "name": "BrainChain",
+          "symbol": "$BRAIN",
+          "icon": "https://sgrs.debot.ai/logo/ed300e45a5aeb69aab1a47c408b9f2ff.webp",
+          "price": 246480.61043453516,
+          "change_pct": 0,
+          "buy_volume": 0,
+          "net_inflow": 0,
+          "sell_volume": 0
+        },
+        {
+          "name": "Forever",
+          "symbol": "$FOREVER",
+          "icon": "https://sgrs.debot.ai/logo/70542e1c63da1e79184caf2a77931124.webp",
+          "price": 4007263.2814031756,
+          "change_pct": 0,
+          "buy_volume": 0,
+          "net_inflow": 0,
+          "sell_volume": 0
+        },
+        {
+          "name": "Bursar",
+          "symbol": "$BURSAR",
+          "icon": "https://sgrs.debot.ai/logo/86832c26343f209f91ba07bd18513390.webp",
+          "price": 97064.78777191669,
+          "change_pct": 0,
+          "buy_volume": 0,
+          "net_inflow": 0,
+          "sell_volume": 0
+        }
+      ]
     },
     {
       "chain": "OKX",
-      "net_inflow": -649.6287644810018,
+      "net_inflow": -2006.1586146803293,
       "metrics": {
-        "volume": 23523.958623211416,
-        "buy_volume": 11437.164929365206,
-        "sell_volume": 12086.793693846208,
-        "wallet_count": 206.0,
-        "token_count": 28.0,
-        "token_created_count": 82.0,
+        "volume": 13933.937999767137,
+        "buy_volume": 5963.889692543404,
+        "sell_volume": 7970.048307223733,
+        "wallet_count": 150.0,
+        "token_count": 25.0,
+        "token_created_count": 1.0,
         "token_migrated_count": 0.0,
-        "tx_count": 473.0,
-        "volume_change_pct": -77.5,
-        "avg_buy_per_wallet": 55.52
-      }
+        "tx_count": 256.0,
+        "volume_change_pct": -77.26,
+        "avg_buy_per_wallet": 39.76
+      },
+      "top_tokens": []
     },
     {
       "chain": "Base",
-      "net_inflow": -669.6011010815346,
+      "net_inflow": -9028.247360417088,
       "metrics": {
-        "volume": 108930.91913645668,
-        "buy_volume": 54130.659017687576,
-        "sell_volume": 54800.26011876911,
-        "wallet_count": 474.0,
-        "token_count": 115.0,
-        "token_created_count": 65.0,
+        "volume": 109297.23391356404,
+        "buy_volume": 50134.49327657347,
+        "sell_volume": 59162.74063699056,
+        "wallet_count": 459.0,
+        "token_count": 101.0,
+        "token_created_count": 68.0,
         "token_migrated_count": 0.0,
-        "tx_count": 1041.0,
-        "volume_change_pct": -38.3,
-        "avg_buy_per_wallet": 114.2
-      }
+        "tx_count": 965.0,
+        "volume_change_pct": -3.35,
+        "avg_buy_per_wallet": 109.23
+      },
+      "top_tokens": []
     },
     {
       "chain": "Arc",
-      "net_inflow": 6.150882270880629,
+      "net_inflow": 1167.5149279706775,
       "metrics": {
-        "volume": 6819.18894027088,
-        "buy_volume": 3412.66991127088,
-        "sell_volume": 3406.5190289999996,
-        "wallet_count": 107.0,
-        "token_count": 26.0,
-        "token_created_count": 5.0,
+        "volume": 6794.489455970678,
+        "buy_volume": 3981.002191970678,
+        "sell_volume": 2813.4872640000003,
+        "wallet_count": 98.0,
+        "token_count": 23.0,
+        "token_created_count": 3.0,
         "token_migrated_count": 0.0,
-        "tx_count": 352.0,
-        "volume_change_pct": -41.72,
-        "avg_buy_per_wallet": 31.89
-      }
+        "tx_count": 347.0,
+        "volume_change_pct": -21.05,
+        "avg_buy_per_wallet": 40.62
+      },
+      "top_tokens": []
     },
     {
       "chain": "Ethereum",
-      "net_inflow": 685.02661195777,
+      "net_inflow": 935.0882246689207,
       "metrics": {
-        "volume": 8637.747078836766,
-        "buy_volume": 4661.386845397268,
-        "sell_volume": 3976.360233439498,
-        "wallet_count": 44.0,
-        "token_count": 20.0,
-        "token_created_count": 2.0,
+        "volume": 7147.251738124079,
+        "buy_volume": 4041.1699813964997,
+        "sell_volume": 3106.081756727579,
+        "wallet_count": 36.0,
+        "token_count": 12.0,
+        "token_created_count": 1.0,
         "token_migrated_count": 0.0,
-        "tx_count": 66.0,
-        "volume_change_pct": 86.76,
-        "avg_buy_per_wallet": 105.94
-      }
+        "tx_count": 57.0,
+        "volume_change_pct": -21.23,
+        "avg_buy_per_wallet": 112.25
+      },
+      "top_tokens": []
     }
   ]
 }
