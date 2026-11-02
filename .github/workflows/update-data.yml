@@ -1,0 +1,88 @@
+# update-data.yml — hotspot data pipeline (no user token needed).
+#
+# Runs every 5 minutes on GitHub's servers using the job's built-in
+# GITHUB_TOKEN. Fully independent of Muse.
+#
+# Layout in this repo (main branch):
+#   index.html                        <- static page (GitHub Pages serves this)
+#   .github/workflows/update-data.yml <- this file
+#   .github/workflows/fetch_loop.py   <- fetch script (pulled from main at runtime)
+#
+# Data branch ("data"): data/*.json + tweet-store.json + translation-cache.json
+# The page reads data from:
+#   https://raw.githubusercontent.com/wnsdtk/hotspot/data/data/<file>.json
+# (raw.githubusercontent.com bypasses the Pages rebuild wait.)
+#
+# Upload order for the user (GitHub web UI, main branch):
+#   1. index.html                      (repo root, "Add file > Upload files")
+#   2. .github/workflows/update-data.yml (repo root path, "Add file > Create new file", paste)
+#   3. .github/workflows/fetch_loop.py   (same, paste)
+# Then: Actions tab > "update-data" > "Run workflow" to verify.
+name: update-data
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare data branch and extract loop script
+        run: |
+          set -e
+          git config user.name "hotspot-bot"
+          git config user.email "hotspot-bot@users.noreply.github.com"
+          mkdir -p /tmp/work
+          # fetch_loop.py is versioned on main; the data branch only holds data
+          git show origin/main:.github/workflows/fetch_loop.py > /tmp/work/fetch_loop.py
+          python3 -m py_compile /tmp/work/fetch_loop.py
+          if git ls-remote --heads origin data | grep -q 'refs/heads/data'; then
+            git fetch origin data
+            git checkout data
+          else
+            git checkout --orphan data
+            git rm -rf . || true
+            git commit --allow-empty -m "init data branch" || true
+          fi
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run fetch loop (slow lane once + 30s fast ticks)
+        run: python /tmp/work/fetch_loop.py --out-dir ./data --state-dir .
+
+      - name: Commit and push (rebase once, retry once)
+        run: |
+          set -e
+          git add -A
+          if git diff --cached --quiet; then
+            echo "no changes to push"
+            exit 0
+          fi
+          git commit -m "data: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git pull --rebase origin data || true
+          if ! git push origin data; then
+            echo "push failed, rebasing once and retrying"
+            git pull --rebase origin data
+            git push origin data
+          fi
