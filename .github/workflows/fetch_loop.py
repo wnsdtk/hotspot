@@ -604,8 +604,13 @@ STAT_CHAINS = [
 ]
 
 
-def fetch_liquidity():
+def fetch_liquidity(trench_files=None):
+    """Build liquidity.json. trench_files (optional) = dict from fetch_trenches()
+    used to attach top_tokens (top 3 by 1h volume) per chain."""
     chains = []
+    # map liquidity chain key -> trench file key
+    _TRENCH_MAP = {"bsc": "trench-bsc.json", "solana": "trench-sol.json",
+                   "robinhood": "trench-rb.json"}
     try:
         r = http.get(
             "https://debot.ai/api/edge/launchpad/stats/latest",
@@ -645,10 +650,32 @@ def fetch_liquidity():
                 metrics["volume_change_pct"] = round((vol - pvol) / pvol * 100, 2)
             if num(s.get("wallet_count")) > 0:
                 metrics["avg_buy_per_wallet"] = round(buy / num(s.get("wallet_count")), 2)
+            # top 3 tokens by 1h volume from trench data (for App-style token cards)
+            top_tokens = []
+            try:
+                tf_key = _TRENCH_MAP.get(key)
+                tdata = (trench_files or {}).get(tf_key) or {}
+                toks = tdata.get("tokens") or []
+                toks = sorted(toks, key=lambda t: num(t.get("vol_1h")), reverse=True)[:3]
+                for t in toks:
+                    mc = num(t.get("market_cap"))
+                    top_tokens.append({
+                        "name": t.get("name") or "",
+                        "symbol": t.get("symbol") or "",
+                        "icon": t.get("icon") or "",
+                        "price": mc,
+                        "change_pct": 0,
+                        "buy_volume": 0,
+                        "net_inflow": 0,
+                        "sell_volume": 0,
+                    })
+            except Exception:
+                top_tokens = []
             chains.append({
                 "chain": label,
                 "net_inflow": buy - sell,
                 "metrics": metrics,
+                "top_tokens": top_tokens,
             })
         print(f"  [liquidity] {len(chains)} chains")
     except Exception as e:
@@ -721,6 +748,71 @@ def fetch_douyin_xxapi():
     except Exception as e:
         print(f"  [douyin] xxapi fallback FAILED: {e}", file=sys.stderr)
     return out
+
+
+def build_douyin_rising(hotlist, state_dir):
+    """Compare current douyin word_list against the previous snapshot.
+
+    Snapshot (word -> hot_value) persists in <state_dir>/douyin-snapshot.json,
+    which the workflow commits to the data branch, so it survives across jobs.
+
+    Returns [{word, url, tag}] where tag is '新上榜' (appeared this round)
+    or '飙升' (top-5 hot_value gainers). ~10 items max.
+    First run (no snapshot): returns [] without error.
+    """
+    snap_path = os.path.join(state_dir, "douyin-snapshot.json")
+    prev = load_json(snap_path, None)
+    prev_words = {}
+    if isinstance(prev, dict) and isinstance(prev.get("words"), dict):
+        prev_words = prev["words"]
+    rising = []
+    if prev_words and hotlist:
+        # 新上榜: words in current list but absent from previous snapshot
+        for it in hotlist:
+            w = (it.get("word") or "").strip()
+            if w and w not in prev_words:
+                rising.append({
+                    "word": w,
+                    "url": it.get("url") or ("https://www.douyin.com/search/" + urlquote(w)),
+                    "tag": "新上榜",
+                })
+        # 飙升: top 5 by hot_value increase (positive delta only)
+        deltas = []
+        for it in hotlist:
+            w = (it.get("word") or "").strip()
+            if not w or w not in prev_words:
+                continue
+            d = num(it.get("hot_value")) - num(prev_words.get(w))
+            if d > 0:
+                deltas.append((d, it))
+        deltas.sort(key=lambda x: x[0], reverse=True)
+        for _, it in deltas[:5]:
+            w = (it.get("word") or "").strip()
+            rising.append({
+                "word": w,
+                "url": it.get("url") or ("https://www.douyin.com/search/" + urlquote(w)),
+                "tag": "飙升",
+            })
+        rising = rising[:10]
+    # Refresh snapshot for the next run. Only overwrite when we actually got
+    # data; never wipe a good snapshot with an empty/failed fetch.
+    if hotlist:
+        try:
+            snap = {
+                "updated_at": iso_now(),
+                "words": {(it.get("word") or "").strip(): num(it.get("hot_value"))
+                          for it in hotlist if (it.get("word") or "").strip()},
+            }
+            atomic_write(snap_path, snap)
+        except Exception as e:
+            print(f"  [douyin] snapshot save FAILED: {e}", file=sys.stderr)
+    if not prev_words:
+        print("  [douyin] no previous snapshot -> rising=[] (first run)")
+    else:
+        n_new = sum(1 for r in rising if r["tag"] == "新上榜")
+        n_up = sum(1 for r in rising if r["tag"] == "飙升")
+        print(f"  [douyin] rising={len(rising)} (新上榜={n_new}, 飙升={n_up})")
+    return rising
 
 
 # ------------------------------------------------------- change detection
@@ -1010,7 +1102,7 @@ def fetch_binance(tr_cache):
 # -------------------------------------------------------------------- main
 # Job budget: keep the whole run comfortably under the 5-minute cron slot.
 JOB_BUDGET_S = 275
-FAST_TICK_S = 30
+FAST_TICK_S = 10
 
 
 def slow_lane(out_dir, state_dir, tr_cache, cache_path):
@@ -1045,8 +1137,9 @@ def slow_lane(out_dir, state_dir, tr_cache, cache_path):
         if not dy["trending"] and not dy["hotlist"]:
             print("  [slow] douyin official empty, trying xxapi", file=sys.stderr)
             dy = fetch_douyin_xxapi()
+        dy["rising"] = build_douyin_rising(dy.get("hotlist") or [], state_dir)
         if write_if_changed(os.path.join(out_dir, "douyin.json"), dy):
-            print(f"  [slow] wrote douyin.json trending={len(dy['trending'])} hotlist={len(dy['hotlist'])}")
+            print(f"  [slow] wrote douyin.json trending={len(dy['trending'])} hotlist={len(dy['hotlist'])} rising={len(dy.get('rising', []))}")
     except Exception as e:
         print(f"  [slow] douyin FAILED: {e}", file=sys.stderr)
     # binance (+translations share the budget/cache)
@@ -1061,16 +1154,24 @@ def slow_lane(out_dir, state_dir, tr_cache, cache_path):
 
 
 def fast_tick(out_dir, state_dir, tr_cache, cache_path):
-    """One 30s fast-lane tick. Never raises."""
+    """One 10s fast-lane tick. Never raises."""
+    trench_files = {}
+    pool = {}
     try:
-        trench_files, _ = fetch_trenches()
+        trench_files, pool = fetch_trenches()
         for fname, payload in trench_files.items():
             if write_if_changed(os.path.join(out_dir, fname), payload):
                 print(f"  [fast] wrote {fname} (source={payload.get('source')})")
     except Exception as e:
         print(f"  [fast] trenches FAILED: {e}", file=sys.stderr)
     try:
-        liq = fetch_liquidity()
+        consensus = build_consensus(pool)
+        if write_if_changed(os.path.join(out_dir, "consensus.json"), consensus):
+            print(f"  [fast] wrote consensus.json lowcap={len(consensus['lowcap'])} rest={len(consensus['rest'])}")
+    except Exception as e:
+        print(f"  [fast] consensus FAILED: {e}", file=sys.stderr)
+    try:
+        liq = fetch_liquidity(trench_files)
         if write_if_changed(os.path.join(out_dir, "liquidity.json"), liq):
             print(f"  [fast] wrote liquidity.json ({len(liq.get('chains', []))} chains)")
     except Exception as e:
