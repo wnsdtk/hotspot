@@ -549,6 +549,7 @@ def fetch_trenches():
                 raw = fetch_debot_chain(chain_key)
                 normed = [norm_debot(t, token_chain) for t in raw]
                 source = "debot"
+                pool[chain_key] = normed
                 print(f"  [trench-{chain_key}] debot: {len(normed)} raw")
             except Exception as e2:
                 print(f"  [trench-{chain_key}] debot FAILED too: {e2}", file=sys.stderr)
@@ -752,6 +753,10 @@ def write_if_changed(path, obj):
 # ---------------------------------------------------------------- halfhour tags
 # Narrative-only tags, never pure-gain tags.
 def build_tags(tokens):
+    """Half-hour narrative tags, App-format:
+    #$SYM 赵长鹏提及发酵 / #$SYM 同名代币 / #AI/Agent概念持续发酵 /
+    #BSC链新币最密集 / #$SYM 聪明钱扎堆 / #新币发行加速
+    """
     tags = []
 
     def add(text, coin=None):
@@ -762,29 +767,48 @@ def build_tags(tokens):
             "coin_chain": (coin or {}).get("chain", ""),
         })
 
+    # 1. 人物提及: #${symbol} ${人名}提及发酵
     for t in tokens:
-        s = f"{t.get('symbol','')} {t.get('name','')}"
+        sym = t.get('symbol', '')
+        s = f"{sym} {t.get('name','')}"
         low = s.lower()
         if "何一" in s or "heyibinance" in low:
-            add("何一提及", t)
+            add(f"#{sym} 何一提及发酵", t)
         elif "赵长鹏" in s or "cz_binance" in low:
-            add("赵长鹏提及", t)
+            add(f"#{sym} 赵长鹏提及发酵", t)
         elif "马斯克" in s or re.search(r"(^|[^a-z])elon([^a-z]|$)", low):
-            add("马斯克提及", t)
-    # same symbol on >=2 chains
+            add(f"#{sym} 马斯克提及发酵", t)
+
+    # 2. 同名代币 (>=2 chains): #${symbol} 同名代币
     by_sym = {}
     for t in tokens:
         by_sym.setdefault(t.get("symbol", "").lower(), []).append(t)
     for sym, lst in by_sym.items():
         if sym and len({t.get("chain") for t in lst}) >= 2:
-            add("同名代币", max(lst, key=lambda t: t.get("smart_count", 0)))
+            coin = max(lst, key=lambda t: t.get("smart_count", 0))
+            add(f"#{coin.get('symbol','')} 同名代币", coin)
+
+    # 3. 概念发酵: #${concept}持续发酵 (>=2 coins per concept)
+    concept_groups = {}
     for t in tokens:
-        if t.get("smart_count", 0) >= 50:
-            add("聪明钱扎堆", t)
-    ai_coins = [t for t in tokens if "ai" in (t.get("narrative") or "").lower()]
-    if len(ai_coins) >= 2:
-        add("AI/Agent概念扎堆", max(ai_coins, key=lambda t: t.get("smart_count", 0)))
-    # most new coins (age<=2h) on BSC
+        concepts = set()
+        nar = (t.get("narrative") or "").strip()
+        if nar:
+            concepts.add(nar)
+        # name-based concept detection (Meimei, Tole, etc.)
+        nm = f"{t.get('symbol','')} {t.get('name','')}".lower()
+        if "meimei" in nm:
+            concepts.add("Meimei概念")
+        if "tole" in nm:
+            concepts.add("Tole概念")
+        for c in concepts:
+            concept_groups.setdefault(c, []).append(t)
+    for concept, lst in concept_groups.items():
+        if len(lst) >= 2:
+            coin = max(lst, key=lambda t: t.get("smart_count", 0))
+            add(f"#{concept}持续发酵", coin)
+
+    # 4. BSC链新币最密集
     def age_h(t):
         m = re.match(r"(\d+)分钟前", t.get("age_text", ""))
         if m:
@@ -797,9 +821,20 @@ def build_tags(tokens):
     for t in tokens:
         if age_h(t) <= 2:
             new_count[t.get("chain")] = new_count.get(t.get("chain"), 0) + 1
+    total_new = sum(new_count.values())
     if new_count.get("bsc", 0) >= 2 and new_count["bsc"] >= max(new_count.values()):
         bsc_new = [t for t in tokens if t.get("chain") == "bsc" and age_h(t) <= 2]
-        add("BSC链新币最密集", max(bsc_new, key=lambda t: t.get("vol_1h", 0)) if bsc_new else None)
+        add("#BSC链新币最密集", max(bsc_new, key=lambda t: t.get("vol_1h", 0)) if bsc_new else None)
+
+    # 5. 聪明钱扎堆: #${symbol} 聪明钱扎堆 (smart_count >= 50)
+    for t in tokens:
+        if t.get("smart_count", 0) >= 50:
+            add(f"#{t.get('symbol','')} 聪明钱扎堆", t)
+
+    # 6. 新币发行加速 (new coins this round >= 5)
+    if total_new >= 5:
+        new_coins = [t for t in tokens if age_h(t) <= 2]
+        add("#新币发行加速", max(new_coins, key=lambda t: t.get("vol_1h", 0)) if new_coins else None)
 
     # dedupe by (text, coin_ca), cap ~12
     seen, out = set(), []
