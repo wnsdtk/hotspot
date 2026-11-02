@@ -75,19 +75,30 @@ a{color:var(--blue); text-decoration:none;}
 .hrow{display:flex; align-items:center; gap:8px; padding:9px 4px; border-bottom:1px solid var(--border);
   cursor:pointer;}
 .hrow:last-child{border-bottom:none;}
-.idx{color:var(--muted); font-size:12px; width:20px; flex:none; text-align:center;}
+.idx{color:#9aa4b2; font-size:12px; width:20px; flex:none; text-align:center;}
 .word{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px;}
-.hotv{color:var(--muted); font-size:12px; flex:none;}
+.hotv{color:#c9d1d9; font-size:12px; flex:none; font-weight:600;}
 .badge{font-size:11px; padding:1px 7px; border-radius:9px; flex:none; white-space:nowrap;}
 .badge.green{background:#0f2c1a; color:var(--green); border:1px solid #1c5c33;}
 .badge.red{background:#3a1414; color:#ff7b72; border:1px solid #7a2d2d;}
 .badge.orange{background:#3a2410; color:var(--orange); border:1px solid #7a4d1f;}
 .badge.blue{background:#0f2743; color:var(--blue); border:1px solid #1f4d7a;}
 .badge.gray{background:#2d333b; color:var(--muted); border:1px solid var(--border);}
+.badge.hot{background:#3a1414; color:#ff4d4f; border:1px solid #a02d2d; font-weight:700;}
 .badge.new{background:#0f2743; color:#58a6ff; border:1px solid #1f4d7a; font-weight:700;}
+/* v9: person tint backgrounds for tweet cards */
+.tweet.pt-heyi{background:rgba(255,107,129,.07); border-color:rgba(255,107,129,.25);}
+.tweet.pt-cz{background:rgba(240,185,11,.07); border-color:rgba(240,185,11,.25);}
+.tweet.pt-elon{background:rgba(88,166,255,.07); border-color:rgba(88,166,255,.25);}
+.ccard.pt-heyi{background:rgba(255,107,129,.08); border-color:rgba(255,107,129,.3);}
+.ccard.pt-cz{background:rgba(240,185,11,.08); border-color:rgba(240,185,11,.3);}
+.ccard.pt-elon{background:rgba(88,166,255,.08); border-color:rgba(88,166,255,.3);}
+.dsec.pt-heyi{border-left:3px solid #ff6b81;}
+.dsec.pt-cz{border-left:3px solid #F0B90B;}
+.dsec.pt-elon{border-left:3px solid #58a6ff;}
 .badge.ynarr{background:#2c250e; color:var(--yellow); border:1px solid #6b5a17;}
 .smart.pu{background:#241a3a; color:var(--purple); border-color:#4a3670;}
-.hrow .idx.top3{color:#ff7b72; font-weight:700;}
+.hrow .idx.top3{color:#ff4d4f; font-weight:800; text-shadow:0 0 8px rgba(255,77,79,.4);}
 /* latest-one cards */
 .lcard{background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:10px; margin-bottom:8px; cursor:pointer;}
 .lhead{display:flex; align-items:center; gap:8px; margin-bottom:6px;}
@@ -219,6 +230,8 @@ var XXAPI_DY='https://v2.xxapi.cn/api/douyinhot';
 /* Data lives on the "data" branch; raw.githubusercontent.com serves it
    immediately after push (no Pages rebuild wait) with CORS *. */
 var DATA_BASE='https://raw.githubusercontent.com/wnsdtk/hotspot/data/data/';
+var WORKER='https://snowy-mud-3037.rj982946925.workers.dev';
+var WORKER_POLL_MS=10000; // 10 seconds for tweets/trench
 var DATA_FILES=[
   ['tweets','tweets.json'],['bsc','trench-bsc.json'],['sol','trench-sol.json'],
   ['rb','trench-rb.json'],['consensus','consensus.json'],['liquidity','liquidity.json'],
@@ -288,11 +301,11 @@ function tweetCard(tw){
   var p=personByKey(tw.person);
   var zh=tw.text_zh?'<div class="zh"><span class="zhtag">译</span>'+nl2br(esc(tw.text_zh))+'</div>':'';
   var media=(tw.media||[]).map(function(m){return '<img class="timg" loading="lazy" src="'+esc(m.url)+'" alt="">';}).join('');
-  return '<div class="tweet" data-act="open-url" data-url="'+esc(tw.url||'')+'">'
+  return '<div class="tweet pt-'+(tw.person||'')+'" data-act="open-url" data-url="'+esc(tw.url||'')+'">'
     +'<div class="thead"><span class="avatar">'+esc((p.name||'?').charAt(0))+'</span>'
     +'<span class="tname">'+esc(p.name)+'</span>'
     +'<span class="thandle muted">'+esc(tw.handle||'')+'</span>'
-    +'<span class="spacer"></span><span class="muted small">'+relTime(tw.time)+'</span></div>'
+    +'<span class="spacer"></span><span class="muted small">'+fmtBj(tw.time)+'</span></div>'
     +'<div class="tbody">'+kindBadge(tw.kind)+'<span class="ttext">'+nl2br(esc(tw.text||''))+'</span></div>'
     +zh+(media?'<div class="tmedia">'+media+'</div>':'')
     +'<div class="tlink">查看X原文 →</div></div>';
@@ -311,7 +324,7 @@ function htmlTweets(){
     return '<div class="lcard" data-act="open-url" data-url="'+esc(t.url||'')+'">'
       +'<div class="lhead">'+av
       +'<span><div><span class="lname">'+esc(p.name)+'</span> <span class="thandle muted">'+esc(t.handle||'')+'</span> <span class="badge red">最新</span></div>'
-      +'<div class="muted small">'+relTime(t.time)+'</div></span>'
+      +'<div class="muted small">'+fmtBj(t.time)+'</div></span>'
       +'<span class="spacer"></span><span class="kbadge" style="background:'+p.color+'22;color:'+p.color+';border-color:'+p.color+'55;margin-right:0">'+esc(kn)+'</span></div>'
       +'<div class="lbody">'+nl2br(esc(t.text||''))+'</div></div>';
   }).join('');
@@ -374,7 +387,7 @@ function htmlDyList(){
   if(!dyList.length)h+='<div class="empty">暂无数据</div>';
   else{
     h+=dyList.slice(0,UI.dyN).map(function(it,i){
-      var lb=DY_LABEL[it.label]?'<span class="badge gray">'+esc(DY_LABEL[it.label])+'</span>':'';
+      var lb=DY_LABEL[it.label]?'<span class="badge '+(it.label==3?'hot':'gray')+'">'+esc(DY_LABEL[it.label])+'</span>':'';
       return '<div class="hrow" data-act="open-url" data-url="'+esc(douyinSearch(it.word||''))+'">'
         +'<span class="idx'+(i<3?' top3':'')+'">'+(i+1)+'</span><span class="word">'+esc(it.word||'')+'</span>'+lb
         +'<span class="hotv">'+fmtHot(it.hot_value)+'</span><span class="go">→</span></div>';
@@ -521,8 +534,8 @@ function htmlLiquidity(){
 }
 function htmlTags(){
   var tg=S.data.tags;
-  var h='<div class="card"><div class="sect">📋 半小时热度总结 <span class="muted" style="font-weight:400;font-size:11px">· 每 30 分钟更新</span></div>';
-  (function(){var tu=(S.data.tags_halfhour&&S.data.tags_halfhour.updated_at)||(S.data.tags&&S.data.tags.updated_at)||'';if(tu){var d=new Date(tu);var s=(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);h+='<div class="muted" style="font-size:11px;padding:0 12px 6px">更新于 '+s+' 北京时间 · 每 30 分钟按最新战壕数据更新</div>';}})();
+  var h='<div class="card"><div class="sect">📋 20分钟热度总结 <span class="muted" style="font-weight:400;font-size:11px">· 每 20 分钟更新</span></div>';
+  (function(){var tu=(S.data.tags_halfhour&&S.data.tags_halfhour.updated_at)||(S.data.tags&&S.data.tags.updated_at)||'';if(tu){var d=new Date(tu);var s=(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);h+='<div class="muted" style="font-size:11px;padding:0 12px 6px">更新于 '+s+' 北京时间 · 每 20 分钟按最新战壕数据更新</div>';}})();
   if(!tg||!Array.isArray(tg.tags)||!tg.tags.length)h+='<div class="empty">暂无数据</div>';
   else h+=tg.tags.map(tagRow).join('');
   return h+'</div>';
@@ -568,7 +581,7 @@ function countCards(tws){
       +'<span>引用 '+c.quote+'</span><span>回复 '+c.reply+'</span>'
       +'<span>关注 0</span><span>取关 0</span></div>'
       +'<div class="small muted" style="margin-top:4px">'+(open?'收起 ▲':'展开 ▼')+'</div>';
-    return '<div class="ccard'+(open?' open':'')+'" data-act="daily-person" data-p="'+p.key+'">'+face+'</div>';
+    return '<div class="ccard pt-'+p.key+(open?' open':'')+'" data-act="daily-person" data-p="'+p.key+'">'+face+'</div>';
   }).join('');
 }
 function dailyDetail(tws){
@@ -726,10 +739,165 @@ function handleAct(act,el){
     case 'wb-more':UI.wbN=UI.wbN>=20?10:20;updateSections();break;
     case 'daily-person':{var p=el.getAttribute('data-p');UI.dailyPerson=(UI.dailyPerson===p?null:p);updateSections();break;}
     case 'day':{var dd2=el.getAttribute('data-d');UI.days[dd2]=!UI.days[dd2];updateSections();break;}
-    case 'refresh':refresh();break;
+    case 'refresh':refresh();pollWorkerFast();setUpdTime();break;
   }
 }
+
+/* ============ v9: Worker-based real-time polling (10s for tweets/trench) ============ */
+function workerUrl(u){return WORKER+'/?u='+encodeURIComponent(u);}
+function parseWorkerTweets(html, channel, defaultPerson){
+  var tweets=[];
+  try{
+    var doc=new DOMParser().parseFromString(html,'text/html');
+    var msgs=doc.querySelectorAll('div.tgme_widget_message_wrap');
+    msgs.forEach(function(msg){
+      try{
+        var t=msg.querySelector('div.tgme_widget_message_text');
+        if(!t)return;
+        var text=t.innerText||t.textContent||'';
+        var lines=text.split('\n').map(function(s){return s.trim();}).filter(function(s){return s;});
+        if(lines.length<3)return;
+        // time from <time datetime="">
+        var timeEl=msg.querySelector('time[datetime]');
+        var time=timeEl?timeEl.getAttribute('datetime'):'';
+        // kind detection (simplified)
+        var kind='original';
+        var txt=text.toLowerCase();
+        if(txt.indexOf('转推')>=0||txt.indexOf('retweet')>=0)kind='retweet';
+        else if(txt.indexOf('引用')>=0||txt.indexOf('quote')>=0)kind='quote';
+        else if(txt.indexOf('回复')>=0||txt.indexOf('reply')>=0)kind='reply';
+        // url from 查看原文 link
+        var url='';
+        var links=t.querySelectorAll('a');
+        for(var i=0;i<links.length;i++){
+          var a=links[i], href=a.getAttribute('href')||'';
+          if(href.indexOf('/status/')>=0){url=href;break;}
+        }
+        var idMatch=url.match(/\/status\/(\d+)/);
+        var id=idMatch?idMatch[1]:'tg_'+channel+'_'+time.replace(/[^0-9]/g,'').slice(0,14);
+        // person from channel
+        var person=defaultPerson;
+        var handle=defaultPerson==='heyi'?'@heyibinance':(defaultPerson==='cz'?'@cz_binance':'@elonmusk');
+        // Clean text: take first meaningful lines, skip headers
+        var cleanLines=lines.filter(function(l){
+          return l!=='中文翻译 ——'&&l!=='💬'&&l!=='🌐'&&l!=='🕒'&&!l.startsWith('推文时间:')&&l.length>1;
+        });
+        var mainText=cleanLines.slice(0,8).join('\n').slice(0,500);
+        if(!mainText)return;
+        tweets.push({
+          id:id, person:person, handle:handle,
+          time:time, text:mainText, text_zh:'',
+          kind:kind, media:[], url:url
+        });
+      }catch(e){}
+    });
+  }catch(e){}
+  return tweets;
+}
+function fetchWorkerTweets(){
+  var channels=[
+    {ch:'TechMelonCzHeyi', person:'heyi'},
+    {ch:'TechMelonElonMusk', person:'elon'}
+  ];
+  // heyi channel has both heyi and cz, we'll split by content later (simplified: assign by channel)
+  var jobs=channels.map(function(cfg){
+    return fetch(workerUrl('https://t.me/s/'+cfg.ch),{cache:'no-store'})
+      .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.text();})
+      .then(function(html){return parseWorkerTweets(html,cfg.ch,cfg.person);})
+      .catch(function(){return [];});
+  });
+  return Promise.all(jobs).then(function(results){
+    var all=[];
+    results.forEach(function(arr){all=all.concat(arr);});
+    // Sort by time desc, dedupe by id
+    var seen={}, uniq=[];
+    all.forEach(function(t){if(!seen[t.id]){seen[t.id]=1;uniq.push(t);}});
+    uniq.sort(function(a,b){return (b.time||'').localeCompare(a.time||'');});
+    return {updated_at:new Date().toISOString(), tweets:uniq.slice(0,60)};
+  });
+}
+function fetchWorkerTrench(chain){
+  var cmap={bsc:'bsc', sol:'solana', rb:'robinhood'};
+  var url='https://debot.ai/api/dashboard/chain/recommend/hot_token?chain='+(cmap[chain]||chain);
+  return fetch(workerUrl(url),{cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
+    .then(function(d){
+      var arr=(d&&d.data)||[];
+      var tokens=arr.map(function(t){
+        var mi=t.market_info||{}, psi=t.pair_summary_info||{}, si=t.social_info||{};
+        return {
+          address:t.address||'', symbol:t.symbol||'', name:t.name||'',
+          icon:t.logo||'', chain:t.chain||chain,
+          market_cap:Number(mi.mkt_cap)||0,
+          liquidity:Number(psi.liquidity)||0,
+          vol_1h:Number(mi.volume)||0,
+          smart_count:Number(t.kol_count)||0,
+          smart_label:'KOL×'+(Number(t.kol_count)||0),
+          age_text:'', creation_timestamp:Number(t.creation_timestamp)||0,
+          twitter:si.dx_twitter||'', website:t.website||'',
+          narrative:'', ca:t.address||''
+        };
+      });
+      return {updated_at:new Date().toISOString(), tokens:tokens.slice(0,30), source:'debot'};
+    })
+    .catch(function(){return null;});
+}
+function pollWorkerFast(){
+  // Tweets every 10s
+  fetchWorkerTweets().then(function(d){
+    if(d&&d.tweets&&d.tweets.length){
+      S.data.tweets=d;
+      updateSections();
+      setUpdTime();
+    }
+  });
+  // Trench every 10s (stagger slightly)
+  ['bsc','sol','rb'].forEach(function(k,i){
+    setTimeout(function(){
+      fetchWorkerTrench(k).then(function(d){
+        if(d&&d.tokens){
+          S.data[k]=d;
+          updateSections();
+        }
+      });
+    }, i*1500);
+  });
+}
+function setUpdTime(){
+  var el=document.getElementById('upd-time');
+  if(el){
+    var d=new Date();
+    var s=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2);
+    el.textContent=s;
+  }
+}
+function fetchWorkerDouyin(){
+  return fetch(workerUrl('https://www.douyin.com/aweme/v1/web/hot/search/list/'),{cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
+    .then(function(d){
+      var wl=(d&&d.data&&d.data.word_list)||[];
+      var tl=(d&&d.data&&d.data.trending_list)||[];
+      var hotlist=wl.map(function(w){
+        return {word:w.word||'', hot_value:w.hot_value||0, label:w.label||0};
+      });
+      var trending=tl.map(function(t){
+        return {word:t.word||''};
+      });
+      return {updated_at:new Date().toISOString(), trending:trending, hotlist:hotlist, rising:[]};
+    })
+    .catch(function(){return null;});
+}
+function pollWorkerSlow(){
+  // Douyin every 5 min via Worker
+  fetchWorkerDouyin().then(function(d){
+    if(d&&d.hotlist&&d.hotlist.length){
+      S.data.douyin=d;
+      updateSections();
+    }
+  });
+}
 /* ============ refresh / boot ============ */
+
 function refresh(){
   var jobs=DATA_FILES.map(function(j){return fetchJson(dataUrl(j[1])).then(function(d){return [j[0],d];});});
   jobs.push(fetchJson(XXAPI_WB).then(function(d){return ['wb',d];}));
@@ -759,6 +927,11 @@ function boot(){
   updateSections();
   refresh();
   setInterval(refresh,POLL_MS);
+  // v9: Worker 10s polling for tweets/trench (real-time)
+  setTimeout(pollWorkerFast, 3000); // first poll after 3s
+  setInterval(pollWorkerFast, WORKER_POLL_MS);
+  setTimeout(pollWorkerSlow, 8000);
+  setInterval(pollWorkerSlow, 300000); // 5 min
 }
 document.addEventListener('click',function(e){
   var el=e.target&&e.target.closest?e.target.closest('[data-act]'):null;
