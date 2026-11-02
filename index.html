@@ -84,6 +84,17 @@ a{color:var(--blue); text-decoration:none;}
 .badge.orange{background:#3a2410; color:var(--orange); border:1px solid #7a4d1f;}
 .badge.blue{background:#0f2743; color:var(--blue); border:1px solid #1f4d7a;}
 .badge.gray{background:#2d333b; color:var(--muted); border:1px solid var(--border);}
+.badge.new{background:#0f2743; color:#58a6ff; border:1px solid #1f4d7a; font-weight:700;}
+.badge.ynarr{background:#2c250e; color:var(--yellow); border:1px solid #6b5a17;}
+.smart.pu{background:#241a3a; color:var(--purple); border-color:#4a3670;}
+.hrow .idx.top3{color:#ff7b72; font-weight:700;}
+/* latest-one cards */
+.lcard{background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:10px; margin-bottom:8px; cursor:pointer;}
+.lhead{display:flex; align-items:center; gap:8px; margin-bottom:6px;}
+.lavatar{width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; flex:none;}
+.lname{font-weight:700; font-size:14px;}
+.lbody{font-size:13px; word-break:break-word; color:var(--text);}
+.lsub{font-size:12px; color:var(--muted); margin-bottom:8px;}
 .go{color:var(--muted); flex:none;}
 .morebtn{display:block; width:100%; margin-top:8px; background:var(--card2); color:var(--blue);
   border:1px solid var(--border); border-radius:8px; padding:8px; font-size:13px; cursor:pointer;}
@@ -175,7 +186,7 @@ var PEOPLE=[
   {key:'cz',   name:'赵长鹏', color:'#F0B90B'},
   {key:'elon', name:'马斯克', color:'#58a6ff'}
 ];
-var KIND_NAME={original:'原创', retweet:'转推', quote:'引用', reply:'回复'};
+var KIND_NAME={original:'原创', retweet:'转推', quote:'引用', reply:'回复', follow:'新增关注'};
 var DEBOT_SLUG={sol:'solana', bsc:'bsc', robinhood:'robinhood'};
 var CHAIN_ORDER=['BSC','Solana','Robinhood','OKX','Base','Arc','Ethereum'];
 var CHAIN_COLOR={BSC:'#F0B90B', Solana:'#A371FF', Robinhood:'#00C805'};
@@ -273,17 +284,22 @@ function htmlTweets(){
   var mini=PEOPLE.map(function(p){
     var t=null;
     for(var i=0;i<tws.length;i++)if(tws[i].person===p.key){t=tws[i];break;}
-    if(!t)return '<div class="mini"><div class="mini-name">'+esc(p.name)+'</div><div class="empty">暂无数据</div></div>';
-    return '<div class="mini" data-act="open-url" data-url="'+esc(t.url||'')+'">'
-      +'<div class="mini-name">📌 '+esc(p.name)+' <span class="muted small">'+relTime(t.time)+'</span></div>'
-      +'<div class="mini-text">'+esc(trunc(t.text||'',70))+'</div></div>';
+    var av='<span class="lavatar" style="background:'+p.color+'22;color:'+p.color+'">'+esc(p.name.charAt(0))+'</span>';
+    if(!t)return '<div class="lcard">'+ '<div class="lhead">'+av+'<span class="lname">'+esc(p.name)+'</span></div><div class="empty">暂无数据</div></div>';
+    var kn=KIND_NAME[t.kind]||t.kind||'';
+    return '<div class="lcard" data-act="open-url" data-url="'+esc(t.url||'')+'">'
+      +'<div class="lhead">'+av
+      +'<span><div><span class="lname">'+esc(p.name)+'</span> <span class="thandle muted">'+esc(t.handle||'')+'</span> <span class="badge red">最新</span></div>'
+      +'<div class="muted small">'+relTime(t.time)+'</div></span>'
+      +'<span class="spacer"></span><span class="kbadge" style="background:'+p.color+'22;color:'+p.color+';border-color:'+p.color+'55;margin-right:0">'+esc(kn)+'</span></div>'
+      +'<div class="lbody">'+nl2br(esc(t.text||''))+'</div></div>';
   }).join('');
   var chips=[{k:'all',t:'全部'}].concat(PEOPLE.map(function(p){return {k:p.key,t:p.name};})).map(function(f){
     return '<button class="chip'+(UI.filter===f.k?' on':'')+'" data-act="tweet-filter" data-f="'+f.k+'">'+esc(f.t)+'</button>';
   }).join('');
   var list=tws.filter(function(t){return UI.filter==='all'||t.person===UI.filter;}).map(tweetCard).join('');
   return '<div class="card"><div class="sect">大佬推文 · 最新</div>'
-    +'<div class="minirow">'+mini+'</div>'
+    +'<div class="lsub">📌 最新一条 · 三人分开 · 各自最新一条</div>'+mini
     +'<div class="chips">'+chips+'</div>'
     +'<div class="tlist">'+(list||'<div class="empty">暂无数据</div>')+'</div></div>';
 }
@@ -327,7 +343,7 @@ function htmlDyRise(){
     var t=r.t,url=t.url||douyinSearch(t.word||'');
     var b=r.badge==='new'?'<span class="badge red">新上榜</span>':'<span class="badge orange">飙升</span>';
     return '<div class="hrow" data-act="open-url" data-url="'+esc(url)+'">'
-      +'<span class="word">'+esc(t.word||'')+'</span>'+b+'<span class="go">→</span></div>';
+      +'<span class="word">'+esc(t.word||'')+'</span>'+b+'<span class="badge blue">抖音</span><span class="go">→</span></div>';
   }).join('');
   return h+'</div>';
 }
@@ -339,7 +355,7 @@ function htmlDyList(){
     h+=dyList.slice(0,UI.dyN).map(function(it,i){
       var lb=DY_LABEL[it.label]?'<span class="badge gray">'+esc(DY_LABEL[it.label])+'</span>':'';
       return '<div class="hrow" data-act="open-url" data-url="'+esc(douyinSearch(it.word||''))+'">'
-        +'<span class="idx">'+(i+1)+'</span><span class="word">'+esc(it.word||'')+'</span>'+lb
+        +'<span class="idx'+(i<3?' top3':'')+'">'+(i+1)+'</span><span class="word">'+esc(it.word||'')+'</span>'+lb
         +'<span class="hotv">'+fmtHot(it.hot_value)+'</span><span class="go">→</span></div>';
     }).join('');
     if(dyList.length>10)h+='<button class="morebtn" data-act="dy-more">'+(UI.dyN>=20?'收起':'展开更多（20条）')+'</button>';
@@ -353,7 +369,7 @@ function htmlWbList(){
   else{
     h+=wbList.slice(0,UI.wbN).map(function(it,i){
       return '<div class="hrow" data-act="open-url" data-url="'+esc(weiboSearch(it.title||''))+'">'
-        +'<span class="idx">'+(i+1)+'</span><span class="word">'+esc(it.title||'')+'</span>'
+        +'<span class="idx'+(i<3?' top3':'')+'">'+(i+1)+'</span><span class="word">'+esc(it.title||'')+'</span>'
         +'<span class="hotv">'+esc(it.hot||'')+'</span><span class="go">→</span></div>';
     }).join('');
     if(wbList.length>10)h+='<button class="morebtn" data-act="wb-more">'+(UI.wbN>=20?'收起':'展开更多（20条）')+'</button>';
@@ -361,6 +377,15 @@ function htmlWbList(){
   return h+'</div>';
 }
 /* ============ 战壕 ============ */
+function ageMin(t){
+  var s=String((t&&t.age_text)||'');
+  if(/刚刚/.test(s))return 0;
+  var m=s.match(/(\d+)\s*分钟前/);if(m)return +m[1];
+  m=s.match(/(\d+)\s*小时前/);if(m)return +m[1]*60;
+  m=s.match(/(\d+)\s*天前/);if(m)return +m[1]*1440;
+  return 99999;
+}
+function isNewCoin(t){return ageMin(t)<=120;}
 function coinCard(t,showHist){
   t=t||{};
   var url=debotUrl(t.chain,t.ca);
@@ -370,14 +395,17 @@ function coinCard(t,showHist){
   var xNarr=t.x_url||xSearch(t.name||t.symbol||'');
   var hist=(showHist&&t.history_highest_mcap!=null&&t.history_highest_mcap!=='')
     ?'<div class="hist">历史最高 '+fmtMoney(t.history_highest_mcap)+'</div>':'';
-  var narr=t.narrative?'<div class="cnarr">#'+esc(t.narrative)+'</div>':'';
+  var narr=t.narrative?'<span class="badge ynarr">'+esc(t.narrative)+'</span>':'';
+  var newb=isNewCoin(t)?'<span class="badge new">NEW</span>':'';
   var iconHtml=t.icon?'<img loading="lazy" src="'+esc(t.icon)+'" alt="" onerror="this.remove()">':esc((t.symbol||t.name||'?').charAt(0));
+  var ageTx=t.age_text?esc(t.age_text)+'上线':'';
   return '<div class="coin">'
     +'<div class="chead"><span class="icon">'+iconHtml+'</span>'
-    +'<span class="cname" data-act="open-url" data-url="'+esc(url)+'">'+esc(t.name||t.symbol||'—')+'</span>'
-    +'<span class="smart">'+smart+'</span></div>'
-    +'<div class="cinfo">市值 '+fmtMoney(t.market_cap)+' · 流动性 '+fmtMoney(t.liquidity)+' · 1h量 '+fmtMoney(t.vol_1h)+' · '+esc(t.age_text||'')+'</div>'
-    +narr+hist
+    +'<span class="cname" data-act="open-url" data-url="'+esc(url)+'">'+esc(t.symbol||'')+' '+esc(t.name||'')+'</span>'
+    +newb+narr
+    +'<span class="smart pu">'+smart+'</span></div>'
+    +'<div class="cinfo">市值 '+fmtMoney(t.market_cap)+' · 流动性 '+fmtMoney(t.liquidity)+' · 1h量 '+fmtMoney(t.vol_1h)+(ageTx?' · '+ageTx:'')+'</div>'
+    +hist
     +'<div class="btnrow">'
     +'<button class="cbtn ca" data-act="copy" data-ca="'+esc(ca)+'" title="点击复制">'+esc(caTrunc)+'</button>'
     +'<button class="cbtn" data-act="copy" data-ca="'+esc(ca)+'">复制</button>'
@@ -438,16 +466,20 @@ function htmlConsensus(){
 }
 function htmlChain(key,title,color){
   var d=S.data[key];
-  var cards=(!d||!Array.isArray(d.tokens)||!d.tokens.length)
-    ?'<div class="empty">暂无数据</div>'
-    :d.tokens.map(function(t){return coinCard(t,false);}).join('');
-  var src=(d&&d.source)?' <span class="src muted small">· '+esc(d.source)+'</span>':'';
-  return '<div class="card"><div class="sect" style="color:'+color+'">'+esc(title)+src+'</div>'
-    +'<div class="coinlist" style="background:'+color+'26">'+cards+'</div></div>';
+  var toks=(d&&Array.isArray(d.tokens))?d.tokens:[];
+  var fresh=toks.filter(isNewCoin), rest=toks.filter(function(t){return !isNewCoin(t);});
+  var cards='';
+  if(!toks.length)cards='<div class="empty">暂无数据</div>';
+  else{
+    if(fresh.length)cards+='<div class="subhead" style="color:var(--green)">🆕 2 小时内新币 · 热度优先</div>'+fresh.map(function(t){return coinCard(t,false);}).join('');
+    if(rest.length)cards+='<div class="subhead" style="color:var(--orange)">🔥 2 天内热门</div>'+rest.map(function(t){return coinCard(t,false);}).join('');
+  }
+  var meta=toks.length+' 个币'+((d&&d.source)?' · 数据源 '+esc(d.source):'');
+  return '<div class="card"><div class="sect" style="color:'+color+'">'+esc(title)+' <span class="muted small" style="color:var(--muted);font-weight:400">'+meta+'</span></div>'
+    +'<div class="coinlist" style="background:'+color+'33">'+cards+'</div></div>';
 }
 /* ============ 当日总结 ============ */
 function countCards(tws){
-  var today=todayBj();
   return PEOPLE.map(function(p){
     var mine=tws.filter(function(t){return t.person===p.key;});
     var c={original:0,retweet:0,quote:0,reply:0};
@@ -459,26 +491,42 @@ function countCards(tws){
       +'<span>引用 '+c.quote+'</span><span>回复 '+c.reply+'</span>'
       +'<span>关注 0</span><span>取关 0</span></div>'
       +'<div class="small muted" style="margin-top:4px">'+(open?'收起 ▲':'展开 ▼')+'</div>';
-    var hist='';
-    if(open){
-      var todays=mine.filter(function(t){return bjDate(t.time)===today;})
-        .sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);});
-      hist='<div class="chist">'+(todays.length?todays.map(function(t){
-        var zh=t.text_zh?'<div class="zh" style="margin-top:6px"><span class="zhtag">译</span>'+nl2br(esc(t.text_zh))+'</div>':'';
-        return '<div class="histitem"><span class="htime">'+fmtBj(t.time)+'</span>'+kindBadge(t.kind)
-          +'<div style="margin-top:4px">'+nl2br(esc(t.text||''))+'</div>'+zh
-          +'<div class="tlink" data-act="open-url" data-url="'+esc(t.url||'')+'">查看X原文 →</div></div>';
-      }).join(''):'<div class="empty">今日暂无动态</div>')+'</div>';
-    }
-    return '<div class="ccard'+(open?' open':'')+'" data-act="daily-person" data-p="'+p.key+'">'+face+hist+'</div>';
+    return '<div class="ccard'+(open?' open':'')+'" data-act="daily-person" data-p="'+p.key+'">'+face+'</div>';
   }).join('');
+}
+function dailyDetail(tws){
+  var key=UI.dailyPerson;
+  if(!key)return '';
+  var p=null,i;
+  for(i=0;i<PEOPLE.length;i++){if(PEOPLE[i].key===key){p=PEOPLE[i];break;}}
+  if(!p)return '';
+  var today=todayBj();
+  var handle='';
+  var todays=tws.filter(function(t){
+    if(t.person!==key)return false;
+    if(!handle&&t.handle)handle=t.handle;
+    return bjDate(t.time)===today;
+  }).sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);});
+  var items=todays.length?todays.map(function(t){
+    var zh=t.text_zh?'<div class="zh"><span class="zhtag">译</span>'+nl2br(esc(t.text_zh))+'</div>':'';
+    return '<div class="histitem"><span class="htime">'+fmtBj(t.time)+'</span>'+kindBadge(t.kind)
+      +'<div style="margin-top:4px">'+nl2br(esc(t.text||''))+'</div>'+zh
+      +'<div class="tlink" data-act="open-url" data-url="'+esc(t.url||'')+'">查看X原文 →</div></div>';
+  }).join(''):'<div class="empty">今日暂无动态</div>';
+  var htext=esc(p.name)+' · 今日动态';
+  if(handle)htext+=' <span class="thandle muted">'+esc(handle)+'</span>';
+  htext+=' <span class="muted small">· 共 '+todays.length+' 条 · 按时间倒序</span>';
+  return '<div class="card"><div class="sect"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+esc(p.color||'#8b949e')+';margin-right:6px"></span>'+htext
+    +' <span class="spacer"></span><span class="tlink" style="margin-top:0" data-act="daily-person" data-p="'+esc(key)+'">收起 ▲</span></div>'
+    +'<div class="chist" style="border-top:none;padding-top:0;margin-top:0">'+items+'</div></div>';
 }
 function htmlCounts(){
   var d=S.data.tweets;
   var tws=(d&&Array.isArray(d.tweets))?d.tweets.slice().sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);}):[];
   return '<div class="card"><div class="sect">📝 当日总结</div>'
     +'<div class="datehead">'+esc(todayBj())+'</div>'
-    +'<div class="countcards">'+countCards(tws)+'</div></div>';
+    +'<div class="countcards">'+countCards(tws)+'</div></div>'
+    +dailyDetail(tws);
 }
 function htmlDaily(){
   var dd=S.data.daily;
@@ -537,9 +585,9 @@ var SECTIONS=[
   {id:'sec-liq',     sig:function(){return sigData(S.data.liquidity)+'|'+(UI.expanded.liq?'1':'0')+'|'+JSON.stringify(UI.liqChains);}, html:htmlLiquidity},
   {id:'sec-tags',    sig:function(){return sigData(S.data.tags);}, html:htmlTags},
   {id:'sec-cons',    sig:function(){return sigData(S.data.consensus)+'|'+(UI.expanded.consensus?'1':'0');}, html:htmlConsensus},
-  {id:'sec-bsc',     sig:function(){return sigData(S.data.bsc);}, html:function(){return htmlChain('bsc','BSC战壕',CHAIN_COLOR.BSC);}},
-  {id:'sec-sol',     sig:function(){return sigData(S.data.sol);}, html:function(){return htmlChain('sol','Solana战壕',CHAIN_COLOR.Solana);}},
-  {id:'sec-rb',      sig:function(){return sigData(S.data.rb);}, html:function(){return htmlChain('rb','Robinhood战壕',CHAIN_COLOR.Robinhood);}},
+  {id:'sec-bsc',     sig:function(){return sigData(S.data.bsc);}, html:function(){return htmlChain('bsc','BSC 战壕',CHAIN_COLOR.BSC);}},
+  {id:'sec-sol',     sig:function(){return sigData(S.data.sol);}, html:function(){return htmlChain('sol','Solana 战壕',CHAIN_COLOR.Solana);}},
+  {id:'sec-rb',      sig:function(){return sigData(S.data.rb);}, html:function(){return htmlChain('rb','Robinhood 战壕',CHAIN_COLOR.Robinhood);}},
   {id:'sec-counts',  sig:function(){return sigData(S.data.tweets)+'|'+(UI.dailyPerson||'');}, html:htmlCounts},
   {id:'sec-daily',   sig:function(){return sigData(S.data.daily)+'|'+JSON.stringify(UI.days);}, html:htmlDaily},
   {id:'sec-binance', sig:function(){return sigData(S.data.binance);}, html:htmlBinance}
