@@ -105,6 +105,27 @@ a{color:var(--blue); text-decoration:none;}
 .metrics{padding:0 10px 10px;}
 .mrow{display:flex; justify-content:space-between; padding:5px 0; font-size:13px;
   border-top:1px dashed var(--border);}
+/* liquidity rich */
+.pos{color:var(--green);} .neg{color:var(--red);}
+.up{color:var(--green);} .dn{color:var(--red);}
+.liqtitle{display:flex;align-items:center;gap:8px;padding:10px 10px 6px;font-weight:700;font-size:14px;}
+.tfbadge{font-size:11px;color:var(--muted);border:1px solid var(--border);border-radius:4px;padding:2px 6px;}
+.netflow{margin-left:auto;font-size:13px;font-weight:700;white-space:nowrap;}
+.tokrow{display:flex;gap:8px;padding:4px 10px 8px;}
+.tok{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;min-width:0;}
+.tok .tname{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tok .tprice{font-size:14px;font-weight:700;margin-top:4px;}
+.tok .tmeta{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.6;}
+.bsbar{padding:0 10px 4px;}
+.bsbar .bar{height:8px;border-radius:4px;overflow:hidden;display:flex;background:var(--card);}
+.bsbar .buy{background:var(--green);} .bsbar .sell{background:var(--red);}
+.bsbar .mid{text-align:center;font-size:12px;font-weight:700;margin:6px 0 2px;}
+.bsbar .ends{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);}
+.mgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:8px 10px 12px;}
+.mcell{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;min-width:0;}
+.mcell .mk{font-size:11px;color:var(--muted);}
+.mcell .mv{font-size:14px;font-weight:700;margin-top:4px;}
+.mcell .mv .up,.mcell .mv .dn{font-size:11px;font-weight:400;}
 /* tags */
 .tagrow{padding:9px 4px; border-bottom:1px solid var(--border); font-size:13px;}
 .tagrow:last-child{border-bottom:none;}
@@ -386,7 +407,7 @@ function ageMin(t){
   return 99999;
 }
 function isNewCoin(t){return ageMin(t)<=120;}
-function coinCard(t,showHist){
+function coinCard(t,showHist,color){
   t=t||{};
   var url=debotUrl(t.chain,t.ca);
   var smart=esc(t.smart_label||'聪明钱')+'×'+(t.smart_count==null?'—':esc(t.smart_count));
@@ -399,7 +420,8 @@ function coinCard(t,showHist){
   var newb=isNewCoin(t)?'<span class="badge new">NEW</span>':'';
   var iconHtml=t.icon?'<img loading="lazy" src="'+esc(t.icon)+'" alt="" onerror="this.remove()">':esc((t.symbol||t.name||'?').charAt(0));
   var ageTx=t.age_text?esc(t.age_text)+'上线':'';
-  return '<div class="coin">'
+  var coinStyle=color?(' style="background:'+color+'26;border-color:'+color+'55"'):'';
+  return '<div class="coin"'+coinStyle+'>'
     +'<div class="chead"><span class="icon">'+iconHtml+'</span>'
     +'<span class="cname" data-act="open-url" data-url="'+esc(url)+'">'+esc(t.symbol||'')+' '+esc(t.name||'')+'</span>'
     +newb+narr
@@ -420,6 +442,49 @@ function tagRow(g){
   if(g.coin_ca)return '<div class="tagrow link" data-act="open-url" data-url="'+esc(debotUrl(g.coin_chain,g.coin_ca))+'">'+inner+'<span class="go">→</span></div>';
   return '<div class="tagrow">'+inner+'</div>';
 }
+function fmtSigned(v){
+  var n=Number(v);if(isNaN(n))return '—';
+  return (n>=0?'+':'')+fmtMoney(n);
+}
+function liqChainDetail(c){
+  var m=c.metrics||{};
+  var net=Number(c.net_inflow)||0;
+  var buy=Number(m.buy_volume)||0, sell=Number(m.sell_volume)||0;
+  var tot=buy+sell, bp=tot>0?Math.round(buy/tot*100):50;
+  var h='<div class="liqtitle">'+esc(c.chain)+' 实时指标<span class="tfbadge">1H</span>'
+    +'<span class="netflow '+(net>=0?'pos':'neg')+'">24H 净流入 '+fmtSigned(net)+'</span></div>';
+  var toks=Array.isArray(c.top_tokens)?c.top_tokens.slice(0,3):[];
+  if(toks.length){
+    h+='<div class="tokrow">'+toks.map(function(t){
+      var chg=Number(t.change_pct), ptx='';
+      if(!isNaN(chg))ptx=' <span class="'+(chg>=0?'up':'dn')+'">'+(chg>=0?'↗ +':'↘ ')+chg+'%</span>';
+      return '<div class="tok"><div class="tname">'+esc(t.symbol||t.name||'')+'</div>'
+        +'<div class="tprice">'+esc(t.price||'')+ptx+'</div>'
+        +'<div class="tmeta">买入 '+esc(t.buy||'')+'<br>净流入 '+esc(t.net||'')+'<br>卖出 '+esc(t.sell||'')+'</div></div>';
+    }).join('')+'</div>';
+  }
+  h+='<div class="bsbar"><div class="bar"><div class="buy" style="width:'+bp+'%"></div><div class="sell" style="width:'+(100-bp)+'%"></div></div>'
+    +'<div class="mid '+(net>=0?'pos':'neg')+'">净流入 '+fmtSigned(net)+'</div>'
+    +'<div class="ends"><span>买入量 '+fmtMoney(buy)+'</span><span>卖出量 '+fmtMoney(sell)+'</span></div></div>';
+  var cells=[
+    ['交易额',m.volume,m.volume_change_pct],
+    ['钱包平均买入量',m.avg_buy_per_wallet,null],
+    ['活跃代币数',m.token_count,null],
+    ['活跃钱包数',m.wallet_count,null],
+    ['创建代币数',m.token_created_count,null],
+    ['迁移代币数',m.token_migrated_count,null]
+  ];
+  h+='<div class="mgrid">'+cells.map(function(x){
+    var ptx='',pct=x[2];
+    if(pct!=null&&pct!==''&&!isNaN(Number(pct))){
+      var pn=Number(pct);
+      ptx=' <span class="'+(pn>=0?'up':'dn')+'">'+(pn>=0?'↗ +':'↘ ')+pn+'%</span>';
+    }
+    var v=x[1], vtx=(typeof v==='number')?fmtVal(v):esc(v==null?'—':v);
+    return '<div class="mcell"><div class="mk">'+x[0]+'</div><div class="mv">'+vtx+ptx+'</div></div>';
+  }).join('')+'</div>';
+  return h;
+}
 function htmlLiquidity(){
   var d=S.data.liquidity,open=!!UI.expanded.liq;
   var h='<div class="card"><div class="sect tog" data-act="toggle" data-key="liq">💧 公链流动性 <span class="chev">'+(open?'▲':'▼')+'</span></div>';
@@ -431,13 +496,12 @@ function htmlLiquidity(){
         d.chains.filter(function(c){return CHAIN_ORDER.indexOf(c.chain)<0;}).map(function(c){return c.chain;}));
       h+=ordered.map(function(n){
         var c=byName[n],copen=!!UI.liqChains[n];
-        var mrows=copen?'<div class="metrics">'+Object.keys(c.metrics||{}).map(function(k){
-          return '<div class="mrow"><span class="muted">'+esc(LIQ_LABEL[k]||k)+'</span><span>'+fmtVal(c.metrics[k])+'</span></div>';
-        }).join('')+'</div>':'';
+        var detail=copen?liqChainDetail(c):'';
+        var net=Number(c.net_inflow)||0;
         return '<div class="chain"><div class="chainrow" data-act="toggle" data-key="liqchain:'+esc(n)+'">'
           +'<span class="chainname">'+esc(n)+'</span><span class="spacer"></span>'
-          +'<span class="muted small">净流入</span> <b>'+fmtMoney(c.net_inflow)+'</b>'
-          +'<span class="chev">'+(copen?'▲':'▼')+'</span></div>'+mrows+'</div>';
+          +'<span class="muted small">净流入</span> <b class="'+(net>=0?'pos':'neg')+'">'+fmtSigned(net)+'</b>'
+          +'<span class="chev">'+(copen?'▲':'▼')+'</span></div>'+detail+'</div>';
       }).join('');
     }
   }
@@ -471,8 +535,8 @@ function htmlChain(key,title,color){
   var cards='';
   if(!toks.length)cards='<div class="empty">暂无数据</div>';
   else{
-    if(fresh.length)cards+='<div class="subhead" style="color:var(--green)">🆕 2 小时内新币 · 热度优先</div>'+fresh.map(function(t){return coinCard(t,false);}).join('');
-    if(rest.length)cards+='<div class="subhead" style="color:var(--orange)">🔥 2 天内热门</div>'+rest.map(function(t){return coinCard(t,false);}).join('');
+    if(fresh.length)cards+='<div class="subhead" style="color:var(--green)">🆕 2 小时内新币 · 热度优先</div>'+fresh.map(function(t){return coinCard(t,false,color);}).join('');
+    if(rest.length)cards+='<div class="subhead" style="color:var(--orange)">🔥 2 天内热门</div>'+rest.map(function(t){return coinCard(t,false,color);}).join('');
   }
   var meta=toks.length+' 个币'+((d&&d.source)?' · 数据源 '+esc(d.source):'');
   return '<div class="card"><div class="sect" style="color:'+color+'">'+esc(title)+' <span class="muted small" style="color:var(--muted);font-weight:400">'+meta+'</span></div>'
@@ -638,7 +702,7 @@ function handleAct(act,el){
   switch(act){
     case 'tab':switchTab(el.getAttribute('data-tab'));break;
     case 'tweet-filter':UI.filter=el.getAttribute('data-f');updateSections();break;
-    case 'open-url':{var u=el.getAttribute('data-url');if(u)window.open(u,'_blank','noopener');break;}
+    case 'open-url':{var u=el.getAttribute('data-url');if(!u)break;if(u.indexOf('debot.ai')>=0){location.href=u;}else{window.open(u,'_blank','noopener');}break;}
     case 'copy':copyText(el.getAttribute('data-ca')||'',el);break;
     case 'toggle':{
       var k=el.getAttribute('data-key');
