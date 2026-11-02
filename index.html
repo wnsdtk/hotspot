@@ -407,16 +407,28 @@ function ageMin(t){
   return 99999;
 }
 function isNewCoin(t){return ageMin(t)<=120;}
-function coinCard(t,showHist,color){
+var CHAIN_META={
+  bsc:{name:'BSC',color:'#F0B90B'},
+  sol:{name:'Solana',color:'#A371FF'},
+  solana:{name:'Solana',color:'#A371FF'},
+  robinhood:{name:'Robinhood',color:'#00C805'}
+};
+function chainBadge(chain){
+  var m=CHAIN_META[String(chain||'').toLowerCase()];
+  if(!m)return '';
+  return '<span class="badge" style="background:'+m.color+'22;color:'+m.color+';border:1px solid '+m.color+'55">'+m.name+'</span>';
+}
+function coinCard(t,showHist,color,showChain){
   t=t||{};
   var url=debotUrl(t.chain,t.ca);
   var smart=esc(t.smart_label||'聪明钱')+'×'+(t.smart_count==null?'—':esc(t.smart_count));
   var ca=t.ca||'';
   var caTrunc=ca.length>12?ca.slice(0,6)+'…'+ca.slice(-4):(ca||'—');
   var xNarr=t.x_url||xSearch(t.name||t.symbol||'');
-  var hist=(showHist&&t.history_highest_mcap!=null&&t.history_highest_mcap!=='')
+  var hist=(showHist&&Number(t.history_highest_mcap)>0)
     ?'<div class="hist">历史最高 '+fmtMoney(t.history_highest_mcap)+'</div>':'';
   var narr=t.narrative?'<span class="badge ynarr">'+esc(t.narrative)+'</span>':'';
+  var chainb=showChain?chainBadge(t.chain):'';
   var newb=isNewCoin(t)?'<span class="badge new">NEW</span>':'';
   var iconHtml=t.icon?'<img loading="lazy" src="'+esc(t.icon)+'" alt="" onerror="this.remove()">':esc((t.symbol||t.name||'?').charAt(0));
   var ageTx=t.age_text?esc(t.age_text)+'上线':'';
@@ -424,7 +436,7 @@ function coinCard(t,showHist,color){
   return '<div class="coin"'+coinStyle+'>'
     +'<div class="chead"><span class="icon">'+iconHtml+'</span>'
     +'<span class="cname" data-act="open-url" data-url="'+esc(url)+'">'+esc(t.symbol||'')+' '+esc(t.name||'')+'</span>'
-    +newb+narr
+    +newb+narr+chainb
     +'<span class="smart pu">'+smart+'</span></div>'
     +'<div class="cinfo">市值 '+fmtMoney(t.market_cap)+' · 流动性 '+fmtMoney(t.liquidity)+' · 1h量 '+fmtMoney(t.vol_1h)+(ageTx?' · '+ageTx:'')+'</div>'
     +hist
@@ -509,7 +521,8 @@ function htmlLiquidity(){
 }
 function htmlTags(){
   var tg=S.data.tags;
-  var h='<div class="card"><div class="sect">📋 半小时热度总结</div>';
+  var h='<div class="card"><div class="sect">📋 半小时热度总结 <span class="muted" style="font-weight:400;font-size:11px">· 每 30 分钟更新</span></div>';
+  (function(){var tu=(S.data.tags_halfhour&&S.data.tags_halfhour.updated_at)||(S.data.tags&&S.data.tags.updated_at)||'';if(tu){var d=new Date(tu);var s=(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);h+='<div class="muted" style="font-size:11px;padding:0 12px 6px">更新于 '+s+' 北京时间 · 每 30 分钟按最新战壕数据更新</div>';}})();
   if(!tg||!Array.isArray(tg.tags)||!tg.tags.length)h+='<div class="empty">暂无数据</div>';
   else h+=tg.tags.map(tagRow).join('');
   return h+'</div>';
@@ -521,9 +534,9 @@ function htmlConsensus(){
     if(!d)h+='<div class="empty">暂无数据</div>';
     else{
       h+='<div class="subhead">💰 市值3万以下</div>';
-      h+=((d.lowcap||[]).map(function(t){return coinCard(t,true);}).join('')||'<div class="empty">暂无数据</div>');
+      h+=((d.lowcap||[]).map(function(t){return coinCard(t,true,null,true);}).join('')||'<div class="empty">暂无数据</div>');
       h+='<div class="subhead">🎯 其余聪明钱标的</div>';
-      h+=((d.rest||[]).map(function(t){return coinCard(t,false);}).join('')||'<div class="empty">暂无数据</div>');
+      h+=((d.rest||[]).map(function(t){return coinCard(t,false,null,true);}).join('')||'<div class="empty">暂无数据</div>');
     }
   }
   return h+'</div>';
