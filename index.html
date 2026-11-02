@@ -721,9 +721,10 @@ function htmlConsensus(){
 function htmlChain(key,title,color){
   var d=S.data[key];
   var toks=(d&&Array.isArray(d.tokens))?d.tokens:[];
-  // 5+5 structure: first 5 = 2h new coins, last 5 = 2d hot coins
-  var fresh=toks.filter(isNewCoin).slice(0,5);
-  var rest=toks.filter(function(t){return !isNewCoin(t);}).slice(0,5);
+  // 5+5 structure: sort by age, youngest 5 = new, next 5 = hot
+  var sorted=toks.slice().sort(function(a,b){return ageMin(a)-ageMin(b);});
+  var fresh=sorted.slice(0,5);
+  var rest=sorted.slice(5,10);
   var cards='';
   if(!toks.length)cards='<div class="empty">暂无数据</div>';
   else{
@@ -796,7 +797,14 @@ function getLocalDaily(){
 function generateDailySummaryLocal(){
   var today=todayBj();
   var key='daily_summary_'+today;
-  try{if(localStorage.getItem(key))return;}catch(e){return;}
+  // FIX v13: allow regen if existing is empty
+  try{
+    var ex=localStorage.getItem(key);
+    if(ex){
+      var eo=JSON.parse(ex);
+      if(eo&&(eo.tweetCount>0||(eo.tags&&eo.tags.length)))return;
+    }
+  }catch(e){return;}
   var tws=((S.data.tweets||{}).tweets)||[];
   var todays=tws.filter(function(t){return bjDate(t.time)===today;});
   var tags=buildLocalTags();
@@ -1002,7 +1010,13 @@ function parseWorkerTweets(html, channel, defaultPerson){
         try{
           msg.querySelectorAll('img').forEach(function(img){
             var src=img.getAttribute('src')||'';
-            if(src.indexOf('telesco.pe')>=0&&media.length<4)media.push({url:src,type:'img'});
+            // FIX v13: include all content images (skip avatars/icons by size check)
+            var w=img.getAttribute('width')||img.width||0;
+            if(src&&media.length<4&&src.indexOf('data:')!==0){
+              // Skip tiny avatars (usually <100px)
+              if(w>0&&w<100)return;
+              media.push({url:src,type:'img'});
+            }
           });
           msg.querySelectorAll('video').forEach(function(v){
             var poster=v.getAttribute('poster')||'';
@@ -1176,9 +1190,9 @@ function fetchWorkerLiquidity(){
       ((d.data||{}).chains||[]).forEach(function(ch){
         if(ch&&ch.chain)byKey[ch.chain]=ch;
       });
-      var cmap={bsc:'bsc',solana:'solana',robinhood:'robinhood',base:'base',arc:'arc',eth:'ethereum'};
+      // FIX v13: Use API chain names directly (bsc, solana, robinhood, base, arc, eth)
       var clabel={bsc:'BSC',solana:'Solana',robinhood:'Robinhood',base:'Base',arc:'Arc',eth:'Ethereum'};
-      Object.keys(cmap).forEach(function(k){
+      ['bsc','solana','robinhood','base','arc','eth'].forEach(function(k){
         var ch=byKey[k];if(!ch)return;
         var s=ch.summary||{}, p=ch.prev_summary||{};
         var buy=Number(s.buy_volume)||0, sell=Number(s.sell_volume)||0;
@@ -1240,7 +1254,21 @@ function refresh(){
     results.forEach(function(r){
       if(r[0]==='wb')wb=r[1];else if(r[0]==='dy')dy=r[1];else data[r[0]]=r[1];
     });
-    S.data=data;S.wb=wb;S.dy=dy;
+    // FIX v13: Don't let stale GitHub JSON overwrite fresh Worker data
+    // Worker manages: tweets, bsc, sol, rb, liquidity, douyin
+    var WORKER_KEYS={tweets:1,bsc:1,sol:1,rb:1,liquidity:1,douyin:1};
+    Object.keys(data).forEach(function(k){
+      if(WORKER_KEYS[k]){
+        // Only overwrite if Worker has no data yet AND GitHub has valid data
+        var cur=S.data[k];
+        var hasCur=cur&&(Array.isArray(cur.tokens)?cur.tokens.length:(Array.isArray(cur.tweets)?cur.tweets.length:(Array.isArray(cur.chains)?cur.chains.length:(Array.isArray(cur.hotlist)?cur.hotlist.length:0))));
+        var hasNew=data[k]&&(Array.isArray(data[k].tokens)?data[k].tokens.length:(Array.isArray(data[k].tweets)?data[k].tweets.length:(Array.isArray(data[k].chains)?data[k].chains.length:(Array.isArray(data[k].hotlist)?data[k].hotlist.length:0))));
+        if(!hasCur&&hasNew)S.data[k]=data[k];
+      }else{
+        S.data[k]=data[k];
+      }
+    });
+    S.wb=wb;S.dy=dy;
     var dj=data.douyin;
     S.douyinOk=!!(dj&&Array.isArray(dj.hotlist));
     if(S.douyinOk){
