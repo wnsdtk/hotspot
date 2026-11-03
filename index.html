@@ -919,22 +919,66 @@ function htmlTags(){
 function htmlChain(key,title,color){
   var d=S.data[key];
   var toks=(d&&Array.isArray(d.tokens))?d.tokens:[];
-  // 5+5 structure: sort by age, youngest 5 = new, next 5 = hot
-  var sorted=toks.slice().sort(function(a,b){return ageMin(a)-ageMin(b);});
-  var fresh=sorted.slice(0,5);
-  var rest=sorted.slice(5,10);
+  function mcOf(t){return Number(t.market_cap)||0;}
+  function heatOf(t){
+    // 热度 = 1h 成交量为主，KOL/聪明钱数量加权
+    var v=Number(t.vol_1h)||0;
+    var k=Number(t.smart_count)||0;
+    if(k>60)k=60;
+    return v*(1+k/20);
+  }
+  var byCa=function(t){return t.ca||t.address||'';};
+  // 上线分钟数：优先用 creation_timestamp，age_text 缺失时也能算
+  var ageOf=function(t){
+    var ts=Number(t.creation_timestamp)||0;
+    if(ts>0)return Math.floor((Date.now()-ts*1000)/60000);
+    return ageMin(t);
+  };
+
+  // 前 5：5 小时内上线的新币，先按热度挑 5 个，再按市值从低到高排列
+  var fresh=toks.filter(function(t){return ageOf(t)<=300;})
+    .sort(function(a,b){return (heatOf(b)-heatOf(a))||(mcOf(a)-mcOf(b));})
+    .slice(0,5);
+  fresh.sort(function(a,b){return mcOf(a)-mcOf(b);});
+
+  var used={};
+  fresh.forEach(function(t){used[byCa(t)]=1;});
+
+  // 后 3：5 天内的热门（排除 5 小时内与已出现的），不足 8 个时自动补齐
+  var hotNeed=Math.max(3,8-fresh.length);
+  var hot=toks.filter(function(t){
+    var a=ageOf(t);
+    return a>300 && a<=5*1440 && !used[byCa(t)];
+  }).sort(function(a,b){return heatOf(b)-heatOf(a);}).slice(0,hotNeed);
+
+  hot.forEach(function(t){used[byCa(t)]=1;});
+  // 兜底：该链新币太少时（如 Robinhood），用其余币按热度补满 8 个
+  var short=8-fresh.length-hot.length;
+  if(short>0){
+    var more=toks.filter(function(t){return !used[byCa(t)];})
+      .sort(function(a,b){return heatOf(b)-heatOf(a);}).slice(0,short);
+    hot=hot.concat(more);
+  }
+
   var cards='';
   if(!toks.length)cards='<div class="empty">暂无数据</div>';
   else{
-    if(fresh.length)cards+='<div class="subhead" style="color:var(--green)">🆕 2 小时内新币 · 热度优先</div>'+fresh.map(function(t){return coinCard(t,false,color);}).join('');
-    if(rest.length)cards+='<div class="subhead" style="color:var(--orange)">🔥 2 天内热门</div>'+rest.map(function(t){return coinCard(t,false,color);}).join('');
-    if(!fresh.length&&!rest.length)cards='<div class="empty">暂无数据</div>';
+    if(fresh.length){
+      cards+='<div class="subhead" style="color:var(--green)">🆕 5 小时内新币 · 市值低 → 高</div>'
+        +fresh.map(function(t){return coinCard(t,false,color);}).join('');
+    }
+    if(hot.length){
+      cards+='<div class="subhead" style="color:var(--orange)">🔥 5 天内热门</div>'
+        +hot.map(function(t){return coinCard(t,false,color);}).join('');
+    }
+    if(!fresh.length&&!hot.length)cards='<div class="empty">暂无数据</div>';
   }
   var meta=toks.length+' 个币'+((d&&d.source)?' · 数据源 '+esc(d.source):'');
   return '<div class="card"><div class="sect" style="color:'+color+'">'+esc(title)+updInfo('trench','每10秒更新')+' <span class="muted small" style="color:var(--muted);font-weight:400">'+meta+'</span></div>'
     +'<div class="coinlist" style="background:'+color+'33">'+cards+'</div></div>';
 }
-/* ============ 当日总结 ============ */
+
+/* ============ 当日总结 ============ *//* ============ 当日总结 ============ */
 function countCards(tws){
   var today=todayBj();
   var todays=tws.filter(function(t){return bjDate(t.time)===today;});
@@ -1018,7 +1062,6 @@ function sigData(d){
 }
 var SECTIONS=[
   {id:'sec-moves',   sig:function(){return sigData(S.data.bsc)+sigData(S.data.sol)+sigData(S.data.rb);}, html:htmlSmartMoves},
-  {id:'sec-tweets',  sig:function(){return sigData(S.data.tweets)+'|'+UI.filter;}, html:htmlTweets},
   {id:'sec-dy-trend',sig:function(){var d=S.data.douyin;return JSON.stringify((d&&d.trending)||null);}, html:htmlDyTrend},
   {id:'sec-dy-rise', sig:function(){return (S.douyinOk?'1':'0')+'|'+JSON.stringify(S.hotlistRows);}, html:htmlDyRise},
   {id:'sec-dy-list', sig:function(){return JSON.stringify(S.dy)+'|'+UI.dyN;}, html:htmlDyList},
@@ -1035,7 +1078,7 @@ var SECTIONS=[
 var SEEN_SIG={};
 function setHtml(id,html){var n=document.getElementById(id);if(n)n.innerHTML=html;}
 function buildShell(){
-  setHtml('tab-all','<div id="sec-moves"></div><div id="sec-tweets"></div>');
+  setHtml('tab-all','<div id="sec-moves"></div>');
   setHtml('tab-hot','<div id="sec-dy-trend"></div><div id="sec-dy-rise"></div><div id="sec-dy-list"></div><div id="sec-wb-list"></div>');
   setHtml('tab-trench','<div id="sec-liq"></div><div id="sec-tags"></div><div id="sec-bsc"></div><div id="sec-sol"></div><div id="sec-rb"></div>');
   setHtml('tab-summary','<div id="sec-counts"></div><div id="sec-daily"></div><div id="sec-binance"></div>');
@@ -1294,7 +1337,7 @@ function fetchWorkerTrench(chain){
       var rank=(d&&d.data&&d.data.rank)||[];
       if(!rank.length)throw new Error('gmgn empty');
       var tokens=rank.map(function(t){return normGmgnToken(t,chain);});
-      return {updated_at:new Date().toISOString(), tokens:tokens.slice(0,10), source:'gmgn'};
+      return {updated_at:new Date().toISOString(), tokens:tokens.slice(0,50), source:'gmgn'};
     })
     .catch(function(){
       return fetch(workerUrl(durl),{cache:'no-store'})
@@ -1302,7 +1345,7 @@ function fetchWorkerTrench(chain){
         .then(function(d){
           var arr=(d&&d.data)||[];
           var tokens=arr.map(function(t){return normDebotToken(t,chain);});
-          return {updated_at:new Date().toISOString(), tokens:tokens.slice(0,10), source:'debot'};
+          return {updated_at:new Date().toISOString(), tokens:tokens.slice(0,50), source:'debot'};
         })
         .catch(function(){return null;});
     });
