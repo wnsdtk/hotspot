@@ -193,9 +193,91 @@ a{color:var(--blue); text-decoration:none;}
 .btitle{font-size:13px; font-weight:600;}
 .ben{font-size:12px; color:var(--muted); margin-top:2px;}
 .btime{font-size:11px; color:var(--muted); margin-top:4px;}
+/* ===== v22 · DeBot 式流动性仪表盘 ===== */
+.liq .liq-top{display:flex; align-items:center; gap:7px; margin:2px 0 10px;}
+.liq .cicon{width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:800; color:#0a0d13; background:var(--c,#888); flex:none;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);}
+.liq .liq-t{font-size:13.5px; font-weight:700; letter-spacing:-.01em;}
+.liq .qi{width:14px; height:14px; border-radius:50%; border:1px solid var(--border-2,#2d3440); color:var(--dim,#66727f);
+  font-size:9px; line-height:1; display:inline-flex; align-items:center; justify-content:center; cursor:help; flex:none;}
+.liq .liq-more{margin-left:auto; font-size:11px; color:var(--muted,#8d9aac); border:1px solid var(--border-2,#2d3440);
+  border-radius:7px; padding:4px 9px; white-space:nowrap; text-decoration:none;}
+.liq .liq-tools{display:flex; align-items:center; gap:8px; margin-bottom:11px;}
+.liq .cicorow{display:flex; gap:5px; overflow-x:auto; flex:1; min-width:0; padding:2px 0;
+  scrollbar-width:none; -ms-overflow-style:none;
+  -webkit-mask-image:linear-gradient(to right,#000 90%,transparent 100%);
+  mask-image:linear-gradient(to right,#000 90%,transparent 100%);}
+.liq .cicorow::-webkit-scrollbar{display:none;}
+.liq .ci{width:24px; height:24px; flex:none; padding:0; border:none; background:none; cursor:pointer;
+  border-radius:50%; transition:transform .12s ease, box-shadow .12s ease;}
+.liq .ci .g{display:flex; width:100%; height:100%; border-radius:50%; align-items:center; justify-content:center;
+  font-size:11px; font-weight:800; color:#0a0d13; background:var(--c,#888); opacity:.6;}
+.liq .ci.on .g{opacity:1;}
+.liq .ci.on{box-shadow:0 0 0 2px rgba(255,255,255,.5); transform:scale(1.04);}
+.liq .segs{display:flex; flex:none; gap:2px; padding:2px; border-radius:8px;
+  background:rgba(255,255,255,.05); border:1px solid var(--border,#262d36);}
+.liq .segs button{border:none; background:none; color:var(--dim,#66727f); font-size:11px; font-weight:600;
+  padding:4px 7px; min-width:32px; border-radius:6px; cursor:pointer; font-family:inherit;}
+.liq .segs button.on{background:rgba(255,255,255,.14); color:#fff;}
+.liq .lps{display:flex; gap:7px; margin-bottom:12px;}
+.liq .lp{flex:1; min-width:0; background:rgba(255,255,255,.028); border:1px solid var(--border,#262d36);
+  border-radius:10px; padding:8px 9px;}
+.liq .lp-h{display:flex; align-items:center; gap:5px; font-size:11.5px; color:var(--muted,#8d9aac);
+  font-weight:600; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;}
+.liq .lp-ico{width:14px; height:14px; flex:none; border-radius:5px; display:inline-flex; align-items:center;
+  justify-content:center; font-size:9px; font-weight:800; color:#0a0d13; background:var(--c,#888);}
+.liq .lp-v{font-size:13.5px; font-weight:700; margin-top:5px; font-family:var(--mono,monospace);
+  font-variant-numeric:tabular-nums; letter-spacing:-.02em;}
+.liq .lp-p{margin-top:1px; font-size:11px;}
+.liq .flow{margin-bottom:11px;}
+.liq .flow-lbls{display:flex; align-items:baseline; justify-content:space-between; gap:6px;
+  font-size:11px; color:var(--dim,#66727f); margin-bottom:6px;}
+.liq .flow-lbls b{color:var(--muted,#8d9aac); font-weight:700; font-family:var(--mono,monospace);
+  font-variant-numeric:tabular-nums;}
+.liq .flow-lbls .net{font-weight:700; font-size:11.5px;}
+.liq .flowbar{display:flex; height:6px; border-radius:4px; overflow:hidden; background:rgba(255,255,255,.06);}
+.liq .flowbar i{display:block; height:100%;}
+.liq .flowbar .buy{background:#2EBD85;}
+.liq .flowbar .sell{background:#F6465D;}
+.liq .pct{font-size:11px; font-weight:650; font-family:var(--mono,monospace); white-space:nowrap;}
+.liq .pct.up{color:#2EBD85;}
+.liq .pct.dn{color:#F6465D;}
+.liq .mgrid{grid-template-columns:repeat(3,minmax(0,1fr));}
+.liq .mcell{padding:8px 9px;}
+.liq .mcell .mk{font-size:10px; line-height:1.3; min-height:26px; display:flex; align-items:center;}
+.liq .mcell .mv{font-size:13.5px; display:flex; align-items:baseline; gap:4px; flex-wrap:wrap; letter-spacing:-.02em;}
+.liq .mcell .mv .pct{font-size:10px;}
+.liq .empty{padding:16px 8px;}
+@media (max-width:359px){
+  .liq .lp{padding:7px 6px;}
+  .liq .lp-v{font-size:12.5px;}
+  .liq .segs button{min-width:28px; padding:4px 5px;}
+}
+
+/* ===== v22 · 今日链上热度总结 ===== */
+.dmeta{font-size:11px; color:var(--dim,#66727f); margin:-2px 0 10px; font-family:var(--mono,monospace);}
+.dperiod{background:rgba(255,255,255,.025); border:1px solid var(--border,#262d36); border-radius:10px;
+  padding:10px 11px; margin-bottom:8px;}
+.dph{display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; margin-bottom:8px;}
+.dph span{font-weight:400; font-size:10.5px; color:var(--dim,#66727f); font-family:var(--mono,monospace);}
+.dchips{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:2px;}
+.dchip{font-size:11.5px; padding:2px 9px; border-radius:20px; color:#9fb0c6;
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.07);}
+.dcoins{margin-top:8px; display:flex; flex-direction:column; gap:4px;}
+.dcoin{display:flex; align-items:center; gap:8px; font-size:12px; padding:4px 0; color:inherit;}
+.dcoin b{color:#e8c65a; font-size:12.5px;}
+.dcoin span{color:var(--dim,#66727f); font-size:10.5px;}
+.dcoin .dhit{margin-left:auto; font-family:var(--mono,monospace);}
+.dhist{display:flex; align-items:center; gap:8px; padding:7px 2px; border-bottom:1px solid var(--border,#262d36);
+  font-size:11px; color:var(--muted,#8d9aac); overflow:hidden;}
+.dhist:last-child{border-bottom:none;}
+.dhist .dhd{font-family:var(--mono,monospace); color:var(--dim,#66727f); flex:none; width:34px;}
+.dhist .dhv{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 </style>
 </head>
 <body>
+<!-- v22 -->
 <header class="topbar">
   <div class="brand">热点监控</div>
   <a id="xbtn-heyi" class="xbtn" target="_blank" rel="noopener">@何一</a>
@@ -240,7 +322,7 @@ var WORKER='https://snowy-mud-3037.rj982946925.workers.dev';
 var WORKER_POLL_MS=10000; // 10 seconds for tweets/trench
 var DATA_FILES=[
   ['tweets','tweets.json'],['bsc','trench-bsc.json'],['sol','trench-sol.json'],
-  ['rb','trench-rb.json'],['consensus','consensus.json'],['liquidity','liquidity.json'],
+  ['rb','trench-rb.json'],
   ['douyin','douyin.json'],['tags','tags-halfhour.json'],['daily','summary-daily.json'],
   ['binance','binance.json']
 ];
@@ -248,7 +330,7 @@ function dataUrl(f){return DATA_BASE+f+'?t='+Date.now();}
 var POLL_MS=15000;
 /* ============ state ============ */
 var S={data:{}, wb:null, dy:null, prevHotlist:null, hotlistRows:null, douyinOk:false, lastUpdate:{}};
-var UI={tab:'all', filter:'all', expanded:{}, liqChains:{}, dyN:10, wbN:10, dailyPerson:null, days:{}, tlDays:{}};
+var UI={tab:'all', filter:'all', expanded:{liq:true}, liq:{chain:'bsc', iv:'1h'}, dyN:10, wbN:10, dailyPerson:null, days:{}};
 /* ============ helpers ============ */
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function nl2br(s){return s.replace(/\n/g,'<br>');}
@@ -291,6 +373,248 @@ function debotUrl(chain,ca){var slug=DEBOT_SLUG[String(chain||'').toLowerCase()]
 function xSearch(q){return 'https://x.com/search?q='+encodeURIComponent(q)+'&f=top';}
 function douyinSearch(w){return 'https://www.douyin.com/search/'+encodeURIComponent(w)+'?type=general';}
 function weiboSearch(t){return 'https://s.weibo.com/weibo?q='+encodeURIComponent(t);}
+/* ============ v22 · DeBot 式公链流动性 ============ */
+var LIQ_CHAIN={
+  bsc:{name:'BSC', color:'#F0B90B', g:'B'},
+  eth:{name:'Ethereum', color:'#627EEA', g:'Ξ'},
+  solana:{name:'Solana', color:'#A371FF', g:'S'},
+  base:{name:'Base', color:'#0052FF', g:'B'},
+  arc:{name:'Arc', color:'#7C5CFF', g:'A'},
+  robinhood:{name:'Robinhood', color:'#00C805', g:'R'},
+  arbitrum:{name:'Arbitrum', color:'#28A0F0', g:'A'},
+  monad:{name:'Monad', color:'#836EF9', g:'M'},
+  hyperevm:{name:'HyperEVM', color:'#97FCE4', g:'H'},
+  stable:{name:'Stable', color:'#00D1B2', g:'S'},
+  xlayer:{name:'XLayer', color:'#C3CBD8', g:'X'},
+  pharos:{name:'Pharos', color:'#FF6B6B', g:'P'}
+};
+var LIQ_ORDER=['bsc','eth','solana','base','arc','robinhood','arbitrum','monad','hyperevm','stable','xlayer','pharos'];
+var LIQ_IVS=[{k:'1h',t:'1H'},{k:'6h',t:'6H'},{k:'24h',t:'24H'}];
+var PAD_NAME={flap:'Flap', four_meme:'Four', gangfun:'Gang.fun', pumpfun:'pump.fun', believe:'Believe',
+  bonk:'BONK', meteora:'Meteora', raydium:'Raydium', virtuals:'Virtuals', clanker:'Clanker',
+  bags:'Bags', moonshot:'Moonshot', pump:'pump.fun'};
+var PAD_COLOR={flap:'#F5A623', four_meme:'#00C805', gangfun:'#F0B90B', pumpfun:'#14F195',
+  believe:'#8B5CF6', bonk:'#F7931A', meteora:'#E8B44A', raydium:'#5D5FEF', virtuals:'#00D1B2',
+  clanker:'#FF6B6B', bags:'#4EA1FF', moonshot:'#FF8FB1'};
+var LIQ={cache:{}, loading:{}};
+var LIQ_TTL=60000;
+
+function compactNum(a){
+  a=Math.abs(Number(a)||0);
+  if(a>=1e9)return (a/1e9).toFixed(1)+'B';
+  if(a>=1e6)return (a/1e6).toFixed(1)+'M';
+  if(a>=1e3)return (a/1e3).toFixed(1)+'K';
+  return String(Math.round(a));
+}
+function fmtUsd(v){
+  if(v==null||v===''||isNaN(Number(v)))return '—';
+  var n=Number(v);
+  return (n<0?'-$':'$')+compactNum(n);
+}
+function fmtSignedUsd(v){
+  if(v==null||isNaN(Number(v)))return '—';
+  var n=Number(v);
+  return (n>=0?'+':'-')+'$'+compactNum(n);
+}
+function fmtAvgUsd(v){
+  if(v==null||isNaN(Number(v)))return '—';
+  var n=Number(v), a=Math.abs(n);
+  if(a>=1000)return (n<0?'-$':'$')+compactNum(a);
+  return (n<0?'-$':'$')+Math.floor(a);
+}
+function fmtCnt(v){
+  if(v==null||v===''||isNaN(Number(v)))return '—';
+  return compactNum(v);
+}
+function pctChange(cur,prev){
+  var c=Number(cur)||0, p=Number(prev)||0;
+  if(p<=0)return null;
+  return (c-p)/p*100;
+}
+function pctTag(v){
+  if(v==null||isNaN(v))return '';
+  var n=Math.round(v*10)/10, up=n>=-0.05;
+  var txt=(n>0?'+':'')+Math.round(n)+'%';
+  return '<span class="pct '+(up?'up':'dn')+'">'+(up?'↗ ':'↘ ')+txt+'</span>';
+}
+function padName(s){
+  s=String(s||'');
+  if(PAD_NAME[s])return PAD_NAME[s];
+  return s.replace(/[_-]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+}
+function padColor(s){
+  if(PAD_COLOR[s])return PAD_COLOR[s];
+  var h=0; for(var i=0;i<String(s).length;i++)h=(h*31+String(s).charCodeAt(i))%360;
+  return 'hsl('+h+',58%,62%)';
+}
+function liqChainMeta(k){
+  return LIQ_CHAIN[k]||{name:String(k||'').toUpperCase(), color:'#8d9aac', g:String(k||'?').charAt(0).toUpperCase()};
+}
+function chainName(k){
+  var m=LIQ_CHAIN[String(k||'').toLowerCase()];
+  if(m)return m.name;
+  return String(k||'').replace(/^./,function(c){return c.toUpperCase();});
+}
+function normalizeLiq(d){
+  var arr=((d&&d.data)||{}).chains||[];
+  return arr.map(function(ch){
+    return {
+      key:String(ch.chain||''),
+      summary:ch.summary||{},
+      prev:ch.prev_summary||{},
+      lps:(ch.top_launchpads||[]).slice(0,3).map(function(lp){
+        return {name:lp.launchpad, stats:lp.stats||{}, prev:lp.prev_stats||{}};
+      })
+    };
+  }).filter(function(c){return c.key;});
+}
+function fetchLiq(iv,force){
+  iv=iv||'1h';
+  var c=LIQ.cache[iv];
+  if(!force&&c&&Date.now()-c.ts<LIQ_TTL)return Promise.resolve(c);
+  if(LIQ.loading[iv])return LIQ.loading[iv];
+  var url=workerUrl('https://debot.ai/api/edge/launchpad/stats/latest?interval='+iv);
+  LIQ.loading[iv]=fetch(url,{cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
+    .then(function(d){
+      if(!d||d.code!==0)throw new Error('code');
+      var o={ts:Date.now(), chains:normalizeLiq(d)};
+      if(!o.chains.length)throw new Error('empty');
+      LIQ.cache[iv]=o;
+      markUpd('liquidity');
+      return o;
+    })
+    .catch(function(){return LIQ.cache[iv]||null;})
+    .then(function(o){delete LIQ.loading[iv];return o;});
+  return LIQ.loading[iv];
+}
+function liqChain(cur){
+  var list=(LIQ.cache[UI.liq.iv]&&LIQ.cache[UI.liq.iv].chains)||[];
+  for(var i=0;i<list.length;i++)if(list[i].key===cur)return list[i];
+  return list[0]||null;
+}
+function liqTop(cur){
+  var m=liqChainMeta(cur.key);
+  return '<div class="liq-top"><span class="cicon" style="--c:'+m.color+'">'+esc(m.g)+'</span>'
+    +'<span class="liq-t">'+esc(m.name)+' 实时指标</span>'
+    +'<span class="qi" title="DeBot 链上聚合统计；百分比为当前周期对比上一周期">?</span>'
+    +'<a class="liq-more" href="https://debot.ai/" target="_blank" rel="noopener">查看更多 ›</a></div>';
+}
+function liqTools(){
+  var chains=(LIQ.cache[UI.liq.iv]&&LIQ.cache[UI.liq.iv].chains)||[];
+  var present={}; chains.forEach(function(c){present[c.key]=1;});
+  var order=LIQ_ORDER.filter(function(k){return present[k];})
+    .concat(chains.map(function(c){return c.key;}).filter(function(k){return LIQ_ORDER.indexOf(k)<0;}));
+  var icons=order.map(function(k){
+    var m=liqChainMeta(k);
+    return '<button class="ci'+(k===UI.liq.chain?' on':'')+'" data-act="liq-chain" data-c="'+esc(k)+'" title="'+esc(m.name)+'" aria-label="'+esc(m.name)+'">'
+      +'<span class="g" style="--c:'+m.color+'">'+esc(m.g)+'</span></button>';
+  }).join('');
+  var segs=LIQ_IVS.map(function(x){
+    return '<button data-act="liq-iv" data-iv="'+x.k+'" class="'+(UI.liq.iv===x.k?'on':'')+'">'+x.t+'</button>';
+  }).join('');
+  return '<div class="liq-tools"><div class="cicorow">'+icons+'</div><div class="segs">'+segs+'</div></div>';
+}
+function liqLps(cur){
+  if(!cur.lps||!cur.lps.length)return '';
+  return '<div class="lps">'+cur.lps.map(function(lp){
+    var v=(lp.stats||{}).volume, pv=(lp.prev||{}).volume;
+    var nm=padName(lp.name);
+    return '<div class="lp"><div class="lp-h"><span class="lp-ico" style="--c:'+padColor(lp.name)+'">'
+      +esc(nm.charAt(0))+'</span>'+esc(nm)+'</div>'
+      +'<div class="lp-v">'+fmtUsd(v)+'</div><div class="lp-p">'+pctTag(pctChange(v,pv))+'</div></div>';
+  }).join('')+'</div>';
+}
+function liqFlow(cur){
+  var s=cur.summary||{};
+  var buy=Number(s.buy_volume)||0, sell=Number(s.sell_volume)||0;
+  var net=buy-sell, tot=buy+sell;
+  var bp=tot>0?(buy/tot*100):50;
+  return '<div class="flow"><div class="flow-lbls">'
+    +'<span>买入量 <b>'+fmtUsd(buy)+'</b></span>'
+    +'<span class="net '+(net>=0?'pos':'neg')+'">净流入 '+fmtSignedUsd(net)+'</span>'
+    +'<span>卖出量 <b>'+fmtUsd(sell)+'</b></span></div>'
+    +'<div class="flowbar"><i class="buy" style="width:'+bp.toFixed(1)+'%"></i>'
+    +'<i class="sell" style="width:'+(100-bp).toFixed(1)+'%"></i></div></div>';
+}
+function liqMetrics(cur){
+  var s=cur.summary||{}, p=cur.prev||{};
+  var wc=Number(s.wallet_count)||0, bw=Number(s.buy_volume)||0;
+  var pwc=Number(p.wallet_count)||0, pbw=Number(p.buy_volume)||0;
+  var avg=wc>0?bw/wc:null, pavg=pwc>0?pbw/pwc:null;
+  var cells=[
+    ['交易额', fmtUsd(s.volume), pctChange(s.volume,p.volume)],
+    ['钱包平均买入量', fmtAvgUsd(avg), (avg&&pavg)?pctChange(avg,pavg):null],
+    ['活跃代币数', fmtCnt(s.token_count), pctChange(s.token_count,p.token_count)],
+    ['活跃钱包数', fmtCnt(s.wallet_count), pctChange(s.wallet_count,p.wallet_count)],
+    ['创建代币数', fmtCnt(s.token_created_count), pctChange(s.token_created_count,p.token_created_count)],
+    ['迁移代币数', fmtCnt(s.token_migrated_count), pctChange(s.token_migrated_count,p.token_migrated_count)]
+  ];
+  return '<div class="mgrid">'+cells.map(function(c){
+    return '<div class="mcell"><div class="mk">'+c[0]+'</div><div class="mv">'+c[1]+pctTag(c[2])+'</div></div>';
+  }).join('')+'</div>';
+}
+function htmlLiquidity(){
+  var open=!!UI.expanded.liq;
+  var h='<div class="card liq"><div class="sect tog" data-act="toggle" data-key="liq">💧 公链流动性'
+    +updInfo('liquidity','每5分钟更新')+' <span class="chev">'+(open?'▲':'▼')+'</span></div>';
+  if(!open)return h+'</div>';
+  var d=LIQ.cache[UI.liq.iv];
+  if(!d){h+='<div class="empty">指标加载中…</div>';return h+'</div>';}
+  var cur=liqChain(UI.liq.chain);
+  if(!cur){h+='<div class="empty">暂无数据</div>';return h+'</div>';}
+  h+=liqTop(cur)+liqTools()+liqLps(cur)+liqFlow(cur)+liqMetrics(cur);
+  return h+'</div>';
+}
+
+/* ============ v22 · 今日链上热度总结 ============ */
+function fmtHM(iso){
+  var d=new Date(iso);
+  if(isNaN(d))return '';
+  return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
+}
+function dailyPeriod(p,label,range,emoji){
+  var themes=(p&&p.themes)||[], coins=(p&&p.coins)||[];
+  var head='<div class="dph">'+emoji+' '+label+' <span>'+range+'</span></div>';
+  if(!themes.length&&!coins.length)
+    return '<div class="dperiod">'+head+'<div class="empty" style="padding:8px;font-size:12px">该时段数据不足</div></div>';
+  var chips=themes.map(function(t){return '<span class="dchip">'+esc(t.text)+'</span>';}).join('');
+  var rows=coins.map(function(c){
+    return '<a class="dcoin" href="'+esc(debotUrl(c.chain,c.ca))+'"><b>$'+esc(c.symbol)+'</b>'
+      +'<span>'+esc(chainName(c.chain))+'</span><span class="dhit">出现 '+esc(c.hits)+' 次</span></a>';
+  }).join('');
+  return '<div class="dperiod">'+head
+    +(chips?'<div class="dchips">'+chips+'</div>':'')
+    +(rows?'<div class="dcoins">'+rows+'</div>':'')+'</div>';
+}
+function htmlDaily(){
+  var dd=S.data.daily;
+  if(dd&&dd.generated_at){
+    var gt=Date.parse(dd.generated_at);
+    if(!isNaN(gt))S.lastUpdate.daily=gt;
+  }
+  var h='<div class="card"><div class="sect">📋 今日链上热度总结'+updInfo('daily','每晚 21:00 更新')+'</div>';
+  if(!dd||!dd.periods){
+    h+='<div class="empty">今晚 21:00 生成今日总结（战壕上午 / 下午各在玩什么）</div>';
+    return h+'</div>';
+  }
+  h+='<div class="dmeta">'+esc(dd.date||'')+' · 战壕全天叙事 · 生成于 '+esc(fmtHM(dd.generated_at))+'</div>';
+  h+=dailyPeriod(dd.periods.morning,'上午','00:00 – 12:00','🌅');
+  h+=dailyPeriod(dd.periods.afternoon,'下午','12:00 – 21:00','🌆');
+  var hist=dd.history||{};
+  var days=Object.keys(hist).filter(function(d){return d!==dd.date;}).sort().reverse().slice(0,5);
+  if(days.length){
+    h+='<div class="subhead">最近几天</div>';
+    h+=days.map(function(d){
+      var e=hist[d]||{};
+      var m=((e.morning||[])[0]||{}).text||'—';
+      var a=((e.afternoon||[])[0]||{}).text||'—';
+      return '<div class="dhist"><span class="dhd">'+esc(String(d).slice(5))+'</span>'
+        +'<span class="dhv">上午 '+esc(m)+'</span><span class="dhv">下午 '+esc(a)+'</span></div>';
+    }).join('');
+  }
+  return h+'</div>';
+}
 /* ============ fetch ============ */
 function fetchJson(url){
   return fetch(url,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
@@ -485,7 +809,7 @@ function coinCard(t,showHist,color,showChain){
   var smart=(_sl.indexOf('×')>=0)?esc(_sl):(esc(_sl)+'×'+(_sc==null?'—':esc(_sc)));
   var ca=t.ca||'';
   var caTrunc=ca.length>12?ca.slice(0,6)+'…'+ca.slice(-4):(ca||'—');
-  var xNarr=t.x_url||xSearch(t.name||t.symbol||'');
+  var xNarr=t.x_url||'';
   var hist=(showHist&&Number(t.history_highest_mcap)>0)
     ?'<div class="hist">历史最高 '+fmtMoney(t.history_highest_mcap)+'</div>':'';
   var narr=t.narrative?'<span class="badge ynarr">'+esc(t.narrative)+'</span>':'';
@@ -505,7 +829,7 @@ function coinCard(t,showHist,color,showChain){
     +'<button class="cbtn ca" data-act="copy" data-ca="'+esc(ca)+'" title="点击复制">'+esc(caTrunc)+'</button>'
     +'<button class="cbtn" data-act="copy" data-ca="'+esc(ca)+'">复制</button>'
     +'<button class="cbtn" data-act="open-url" data-url="'+esc(xSearch(ca||''))+'">🔍搜合约</button>'
-    +'<button class="cbtn" data-act="open-url" data-url="'+esc(xNarr)+'">X 叙事</button>'
+    +(xNarr?'<button class="cbtn" data-act="open-url" data-url="'+esc(xNarr)+'">X 叙事</button>':'')
     +'</div></div>';
 }
 function tagRow(g){
@@ -514,71 +838,6 @@ function tagRow(g){
     +(g.coin_symbol?'<span class="coinsym">'+esc(g.coin_symbol)+'</span>':'');
   if(g.coin_ca)return '<div class="tagrow link" data-act="open-url" data-url="'+esc(debotUrl(g.coin_chain,g.coin_ca))+'">'+inner+'<span class="go">→</span></div>';
   return '<div class="tagrow">'+inner+'</div>';
-}
-function fmtSigned(v){
-  var n=Number(v);if(isNaN(n))return '—';
-  return (n>=0?'+':'')+fmtMoney(n);
-}
-function liqChainDetail(c){
-  var m=c.metrics||{};
-  var net=Number(c.net_inflow)||0;
-  var buy=Number(m.buy_volume)||0, sell=Number(m.sell_volume)||0;
-  var tot=buy+sell, bp=tot>0?Math.round(buy/tot*100):50;
-  var h='<div class="liqtitle">'+esc(c.chain)+' 实时指标<span class="tfbadge">1H</span>'
-    +'<span class="netflow '+(net>=0?'pos':'neg')+'">24H 净流入 '+fmtSigned(net)+'</span></div>';
-  var toks=Array.isArray(c.top_tokens)?c.top_tokens.slice(0,3):[];
-  if(toks.length){
-    h+='<div class="tokrow">'+toks.map(function(t){
-      var chg=Number(t.change_pct), ptx='';
-      if(!isNaN(chg))ptx=' <span class="'+(chg>=0?'up':'dn')+'">'+(chg>=0?'↗ +':'↘ ')+chg+'%</span>';
-      return '<div class="tok"><div class="tname">'+esc(t.symbol||t.name||'')+'</div>'
-        +'<div class="tprice">'+esc(t.price||'')+ptx+'</div>'
-        +'<div class="tmeta">买入 '+esc(t.buy||'')+'<br>净流入 '+esc(t.net||'')+'<br>卖出 '+esc(t.sell||'')+'</div></div>';
-    }).join('')+'</div>';
-  }
-  h+='<div class="bsbar"><div class="bar"><div class="buy" style="width:'+bp+'%"></div><div class="sell" style="width:'+(100-bp)+'%"></div></div>'
-    +'<div class="mid '+(net>=0?'pos':'neg')+'">净流入 '+fmtSigned(net)+'</div>'
-    +'<div class="ends"><span>买入量 '+fmtMoney(buy)+'</span><span>卖出量 '+fmtMoney(sell)+'</span></div></div>';
-  var cells=[
-    ['交易额',m.volume,m.volume_change_pct],
-    ['钱包平均买入量',m.avg_buy_per_wallet,null],
-    ['活跃代币数',m.token_count,null],
-    ['活跃钱包数',m.wallet_count,null],
-    ['创建代币数',m.token_created_count,null],
-    ['迁移代币数',m.token_migrated_count,null]
-  ];
-  h+='<div class="mgrid">'+cells.map(function(x){
-    var ptx='',pct=x[2];
-    if(pct!=null&&pct!==''&&!isNaN(Number(pct))){
-      var pn=Number(pct);
-      ptx=' <span class="'+(pn>=0?'up':'dn')+'">'+(pn>=0?'↗ +':'↘ ')+pn+'%</span>';
-    }
-    var v=x[1], vtx=(typeof v==='number')?fmtVal(v):esc(v==null?'—':v);
-    return '<div class="mcell"><div class="mk">'+x[0]+'</div><div class="mv">'+vtx+ptx+'</div></div>';
-  }).join('')+'</div>';
-  return h;
-}
-function htmlLiquidity(){
-  var d=S.data.liquidity,open=!!UI.expanded.liq;
-  var h='<div class="card"><div class="sect tog" data-act="toggle" data-key="liq">💧 公链流动性'+updInfo('liquidity','每5分钟更新')+' <span class="chev">'+(open?'▲':'▼')+'</span></div>';
-  if(open){
-    if(!d||!Array.isArray(d.chains)||!d.chains.length)h+='<div class="empty">暂无数据</div>';
-    else{
-      var byName={};d.chains.forEach(function(c){byName[c.chain]=c;});
-      var ordered=CHAIN_ORDER.filter(function(n){return byName[n];}).concat(
-        d.chains.filter(function(c){return CHAIN_ORDER.indexOf(c.chain)<0;}).map(function(c){return c.chain;}));
-      h+=ordered.map(function(n){
-        var c=byName[n],copen=!!UI.liqChains[n];
-        var detail=copen?liqChainDetail(c):'';
-        var net=Number(c.net_inflow)||0;
-        return '<div class="chain"><div class="chainrow" data-act="toggle" data-key="liqchain:'+esc(n)+'">'
-          +'<span class="chainname">'+esc(n)+'</span><span class="spacer"></span>'
-          +'<span class="muted small">净流入</span> <b class="'+(net>=0?'pos':'neg')+'">'+fmtSigned(net)+'</b>'
-          +'<span class="chev">'+(copen?'▲':'▼')+'</span></div>'+detail+'</div>';
-      }).join('');
-    }
-  }
-  return h+'</div>';
 }
 function buildLocalTags(){
   // Generate narrative tags from trench data (gmgn-style, at least 5)
@@ -640,8 +899,9 @@ function buildLocalTags(){
 }
 function htmlTags(){
   var tg=S.data.tags;
-  var h='<div class="card"><div class="sect">📋 5分钟热度总结'+updInfo('tags','每5分钟更新')+'</div>';
-  (function(){var tu=(S.data.tags_halfhour&&S.data.tags_halfhour.updated_at)||(S.data.tags&&S.data.tags.updated_at)||'';if(tu){var d=new Date(tu);var s=(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);h+='<div class="muted" style="font-size:11px;padding:0 12px 6px">更新于 '+s+' 北京时间 · 每 5 分钟按最新战壕数据更新</div>';}})();
+  if(tg&&tg.updated_at){var tt=Date.parse(tg.updated_at);if(!isNaN(tt))S.lastUpdate.tags=tt;}
+  var h='<div class="card"><div class="sect">📋 30分钟热度总结'+updInfo('tags','每30分钟更新')+'</div>';
+  (function(){var tu=(S.data.tags_halfhour&&S.data.tags_halfhour.updated_at)||(S.data.tags&&S.data.tags.updated_at)||'';if(tu){var d=new Date(tu);var s=(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);h+='<div class="dmeta" style="margin:0 0 8px">更新于 '+s+' 北京时间 · 每 30 分钟按最新战壕数据生成</div>';}})();
   var tags=(tg&&Array.isArray(tg.tags))?tg.tags.slice():[];
   // Supplement with local tags if fewer than 5
   if(tags.length<5){
@@ -654,63 +914,6 @@ function htmlTags(){
   }
   if(!tags.length)h+='<div class="empty">暂无数据</div>';
   else h+=tags.map(tagRow).join('');
-  return h+'</div>';
-}
-function buildLocalConsensus(){
-  // FIX v14: STRICT filters only. Never show unqualified tokens.
-  // Group 1 (max 3): age < 2 days AND MC < $30,000 AND ATH/MC > 2 AND smart_count >= 5
-  // Group 2 (max 2): age < 5 days AND smart_count >= 5, sorted by smart_count*vol_1h
-  var allToks=[];
-  ['bsc','sol','rb'].forEach(function(k){
-    var d=S.data[k];
-    if(d&&Array.isArray(d.tokens))d.tokens.forEach(function(t){allToks.push(t);});
-  });
-  var qualified=allToks.filter(function(t){return (Number(t.smart_count)||0)>=5;});
-  var now=Date.now();
-  var fallen=qualified.filter(function(t){
-    var mc=Number(t.market_cap)||0, ath=Number(t.history_highest_mcap)||0;
-    var cts=Number(t.creation_timestamp)||0;
-    var ageMs=cts>0?(now-cts*1000):Infinity;
-    return mc>0&&mc<30000&&ath>mc*2&&ageMs<2*86400*1000;
-  }).sort(function(a,b){return (Number(b.smart_count)||0)-(Number(a.smart_count)||0);}).slice(0,3);
-  var fallenIds={};fallen.forEach(function(t){fallenIds[t.ca||t.address]=1;});
-  var hot=qualified.filter(function(t){
-    var cts=Number(t.creation_timestamp)||0;
-    var ageMs=cts>0?(now-cts*1000):Infinity;
-    return ageMs<5*86400*1000&&!fallenIds[t.ca||t.address];
-  }).sort(function(a,b){
-    return ((Number(b.smart_count)||0)*(Number(b.vol_1h)||0))-((Number(a.smart_count)||0)*(Number(a.vol_1h)||0));
-  }).slice(0,2);
-  return {fallen:fallen, hot:hot};
-}
-function htmlConsensus(){
-  var open=!!UI.expanded.consensus;
-  var h='<div class="card"><div class="sect tog" data-act="toggle" data-key="consensus">🎯 聪明钱共识'+updInfo('trench','每5分钟更新')+' <span class="chev">'+(open?'▲':'▼')+'</span></div>';
-  if(open){
-    var lc=buildLocalConsensus();
-    var hasData=(lc.fallen.length+lc.hot.length)>0;
-    // Fallback to GitHub data if no local
-    if(!hasData){
-      var d=S.data.consensus;
-      if(d){
-        h+='<div class="subhead">💰 市值3万以下</div>';
-        h+=((d.lowcap||[]).slice(0,3).map(function(t){return coinCard(t,true,null,true);}).join('')||'<div class="empty">暂无数据</div>');
-        h+='<div class="subhead">🎯 其余聪明钱标的</div>';
-        h+=((d.rest||[]).slice(0,2).map(function(t){return coinCard(t,false,null,true);}).join('')||'<div class="empty">暂无数据</div>');
-      }else{
-        h+='<div class="empty">暂无数据</div>';
-      }
-    }else{
-      if(lc.fallen.length){
-        h+='<div class="subhead">💰 高位回落 · 市值3万以下</div>';
-        h+=lc.fallen.map(function(t){return coinCard(t,true,null,true);}).join('');
-      }
-      if(lc.hot.length){
-        h+='<div class="subhead">🔥 5天内高热门</div>';
-        h+=lc.hot.map(function(t){return coinCard(t,false,null,true);}).join('');
-      }
-    }
-  }
   return h+'</div>';
 }
 function htmlChain(key,title,color){
@@ -787,129 +990,6 @@ function htmlCounts(){
     +'<div class="countcards">'+countCards(tws)+'</div></div>'
     +dailyDetail(tws);
 }
-function getLocalDaily(){
-  try{
-    var raw=localStorage.getItem('daily_summary_'+todayBj());
-    // FIX v19: treat empty summaries (saved by older versions) as missing so they get regenerated
-    if(raw){var o=JSON.parse(raw);if(o&&o.generated&&(o.tweetCount>0||(o.tags&&o.tags.length)||(o.topCoins&&o.topCoins.length)))return o;}
-  }catch(e){}
-  return null;
-}
-function maybeGenDaily(){
-  // FIX v19: generate whenever past 22:00 and no good summary exists (covers: page opened
-  // after 22:00, page open exactly at 22:00, data arriving late). Called on boot (delayed)
-  // and every minute; no-ops when a good summary already exists or data isn't ready yet.
-  try{
-    if(new Date().getHours()<22)return;
-    if(getLocalDaily())return;
-    var d=S.data;
-    var hasData=(((d.tweets||{}).tweets||[]).length>0)||
-                (((d.bsc||{}).tokens||[]).length>0)||
-                (((d.sol||{}).tokens||[]).length>0)||
-                (((d.rb||{}).tokens||[]).length>0);
-    if(!hasData)return;
-    generateDailySummaryLocal();
-  }catch(e){}
-}
-function generateDailySummaryLocal(){
-  var today=todayBj();
-  var key='daily_summary_'+today;
-  // FIX v19: don't overwrite a good summary; empty results are never saved
-  try{
-    var ex=localStorage.getItem(key);
-    if(ex){
-      var eo=JSON.parse(ex);
-      if(eo&&eo.generated&&(eo.tweetCount>0||(eo.tags&&eo.tags.length)||(eo.topCoins&&eo.topCoins.length)))return true;
-    }
-  }catch(e){}
-  var tws=((S.data.tweets||{}).tweets)||[];
-  var todays=tws.filter(function(t){return bjDate(t.time)===today;});
-  var tags=buildLocalTags();
-  var allToks=[];
-  ['bsc','sol','rb'].forEach(function(k){var d=S.data[k];if(d&&Array.isArray(d.tokens))d.tokens.forEach(function(t){allToks.push(t);});});
-  var topSmart=allToks.filter(function(t){return (Number(t.smart_count)||0)>=5;})
-    .sort(function(a,b){return (Number(b.smart_count)||0)-(Number(a.smart_count)||0);}).slice(0,5);
-  // FIX v19: never save an empty summary — it would poison storage and block later retries
-  if(!todays.length&&!tags.length&&!topSmart.length)return false;
-  var summary={
-    generated:true, date:today, genTime:new Date().toISOString(),
-    tweetCount:todays.length,
-    tags:tags.slice(0,8),
-    topCoins:topSmart.map(function(t){return {symbol:t.symbol,name:t.name,ca:t.ca,chain:t.chain,smart_count:t.smart_count,market_cap:t.market_cap};})
-  };
-  try{localStorage.setItem(key,JSON.stringify(summary));}catch(e){}
-  if(typeof updateSections==='function')updateSections();
-  return true;
-}
-/* FIX v20: daily on-chain heat timeline — each 5-min tag snapshot is appended to
-   localStorage under tags_timeline_YYYY-MM-DD (max 288 entries), rendered newest-first */
-function getTagsTimeline(){
-  try{
-    var raw=localStorage.getItem('tags_timeline_'+todayBj());
-    var arr=JSON.parse(raw||'[]');
-    return Array.isArray(arr)?arr:[];
-  }catch(e){return [];}
-}
-function saveTagsTimeline(tags){
-  try{
-    tags=(Array.isArray(tags)?tags:[]).slice(0,8);
-    if(!tags.length)return;
-    var key='tags_timeline_'+todayBj();
-    var hh=fmtBj(new Date().toISOString()).slice(-5); // "HH:MM" Beijing
-    var arr=getTagsTimeline();
-    if(arr.length&&arr[arr.length-1].time===hh)arr[arr.length-1].tags=tags; // same minute: overwrite
-    else arr.push({time:hh,tags:tags});
-    if(arr.length>288)arr=arr.slice(arr.length-288);
-    localStorage.setItem(key,JSON.stringify(arr));
-  }catch(e){}
-}
-function htmlDaily(){
-  var tl=getTagsTimeline().slice().reverse(); // newest first
-  var h='<div class="card"><div class="sect">📋 今日链上热度时间线'+(tl.length?'（'+tl.length+'条）':'')+updInfo('daily','每5分钟记录')+'</div>';
-  if(tl.length){
-    h+='<div class="small muted" style="margin-bottom:6px">每 5 分钟记录一次 · 点时间展开</div>';
-    h+=tl.map(function(e){
-      var open=!!UI.tlDays[e.time];
-      var first=(e.tags&&e.tags[0]&&e.tags[0].text)||'';
-      return '<div class="dayrow" data-act="tlday" data-d="'+esc(e.time)+'"><span>🕐 '+esc(e.time)+'</span>'
-        +'<span class="spacer"></span><span style="color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:55%">'+esc(first)+'</span>'
-        +'<span class="chev">'+(open?'▲':'▼')+'</span></div>'
-        +(open?'<div class="daytags">'+((e.tags&&e.tags.length)?e.tags.map(tagRow).join(''):'<div class="empty">暂无数据</div>')+'</div>':'');
-    }).join('');
-    return h+'</div>';
-  }
-  // FIX v20 fallback: no timeline entries yet -> keep the old 22:00 formal-summary behaviour
-  var dd=S.data.daily||getLocalDaily();
-  // FIX v19: past 22:00 with no summary yet -> show "generating" (data may still be loading);
-  // before 22:00 -> show the scheduled-time placeholder
-  if(!dd){
-    var _hr=new Date().getHours();
-    h+=_hr>=22?'<div class="empty">正在生成今日总结，请稍候…</div>':'<div class="empty">今晚 22:00 生成正式版</div>';
-  }
-  else{
-    h+='<div class="small muted" style="margin-bottom:6px">'+esc(dd.date||'')+((dd.genTime||dd.generated)?' · 本地生成':'')+'</div>';
-    var tags=Array.isArray(dd.tags)?dd.tags:[];
-    h+=tags.length?tags.map(tagRow).join(''):'<div class="empty">暂无数据</div>';
-    if(dd.topCoins&&dd.topCoins.length){
-      h+='<div class="subhead">🎯 当日聪明钱标的</div>';
-      h+=dd.topCoins.map(function(c){
-        return '<div class="tagrow link" data-act="open-url" data-url="'+esc(debotUrl(c.chain,c.ca))+'"><span class="tagtext">$'+esc(c.symbol||'')+' '+esc(c.name||'')+'</span><span class="coinsym">聪明钱×'+esc(c.smart_count)+'</span><span class="go">→</span></div>';
-      }).join('');
-    }
-    var days=Object.keys(dd.history||{}).sort().reverse();
-    if(days.length){
-      h+='<div class="subhead">历史</div>';
-      h+=days.map(function(day){
-        var open=!!UI.days[day];
-        var dtags=(dd.history[day]&&Array.isArray(dd.history[day].tags))?dd.history[day].tags:[];
-        return '<div class="dayrow" data-act="day" data-d="'+esc(day)+'"><span>'+esc(day)+'</span>'
-          +'<span class="spacer"></span><span class="chev">'+(open?'▲':'▼')+'</span></div>'
-          +(open?'<div class="daytags">'+(dtags.length?dtags.map(tagRow).join(''):'<div class="empty">暂无数据</div>')+'</div>':'');
-      }).join('');
-    }
-  }
-  return h+'</div>';
-}
 function htmlBinance(){
   var bn=S.data.binance;
   var h='<div class="card"><div class="sect">🟡 近一周币安动态'+updInfo('binance','每5分钟更新')+'</div>';
@@ -943,14 +1023,13 @@ var SECTIONS=[
   {id:'sec-dy-rise', sig:function(){return (S.douyinOk?'1':'0')+'|'+JSON.stringify(S.hotlistRows);}, html:htmlDyRise},
   {id:'sec-dy-list', sig:function(){return JSON.stringify(S.dy)+'|'+UI.dyN;}, html:htmlDyList},
   {id:'sec-wb-list', sig:function(){return JSON.stringify(S.wb)+'|'+UI.wbN;}, html:htmlWbList},
-  {id:'sec-liq',     sig:function(){return sigData(S.data.liquidity)+'|'+(UI.expanded.liq?'1':'0')+'|'+JSON.stringify(UI.liqChains);}, html:htmlLiquidity},
+  {id:'sec-liq',     sig:function(){var c=LIQ.cache[UI.liq.iv];return (c?c.ts:0)+'|'+UI.liq.iv+'|'+UI.liq.chain+'|'+(UI.expanded.liq?'1':'0');}, html:htmlLiquidity},
   {id:'sec-tags',    sig:function(){return sigData(S.data.tags);}, html:htmlTags},
-  {id:'sec-cons',    sig:function(){return sigData(S.data.consensus)+'|'+(UI.expanded.consensus?'1':'0');}, html:htmlConsensus},
-  {id:'sec-bsc',     sig:function(){return sigData(S.data.bsc);}, html:function(){return htmlChain('bsc','BSC 战壕',CHAIN_COLOR.BSC);}},
+    {id:'sec-bsc',     sig:function(){return sigData(S.data.bsc);}, html:function(){return htmlChain('bsc','BSC 战壕',CHAIN_COLOR.BSC);}},
   {id:'sec-sol',     sig:function(){return sigData(S.data.sol);}, html:function(){return htmlChain('sol','Solana 战壕',CHAIN_COLOR.Solana);}},
   {id:'sec-rb',      sig:function(){return sigData(S.data.rb);}, html:function(){return htmlChain('rb','Robinhood 战壕',CHAIN_COLOR.Robinhood);}},
   {id:'sec-counts',  sig:function(){return sigData(S.data.tweets)+'|'+(UI.dailyPerson||'');}, html:htmlCounts},
-  {id:'sec-daily',   sig:function(){return sigData(S.data.daily)+'|'+JSON.stringify(UI.days)+'|'+JSON.stringify(UI.tlDays)+'|'+getTagsTimeline().length;}, html:htmlDaily},
+  {id:'sec-daily',   sig:function(){return sigData(S.data.daily);}, html:htmlDaily},
   {id:'sec-binance', sig:function(){return sigData(S.data.binance);}, html:htmlBinance}
 ];
 var SEEN_SIG={};
@@ -958,7 +1037,7 @@ function setHtml(id,html){var n=document.getElementById(id);if(n)n.innerHTML=htm
 function buildShell(){
   setHtml('tab-all','<div id="sec-moves"></div><div id="sec-tweets"></div>');
   setHtml('tab-hot','<div id="sec-dy-trend"></div><div id="sec-dy-rise"></div><div id="sec-dy-list"></div><div id="sec-wb-list"></div>');
-  setHtml('tab-trench','<div id="sec-liq"></div><div id="sec-tags"></div><div id="sec-cons"></div><div id="sec-bsc"></div><div id="sec-sol"></div><div id="sec-rb"></div>');
+  setHtml('tab-trench','<div id="sec-liq"></div><div id="sec-tags"></div><div id="sec-bsc"></div><div id="sec-sol"></div><div id="sec-rb"></div>');
   setHtml('tab-summary','<div id="sec-counts"></div><div id="sec-daily"></div><div id="sec-binance"></div>');
 }
 function updateSections(){
@@ -1003,14 +1082,23 @@ function handleAct(act,el){
     case 'copy':copyText(el.getAttribute('data-ca')||'',el);break;
     case 'toggle':{
       var k=el.getAttribute('data-key');
-      if(k.indexOf('liqchain:')===0){var c=k.slice(9);UI.liqChains[c]=!UI.liqChains[c];}
-      else UI.expanded[k]=!UI.expanded[k];
+      UI.expanded[k]=!UI.expanded[k];
       updateSections();break;}
     case 'dy-more':UI.dyN=UI.dyN>=20?10:20;updateSections();break;
     case 'wb-more':UI.wbN=UI.wbN>=20?10:20;updateSections();break;
+    case 'liq-chain':{
+      var ck=el.getAttribute('data-c');
+      if(ck){UI.liq.chain=ck;updateSections();}
+      break;}
+    case 'liq-iv':{
+      var iv=el.getAttribute('data-iv');
+      if(iv&&iv!==UI.liq.iv){
+        UI.liq.iv=iv;
+        updateSections();
+        fetchLiq(iv,true).then(function(){updateSections();});
+      }
+      break;}
     case 'daily-person':{var p=el.getAttribute('data-p');UI.dailyPerson=(UI.dailyPerson===p?null:p);updateSections();break;}
-    case 'day':{var dd2=el.getAttribute('data-d');UI.days[dd2]=!UI.days[dd2];updateSections();break;}
-    case 'tlday':{var td=el.getAttribute('data-d');UI.tlDays[td]=!UI.tlDays[td];updateSections();break;}
     case 'refresh':refresh();pollWorkerFast();setUpdTime();break;
   }
 }
@@ -1200,7 +1288,8 @@ function normDebotToken(t,chain){
     smart_count:Number(t.kol_count)||0,
     smart_label:'KOL',
     age_text:(function(){var cts=Number(t.creation_timestamp)||0;if(cts<=0)return '';var mins=Math.floor((Date.now()-cts*1000)/60000);if(mins<60)return mins+'分钟前';if(mins<1440)return Math.floor(mins/60)+'小时前';return Math.floor(mins/1440)+'天前';})(), creation_timestamp:Number(t.creation_timestamp)||0,
-    twitter:si.dx_twitter||'', website:t.website||'',
+    twitter:(si.twitter||si.dx_twitter||''), website:(si.website||t.website||''),
+    x_url:(function(){var tw=String(si.twitter||si.dx_twitter||'').trim();if(!tw)return '';return tw.indexOf('http')===0?tw:('https://x.com/'+tw.replace(/^@/,''));})(),
     narrative:guessNarrative(t.symbol,t.name),
     ca:t.address||''
   };
@@ -1277,46 +1366,8 @@ function fetchWorkerDouyin(){
     })
     .catch(function(){return null;});
 }
-function fetchWorkerLiquidity(){
-  return fetch(workerUrl('https://debot.ai/api/edge/launchpad/stats/latest?interval=1h'),{cache:'no-store'})
-    .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
-    .then(function(d){
-      if(!d||d.code!==0)throw new Error('debot code');
-      var chains=[];
-      var byKey={};
-      ((d.data||{}).chains||[]).forEach(function(ch){
-        if(ch&&ch.chain)byKey[ch.chain]=ch;
-      });
-      // FIX v13: Use API chain names directly (bsc, solana, robinhood, base, arc, eth)
-      var clabel={bsc:'BSC',solana:'Solana',robinhood:'Robinhood',base:'Base',arc:'Arc',eth:'Ethereum'};
-      ['bsc','solana','robinhood','base','arc','eth'].forEach(function(k){
-        var ch=byKey[k];if(!ch)return;
-        var s=ch.summary||{}, p=ch.prev_summary||{};
-        var buy=Number(s.buy_volume)||0, sell=Number(s.sell_volume)||0;
-        var vol=Number(s.volume)||0, pvol=Number(p.volume)||0;
-        var metrics={
-          volume:vol, buy_volume:buy, sell_volume:sell,
-          wallet_count:Number(s.wallet_count)||0,
-          token_count:Number(s.token_count)||0,
-          token_created_count:Number(s.token_created_count)||0,
-          token_migrated_count:Number(s.token_migrated_count)||0,
-          tx_count:Number(s.tx_count)||0
-        };
-        if(pvol>0)metrics.volume_change_pct=Math.round((vol-pvol)/pvol*10000)/100;
-        var wc=Number(s.wallet_count)||0;
-        if(wc>0)metrics.avg_buy_per_wallet=Math.round(buy/wc*100)/100;
-        chains.push({
-          chain:clabel[k]||k,
-          net_inflow:buy-sell,
-          metrics:metrics,
-          top_tokens:[]
-        });
-      });
-      return {updated_at:new Date().toISOString(), chains:chains};
-    })
-    .catch(function(){return null;});
-}
 function pollWorkerSlow(){
+  if(document.hidden)return;
   // Douyin every 5 min via Worker
   fetchWorkerDouyin().then(function(d){
     if(d&&d.hotlist&&d.hotlist.length){
@@ -1339,23 +1390,19 @@ function pollWorkerSlow(){
       updateSections();
     }
   });
-  // Liquidity every 5 min via Worker
-  fetchWorkerLiquidity().then(function(d){
-    if(d&&d.chains&&d.chains.length){
-      S.data.liquidity=d;
-      markUpd('liquidity');
-      updateSections();
-    }
-  });
-  // FIX v14/v18: 5-min summary - rebuild local tags every 5 min with FRESH timestamp
+  // 公链流动性仪表盘：跟随所选周期，每 5 分钟刷新
+  fetchLiq(UI.liq.iv,true).then(function(){updateSections();});
+  // v22: 热度总结改 30 分钟一次；上游 tags-halfhour.json 在 :00/:30 写入，
+  // 这里只在上游超过 30 分钟未更新时用本地战壕数据兜底，不再每 5 分钟覆盖。
   try{
-    var lt=buildLocalTags();
-    if(lt&&lt.length){
-      S.data.tags={updated_at:new Date().toISOString(),tags:lt};
-      markUpd('tags');
-      saveTagsTimeline(lt); // FIX v20: append 5-min snapshot to daily timeline
-      markUpd('daily');
-      updateSections();
+    var tu=S.data.tags&&S.data.tags.updated_at?Date.parse(S.data.tags.updated_at):0;
+    if(!tu||Date.now()-tu>30*60*1000){
+      var lt=buildLocalTags();
+      if(lt&&lt.length){
+        S.data.tags={updated_at:new Date().toISOString(),tags:lt};
+        markUpd('tags');
+        updateSections();
+      }
     }
   }catch(e){}
 }
@@ -1372,7 +1419,7 @@ function refresh(){
     });
     // FIX v13: Don't let stale GitHub JSON overwrite fresh Worker data
     // Worker manages: tweets, bsc, sol, rb, liquidity, douyin
-    var WORKER_KEYS={tweets:1,bsc:1,sol:1,rb:1,liquidity:1,douyin:1,tags:1};
+    var WORKER_KEYS={tweets:1,bsc:1,sol:1,rb:1,douyin:1,tags:1};
     Object.keys(data).forEach(function(k){
       if(WORKER_KEYS[k]){
         // Only overwrite if Worker has no data yet AND GitHub has valid data
@@ -1419,6 +1466,7 @@ function boot(){
   if(b)b.href='https://x.com/search?q=%40cz_binance%20since:'+y+'&f=top';
   buildShell();
   updateSections();
+  fetchLiq(UI.liq.iv,true).then(function(){updateSections();});
   refresh();
   setInterval(refresh,POLL_MS);
   // v9: Worker 10s polling for tweets/trench (real-time)
@@ -1426,14 +1474,7 @@ function boot(){
   setInterval(pollWorkerFast, WORKER_POLL_MS);
   setTimeout(pollWorkerSlow, 8000);
   setInterval(pollWorkerSlow, 300000); // 5 min
-  // FIX v19: generate daily summary locally whenever past 22:00 and none exists
-  // (covers page opened after 22:00, at 22:00, or data arriving late); maybeGenDaily no-ops otherwise
-  setInterval(function(){
-    try{maybeGenDaily();}catch(e){}
-  }, 60000);
-  // FIX v19: don't call generateDailySummaryLocal() directly on boot (data not loaded yet) —
-  // maybeGenDaily() waits for data and runs 25s after boot instead of waiting for the 22:00 timer
-  setTimeout(function(){try{maybeGenDaily();}catch(e){}},25000);
+
 }
 document.addEventListener('click',function(e){
   var el=e.target&&e.target.closest?e.target.closest('[data-act]'):null;
