@@ -362,6 +362,15 @@ def fetch_tweets(state_dir, tr_cache):
                 if not p or not p["text"]:
                     continue
                 if p["id"] in store:
+                    # 旧条目之前是直接跳过的，导致"图片/翻译"永远补不上；
+                    # 这里用本次解析结果回填缺失字段（媒体优先）。
+                    old = store[p["id"]]
+                    if (not old.get("media")) and p.get("media"):
+                        old["media"] = p["media"]
+                    if (not old.get("text_zh")) and p.get("_zh_channel"):
+                        old["text_zh"] = p["_zh_channel"]
+                    if (not old.get("url")) and p.get("url"):
+                        old["url"] = p["url"]
                     continue
                 # text_zh: channel's own Chinese translation first (free & exact),
                 # else MyMemory for new tweets.
