@@ -1105,6 +1105,38 @@ function handleAct(act,el){
 
 /* ============ v9: Worker-based real-time polling (10s for tweets/trench) ============ */
 function workerUrl(u){return WORKER+'/?u='+encodeURIComponent(u);}
+/* ============ v23 · TG 实时解析修复 ============
+   原实现用 innerText 取文本，但 DOMParser 文档里 <br> 不会变成换行，
+   整个推文被压成 1 行，随后被 lines.length<3 的过滤全部丢弃 → 实时抓取恒为 0 条。
+   这里把 <br> 显式换成 \n，并按 TG 模板拆出「原文 / 中文翻译 / 类型 / 原帖链接」。 */
+function tgMsgText(el){
+  if(!el)return '';
+  var c=el.cloneNode(true);
+  var brs=c.querySelectorAll('br');
+  for(var i=brs.length-1;i>=0;i--){
+    var b=brs[i];
+    if(b.parentNode)b.parentNode.replaceChild(document.createTextNode('\n'),b);
+  }
+  return String(c.textContent||'').replace(/\u00a0/g,' ').replace(/\r/g,'');
+}
+function tgIsNoise(s){
+  if(!s)return true;
+  if(/^(\u{1F4CC}|\u{1F4AC}|\u{1F504}|\u{1F464}|\u2705|\u274C|\u{1F5D1}|\u{1F4DD}|\u{1F552}|\u{1F517}|——)/u.test(s))return true;
+  if(s.indexOf('粉丝')>=0&&s.length<70)return true;
+  if(s.indexOf('查看原文')>=0)return true;
+  if(/^推文时间/.test(s))return true;
+  return false;
+}
+function sortTweets(arr){
+  return arr.sort(function(a,b){return (Date.parse(b.time)||0)-(Date.parse(a.time)||0);});
+}
+function mergeTweets(base, extra){
+  var seen={}, out=[];
+  function key(t){return t.id||t.url||((t.person||'')+'|'+t.time);}
+  (base||[]).forEach(function(t){var k=key(t);if(!k||seen[k])return;seen[k]=1;out.push(t);});
+  (extra||[]).forEach(function(t){var k=key(t);if(!k||seen[k])return;seen[k]=1;out.push(t);});
+  return sortTweets(out).slice(0,80);
+}
 function parseWorkerTweets(html, channel, defaultPerson){
   var tweets=[];
   try{
@@ -1114,109 +1146,65 @@ function parseWorkerTweets(html, channel, defaultPerson){
       try{
         var t=msg.querySelector('div.tgme_widget_message_text');
         if(!t)return;
-        var text=t.innerText||t.textContent||'';
-        var lines=text.split('\n').map(function(s){return s.trim();}).filter(function(s){return s;});
-        if(lines.length<3)return;
-        // time from <time datetime="">
-        var timeEl=msg.querySelector('time[datetime]');
-        var time=timeEl?timeEl.getAttribute('datetime'):'';
-        // kind detection (simplified)
+        var lines=tgMsgText(t).split('\n').map(function(s){return s.trim();}).filter(function(s){return s;});
+        if(!lines.length)return;
+        var head=lines[0]||'';
+        if(head.indexOf('删除')>=0)return;            // 已删除的推文不展示
+        // 作者：TG 模板里的「👤 昵称 @handle · x 粉丝」行最可靠
+        var who='';
+        for(var i=0;i<lines.length;i++){if(lines[i].indexOf('\u{1F464}')===0){who=lines[i];break;}}
+        var wl=(who+' '+lines.join(' ')).toLowerCase();
+        var person=defaultPerson;
+        if(wl.indexOf('heyibinance')>=0||wl.indexOf('yi he')>=0||wl.indexOf('何一')>=0)person='heyi';
+        else if(wl.indexOf('cz_binance')>=0||wl.indexOf('赵长鹏')>=0)person='cz';
+        else if(wl.indexOf('elonmusk')>=0||wl.indexOf('马斯克')>=0)person='elon';
+        var handle=person==='heyi'?'@heyibinance':(person==='cz'?'@cz_binance':'@elonmusk');
+        // 类型
         var kind='original';
-        var txt=text.toLowerCase();
-        if(txt.indexOf('关注了')>=0||txt.indexOf('followed')>=0||txt.indexOf('开始关注')>=0)kind='follow';
-        else if(txt.indexOf('取关')>=0||txt.indexOf('unfollowed')>=0)kind='unfollow';
-        else if(txt.indexOf('转推')>=0||txt.indexOf('retweet')>=0)kind='retweet';
-        else if(txt.indexOf('引用')>=0||txt.indexOf('quote')>=0)kind='quote';
-        else if(txt.indexOf('回复')>=0||txt.indexOf('reply')>=0)kind='reply';
-        // url from 查看原文 link
+        if(head.indexOf('引用')>=0)kind='quote';
+        else if(head.indexOf('回复')>=0)kind='reply';
+        else if(head.indexOf('转推')>=0)kind='retweet';
+        else if(head.indexOf('新增关注')>=0)kind='follow';
+        else if(head.indexOf('取消关注')>=0)kind='unfollow';
+        // 原帖链接
         var url='';
         var links=t.querySelectorAll('a');
-        for(var i=0;i<links.length;i++){
-          var a=links[i], href=a.getAttribute('href')||'';
-          if(href.indexOf('/status/')>=0){url=href;break;}
+        for(var j=0;j<links.length;j++){
+          var href=links[j].getAttribute('href')||'';
+          if(/\/status\/\d+/.test(href)){url=href;break;}
         }
+        if(!url)return;
+        var timeEl=msg.querySelector('time[datetime]');
+        var time=timeEl?timeEl.getAttribute('datetime'):'';
+        // 分段：中文翻译块 / 原推块 / 时间行
+        var zhAt=-1, origAt=-1, timeAt=-1;
+        for(var k=0;k<lines.length;k++){
+          if(zhAt<0&&lines[k].indexOf('中文翻译')>=0)zhAt=k;
+          if(origAt<0&&lines[k].indexOf('原推翻译')>=0)origAt=k;
+          if(timeAt<0&&lines[k].indexOf('推文时间')>=0)timeAt=k;
+        }
+        var bodyEnd=timeAt>=0?timeAt:lines.length;
+        var bodyStart=origAt>=0?origAt+1:(zhAt>=0?zhAt+1:0);
+        var body=[],zh=[];
+        for(var b=bodyStart;b<bodyEnd;b++){if(!tgIsNoise(lines[b]))body.push(lines[b]);}
+        if(zhAt>=0){
+          var zEnd=origAt>=0?origAt:bodyEnd;
+          for(var z=zhAt+1;z<zEnd;z++){if(!tgIsNoise(lines[z]))zh.push(lines[z]);}
+        }
+        var text=body.join('\n').trim();
+        var textZh=zh.join('\n').trim();
+        if(!text&&!textZh)return;
+        if(!text){text=textZh;textZh='';}
         var idMatch=url.match(/\/status\/(\d+)/);
-        var id=idMatch?idMatch[1]:'tg_'+channel+'_'+time.replace(/[^0-9]/g,'').slice(0,14);
-        // person: split heyi/cz by content (TechMelonCzHeyi has both)
-        var person=defaultPerson;
-        if(channel==='TechMelonCzHeyi'){
-          var low=text.toLowerCase();
-          if(low.indexOf('@heyibinance')>=0||text.indexOf('何一')>=0||low.indexOf('yi he')>=0){
-            person='heyi';
-          }else if(low.indexOf('@cz_binance')>=0||text.indexOf('赵长鹏')>=0||/^cz\b/.test(low)){
-            person='cz';
-          }
-          // default to heyi if unclear (channel is primarily heyi)
-        }
-        var handle=person==='heyi'?'@heyibinance':(person==='cz'?'@cz_binance':'@elonmusk');
-        // Clean text: take first meaningful lines, skip headers
-        var cleanLines=lines.filter(function(l){
-          return l!=='中文翻译 ——'&&l!=='💬'&&l!=='🌐'&&l!=='🕒'&&!l.startsWith('推文时间:')&&l.length>1;
-        });
-        var mainText=cleanLines.slice(0,8).join('\n').slice(0,500);
-        if(!mainText)return;
-        // FIX v21: extract images/videos — t.me/s renders tweet photos as link previews
-        // (a.tgme_widget_message_link_preview > i.link_preview_image with
-        // background-image CDN thumb), NOT as <img> tags. Videos have no playable
-        // source on t.me/s, so video thumbs are shown as images.
-        var media=[];
-        try{
-          var seenM={};
-          var bgUrl=function(el){
-            var st=el.getAttribute('style')||'';
-            var m=st.match(/background-image\s*:\s*url\(['"]?([^'")]+)['"]?\)/i);
-            return m?m[1]:'';
-          };
-          var addMedia=function(url,type){
-            if(!url)return;
-            url=String(url).trim();
-            if(url.indexOf('//')===0)url='https:'+url;
-            if(url.indexOf('http')!==0)return;
-            if(seenM[url])return;
-            seenM[url]=1;
-            if(media.length<4)media.push({url:url,type:type||'img'});
-          };
-          // 1) link preview images (tweet photos / video thumbs -> pbs.twimg.com)
-          msg.querySelectorAll('a.tgme_widget_message_link_preview').forEach(function(a){
-            var im=a.querySelector('i.link_preview_image');
-            var u=im?bgUrl(im):'';
-            if(u)addMedia(u,'img');
-          });
-          // 2) direct photo divs (rare)
-          msg.querySelectorAll('div.tgme_widget_message_photo').forEach(function(d){
-            var u=bgUrl(d); if(u)addMedia(u,'img');
-          });
-          // 3) plain <img> (skip avatars / user photos)
-          msg.querySelectorAll('img').forEach(function(img){
-            var src=img.getAttribute('src')||'';
-            if(!src||src.indexOf('data:')===0)return;
-            var cls=(img.getAttribute('class')||'');
-            var pn=img.parentNode;
-            var pcls=(pn&&pn.getAttribute)?(pn.getAttribute('class')||''):'';
-            if(/user_photo|avatar|emoji/i.test(cls+' '+pcls))return;
-            var w=parseInt(img.getAttribute('width')||'0',10);
-            if(w>0&&w<100)return;
-            addMedia(src,'img');
-          });
-          // 4) <video> elements (playable source preferred, else poster)
-          msg.querySelectorAll('video').forEach(function(v){
-            var srcEl=v.querySelector('source');
-            var ssrc=srcEl?(srcEl.getAttribute('src')||''):'';
-            var vsrc=v.getAttribute('src')||'';
-            if(ssrc)addMedia(ssrc,'video');
-            else if(vsrc)addMedia(vsrc,'video');
-            else{var poster=v.getAttribute('poster')||'';if(poster)addMedia(poster,'img');}
-          });
-        }catch(me){}
         tweets.push({
-          id:id, person:person, handle:handle,
-          time:time, text:mainText, text_zh:'',
-          kind:kind, media:media, url:url
+          id:idMatch?idMatch[1]:url, person:person, handle:handle,
+          time:time, text:text, text_zh:(textZh&&textZh!==text)?textZh:'',
+          kind:kind, media:[], url:url
         });
       }catch(e){}
     });
   }catch(e){}
-  return tweets;
+  return sortTweets(tweets).slice(0,60);
 }
 function fetchWorkerTweets(){
   var channels=[
@@ -1323,7 +1311,8 @@ function pollWorkerFast(){
   // Tweets every 10s
   fetchWorkerTweets().then(function(d){
     if(d&&d.tweets&&d.tweets.length){
-      S.data.tweets=d;
+      var cur=(S.data.tweets&&S.data.tweets.tweets)||[];
+      S.data.tweets={updated_at:new Date().toISOString(), tweets:mergeTweets(cur,d.tweets)};
       markUpd('tweets');
       updateSections();
       setUpdTime();
