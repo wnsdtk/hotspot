@@ -247,11 +247,15 @@ var DATA_FILES=[
 function dataUrl(f){return DATA_BASE+f+'?t='+Date.now();}
 var POLL_MS=15000;
 /* ============ state ============ */
-var S={data:{}, wb:null, dy:null, prevHotlist:null, hotlistRows:null, douyinOk:false};
-var UI={tab:'all', filter:'all', expanded:{}, liqChains:{}, dyN:10, wbN:10, dailyPerson:null, days:{}};
+var S={data:{}, wb:null, dy:null, prevHotlist:null, hotlistRows:null, douyinOk:false, lastUpdate:{}};
+var UI={tab:'all', filter:'all', expanded:{}, liqChains:{}, dyN:10, wbN:10, dailyPerson:null, days:{}, tlDays:{}};
 /* ============ helpers ============ */
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function nl2br(s){return s.replace(/\n/g,'<br>');}
+/* v16: update frequency + last update time for every section */
+function fmtTime(ts){if(!ts)return '--:--:--';var d=new Date(ts);return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2);}
+function updInfo(key,freq){var ts=S.lastUpdate[key];return '<span class="upd-info" style="font-weight:400;font-size:11px;color:var(--muted);margin-left:8px">'+esc(freq)+' · 上次 '+fmtTime(ts)+'</span>';}
+function markUpd(key){S.lastUpdate[key]=Date.now();}
 function trunc(s,n){s=String(s||'');return s.length>n?s.slice(0,n)+'…':s;}
 function trim1(x){return String(Math.round(x*10)/10);}
 function fmtMoney(v){
@@ -320,7 +324,7 @@ function htmlSmartMoves(){
   // Sort by smart_count desc, take top 5
   allToks.sort(function(a,b){return (Number(b.smart_count)||0)-(Number(a.smart_count)||0);});
   var top=allToks.slice(0,5);
-  var h='<div class="card"><div class="sect">⚡ 聪明钱异动 <span class="muted" style="font-weight:400;font-size:11px">· 10秒更新</span></div>';
+  var h='<div class="card"><div class="sect">⚡ 聪明钱异动'+updInfo('trench','每10秒更新')+'</div>';
   h+=top.map(function(t){return coinCard(t,false,null,true);}).join('');
   return h+'</div>';
 }
@@ -328,7 +332,10 @@ function htmlSmartMoves(){
 function tweetCard(tw){
   var p=personByKey(tw.person);
   var zh=tw.text_zh?'<div class="zh"><span class="zhtag">译</span>'+nl2br(esc(tw.text_zh))+'</div>':'';
-  var media=(tw.media||[]).map(function(m){return '<img class="timg" loading="lazy" src="'+esc(m.url)+'" alt="">';}).join('');
+  var media=(tw.media||[]).map(function(m){
+    if(m.type==='video')return '<video class="timg" controls preload="none" playsinline src="'+esc(m.url)+'"></video>';
+    return '<img class="timg" loading="lazy" src="'+esc(m.url)+'" alt="">';
+  }).join('');
   return '<div class="tweet pt-'+(tw.person||'')+'" data-act="open-url" data-url="'+esc(tw.url||'')+'">'
     +'<div class="thead"><span class="avatar">'+esc((p.name||'?').charAt(0))+'</span>'
     +'<span class="tname">'+esc(p.name)+'</span>'
@@ -341,7 +348,7 @@ function tweetCard(tw){
 function htmlTweets(){
   var d=S.data.tweets;
   if(!d||!Array.isArray(d.tweets)||!d.tweets.length)
-    return '<div class="card"><div class="sect">大佬推文 · 最新</div><div class="empty">暂无数据</div></div>';
+    return '<div class="card"><div class="sect">大佬推文 · 最新'+updInfo('tweets','每10秒更新')+'</div><div class="empty">暂无数据</div></div>';
   var tws=d.tweets.slice().sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);});
   var mini=PEOPLE.map(function(p){
     var t=null;
@@ -360,7 +367,7 @@ function htmlTweets(){
     return '<button class="chip'+(UI.filter===f.k?' on':'')+'" data-act="tweet-filter" data-f="'+f.k+'">'+esc(f.t)+'</button>';
   }).join('');
   var list=tws.filter(function(t){return UI.filter==='all'||t.person===UI.filter;}).map(tweetCard).join('');
-  return '<div class="card"><div class="sect">大佬推文 · 最新</div>'
+  return '<div class="card"><div class="sect">大佬推文 · 最新'+updInfo('tweets','每10秒更新')+'</div>'
     +'<div class="lsub">📌 最新一条 · 三人分开 · 各自最新一条</div>'+mini
     +'<div class="chips">'+chips+'</div>'
     +'<div class="tlist">'+(list||'<div class="empty">暂无数据</div>')+'</div></div>';
@@ -382,10 +389,19 @@ function diffHotlist(prev,curr){
   });
   return rows;
 }
+// FIX v15: fallback — top 5 by hot_value as 飙升, section must NEVER be empty
+function topHotlistFallback(hl){
+  if(!hl){
+    var dj=S.data.douyin;
+    hl=(dj&&Array.isArray(dj.hotlist))?dj.hotlist:[];
+  }
+  var top=(hl||[]).slice().sort(function(a,b){return (Number(b.hot_value)||0)-(Number(a.hot_value)||0);}).slice(0,5);
+  return top.map(function(t){return {t:t,badge:'hot'};});
+}
 function htmlDyTrend(){
   var dj=S.data.douyin;
   var tr=(dj&&Array.isArray(dj.trending))?dj.trending.slice(0,5):null;
-  var h='<div class="card"><div class="sect">📈 抖音实时上升热点</div>';
+  var h='<div class="card"><div class="sect">📈 抖音实时上升热点'+updInfo('douyin','每5分钟更新')+'</div>';
   if(!dj||!tr)h+='<div class="empty">暂无数据</div>';
   else if(!tr.length)h+='<div class="empty">暂无数据</div>';
   else h+=tr.map(function(t){
@@ -397,31 +413,24 @@ function htmlDyTrend(){
   return h+'</div>';
 }
 function htmlDyRise(){
-  var h='<div class="card"><div class="sect">🚀 刚上榜 / 飙升</div>';
+  var h='<div class="card"><div class="sect">🚀 刚上榜 / 飙升'+updInfo('douyin','每5分钟更新')+'</div>';
   if(!S.douyinOk)h+='<div class="empty">暂无数据</div>';
-  else if(!S.hotlistRows){
-    // FIX v11: first load - show top 5 hottest as 飙升 instead of empty
-    var dj=S.data.douyin;
-    var hl=(dj&&Array.isArray(dj.hotlist))?dj.hotlist:[];
-    if(hl.length){
-      var top=hl.slice().sort(function(a,b){return (Number(b.hot_value)||0)-(Number(a.hot_value)||0);}).slice(0,5);
-      h+=top.map(function(t){
-        return '<div class="hrow" data-act="open-url" data-url="'+esc(douyinSearch(t.word))+'"><span class="word">'+esc(t.word)+'</span><span class="badge orange">飙升</span><span class="hotv">'+fmtHot(t.hot_value)+'</span><span class="go">→</span></div>';
-      }).join('');
-    }else h+='<div class="empty">等待下一轮对比出数据</div>';
+  else{
+    // FIX v15: NEVER empty — fall back to top-5 hottest as 飙升
+    var rows=(S.hotlistRows&&S.hotlistRows.length)?S.hotlistRows:topHotlistFallback();
+    if(!rows.length)h+='<div class="empty">等待数据加载…</div>';
+    else h+=rows.map(function(r){
+      var t=r.t,url=t.url||douyinSearch(t.word||'');
+      var b=r.badge==='new'?'<span class="badge red">新上榜</span>':'<span class="badge orange">飙升</span>';
+      return '<div class="hrow" data-act="open-url" data-url="'+esc(url)+'">'
+        +'<span class="word">'+esc(t.word||'')+'</span>'+b+'<span class="badge blue">抖音</span><span class="go">→</span></div>';
+    }).join('');
   }
-  else if(!S.hotlistRows.length)h+='<div class="empty">本轮无新上榜/飙升词</div>';
-  else h+=S.hotlistRows.map(function(r){
-    var t=r.t,url=t.url||douyinSearch(t.word||'');
-    var b=r.badge==='new'?'<span class="badge red">新上榜</span>':'<span class="badge orange">飙升</span>';
-    return '<div class="hrow" data-act="open-url" data-url="'+esc(url)+'">'
-      +'<span class="word">'+esc(t.word||'')+'</span>'+b+'<span class="badge blue">抖音</span><span class="go">→</span></div>';
-  }).join('');
   return h+'</div>';
 }
 function htmlDyList(){
   var dyList=(S.dy&&S.dy.code===200&&Array.isArray(S.dy.data))?S.dy.data:[];
-  var h='<div class="card"><div class="sect">抖音热榜</div>';
+  var h='<div class="card"><div class="sect">抖音热榜'+updInfo('dy','每5分钟更新')+'</div>';
   if(!dyList.length)h+='<div class="empty">暂无数据</div>';
   else{
     h+=dyList.slice(0,UI.dyN).map(function(it,i){
@@ -436,7 +445,7 @@ function htmlDyList(){
 }
 function htmlWbList(){
   var wbList=(S.wb&&S.wb.code===200&&Array.isArray(S.wb.data))?S.wb.data:[];
-  var h='<div class="card"><div class="sect">微博热搜</div>';
+  var h='<div class="card"><div class="sect">微博热搜'+updInfo('wb','每5分钟更新')+'</div>';
   if(!wbList.length)h+='<div class="empty">暂无数据</div>';
   else{
     h+=wbList.slice(0,UI.wbN).map(function(it,i){
@@ -551,7 +560,7 @@ function liqChainDetail(c){
 }
 function htmlLiquidity(){
   var d=S.data.liquidity,open=!!UI.expanded.liq;
-  var h='<div class="card"><div class="sect tog" data-act="toggle" data-key="liq">💧 公链流动性 <span class="chev">'+(open?'▲':'▼')+'</span></div>';
+  var h='<div class="card"><div class="sect tog" data-act="toggle" data-key="liq">💧 公链流动性'+updInfo('liquidity','每5分钟更新')+' <span class="chev">'+(open?'▲':'▼')+'</span></div>';
   if(open){
     if(!d||!Array.isArray(d.chains)||!d.chains.length)h+='<div class="empty">暂无数据</div>';
     else{
@@ -631,8 +640,8 @@ function buildLocalTags(){
 }
 function htmlTags(){
   var tg=S.data.tags;
-  var h='<div class="card"><div class="sect">📋 20分钟热度总结 <span class="muted" style="font-weight:400;font-size:11px">· 每 20 分钟更新</span></div>';
-  (function(){var tu=(S.data.tags_halfhour&&S.data.tags_halfhour.updated_at)||(S.data.tags&&S.data.tags.updated_at)||'';if(tu){var d=new Date(tu);var s=(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);h+='<div class="muted" style="font-size:11px;padding:0 12px 6px">更新于 '+s+' 北京时间 · 每 20 分钟按最新战壕数据更新</div>';}})();
+  var h='<div class="card"><div class="sect">📋 5分钟热度总结'+updInfo('tags','每5分钟更新')+'</div>';
+  (function(){var tu=(S.data.tags_halfhour&&S.data.tags_halfhour.updated_at)||(S.data.tags&&S.data.tags.updated_at)||'';if(tu){var d=new Date(tu);var s=(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);h+='<div class="muted" style="font-size:11px;padding:0 12px 6px">更新于 '+s+' 北京时间 · 每 5 分钟按最新战壕数据更新</div>';}})();
   var tags=(tg&&Array.isArray(tg.tags))?tg.tags.slice():[];
   // Supplement with local tags if fewer than 5
   if(tags.length<5){
@@ -648,49 +657,35 @@ function htmlTags(){
   return h+'</div>';
 }
 function buildLocalConsensus(){
+  // FIX v14: STRICT filters only. Never show unqualified tokens.
+  // Group 1 (max 3): age < 2 days AND MC < $30,000 AND ATH/MC > 2 AND smart_count >= 5
+  // Group 2 (max 2): age < 5 days AND smart_count >= 5, sorted by smart_count*vol_1h
   var allToks=[];
   ['bsc','sol','rb'].forEach(function(k){
     var d=S.data[k];
     if(d&&Array.isArray(d.tokens))d.tokens.forEach(function(t){allToks.push(t);});
   });
-  // Filter: smart_count >= 5
   var qualified=allToks.filter(function(t){return (Number(t.smart_count)||0)>=5;});
   var now=Date.now();
-  // Group 1: fallen from high ATH to < $30k, within 2 days
   var fallen=qualified.filter(function(t){
     var mc=Number(t.market_cap)||0, ath=Number(t.history_highest_mcap)||0;
     var cts=Number(t.creation_timestamp)||0;
-    var ageOk=cts>0&&(now-cts*1000)<2*86400*1000;
-    return mc>0&&mc<=30000&&ath>mc*3&&ageOk;
+    var ageMs=cts>0?(now-cts*1000):Infinity;
+    return mc>0&&mc<30000&&ath>mc*2&&ageMs<2*86400*1000;
   }).sort(function(a,b){return (Number(b.smart_count)||0)-(Number(a.smart_count)||0);}).slice(0,3);
-  // Group 2: high hotness within 5 days (any MC)
   var fallenIds={};fallen.forEach(function(t){fallenIds[t.ca||t.address]=1;});
   var hot=qualified.filter(function(t){
     var cts=Number(t.creation_timestamp)||0;
-    var ageOk=cts>0&&(now-cts*1000)<5*86400*1000;
-    return ageOk&&!fallenIds[t.ca||t.address];
+    var ageMs=cts>0?(now-cts*1000):Infinity;
+    return ageMs<5*86400*1000&&!fallenIds[t.ca||t.address];
   }).sort(function(a,b){
-    var sa=(Number(b.smart_count)||0)-(Number(a.smart_count)||0);
-    if(sa!==0)return sa;
-    return (Number(b.vol_1h)||0)-(Number(a.vol_1h)||0);
+    return ((Number(b.smart_count)||0)*(Number(b.vol_1h)||0))-((Number(a.smart_count)||0)*(Number(a.vol_1h)||0));
   }).slice(0,2);
-  // FIX v11: lenient fallback - fill up to 3+2 from qualified if strict filters too narrow
-  if(fallen.length<3||hot.length<2){
-    var used={};fallen.forEach(function(t){used[t.ca||t.address]=1;});hot.forEach(function(t){used[t.ca||t.address]=1;});
-    var rest=qualified.filter(function(t){return !used[t.ca||t.address];})
-      .sort(function(a,b){return (Number(b.smart_count)||0)-(Number(a.smart_count)||0);});
-    while(fallen.length<3&&rest.length){fallen.push(rest.shift());}
-    // re-mark used after filling fallen
-    used={};fallen.forEach(function(t){used[t.ca||t.address]=1;});hot.forEach(function(t){used[t.ca||t.address]=1;});
-    rest=qualified.filter(function(t){return !used[t.ca||t.address];})
-      .sort(function(a,b){return (Number(b.smart_count)||0)-(Number(a.smart_count)||0);});
-    while(hot.length<2&&rest.length){hot.push(rest.shift());}
-  }
   return {fallen:fallen, hot:hot};
 }
 function htmlConsensus(){
   var open=!!UI.expanded.consensus;
-  var h='<div class="card"><div class="sect tog" data-act="toggle" data-key="consensus">🎯 聪明钱共识 <span class="chev">'+(open?'▲':'▼')+'</span></div>';
+  var h='<div class="card"><div class="sect tog" data-act="toggle" data-key="consensus">🎯 聪明钱共识'+updInfo('trench','每5分钟更新')+' <span class="chev">'+(open?'▲':'▼')+'</span></div>';
   if(open){
     var lc=buildLocalConsensus();
     var hasData=(lc.fallen.length+lc.hot.length)>0;
@@ -733,7 +728,7 @@ function htmlChain(key,title,color){
     if(!fresh.length&&!rest.length)cards='<div class="empty">暂无数据</div>';
   }
   var meta=toks.length+' 个币'+((d&&d.source)?' · 数据源 '+esc(d.source):'');
-  return '<div class="card"><div class="sect" style="color:'+color+'">'+esc(title)+' <span class="muted small" style="color:var(--muted);font-weight:400">'+meta+'</span></div>'
+  return '<div class="card"><div class="sect" style="color:'+color+'">'+esc(title)+updInfo('trench','每10秒更新')+' <span class="muted small" style="color:var(--muted);font-weight:400">'+meta+'</span></div>'
     +'<div class="coinlist" style="background:'+color+'33">'+cards+'</div></div>';
 }
 /* ============ 当日总结 ============ */
@@ -768,8 +763,13 @@ function dailyDetail(tws){
   }).sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);});
   var items=todays.length?todays.map(function(t){
     var zh=t.text_zh?'<div class="zh"><span class="zhtag">译</span>'+nl2br(esc(t.text_zh))+'</div>':'';
+    var media=(t.media||[]).map(function(m){
+      if(m.type==='video')return '<video class="timg" controls preload="none" playsinline src="'+esc(m.url)+'"></video>';
+      return '<img class="timg" loading="lazy" src="'+esc(m.url)+'" alt="">';
+    }).join('');
     return '<div class="histitem pt-'+key+'"><span class="htime">'+fmtBj(t.time)+' · '+relTime(t.time)+'</span>'+kindBadge(t.kind)
       +'<div style="margin-top:4px">'+nl2br(esc(t.text||''))+'</div>'+zh
+      +(media?'<div class="tmedia">'+media+'</div>':'')
       +'<div class="tlink" data-act="open-url" data-url="'+esc(t.url||'')+'">查看X原文 →</div></div>';
   }).join(''):'<div class="empty">今日暂无动态</div>';
   var htext=esc(p.name)+' · 今日动态';
@@ -782,7 +782,7 @@ function dailyDetail(tws){
 function htmlCounts(){
   var d=S.data.tweets;
   var tws=(d&&Array.isArray(d.tweets))?d.tweets.slice().sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);}):[];
-  return '<div class="card"><div class="sect">📝 当日总结</div>'
+  return '<div class="card"><div class="sect">📝 当日总结'+updInfo('tweets','每10秒更新')+'</div>'
     +'<div class="datehead">'+esc(todayBj())+'</div>'
     +'<div class="countcards">'+countCards(tws)+'</div></div>'
     +dailyDetail(tws);
@@ -790,21 +790,38 @@ function htmlCounts(){
 function getLocalDaily(){
   try{
     var raw=localStorage.getItem('daily_summary_'+todayBj());
-    if(raw){var o=JSON.parse(raw);if(o&&o.generated)return o;}
+    // FIX v19: treat empty summaries (saved by older versions) as missing so they get regenerated
+    if(raw){var o=JSON.parse(raw);if(o&&o.generated&&(o.tweetCount>0||(o.tags&&o.tags.length)||(o.topCoins&&o.topCoins.length)))return o;}
   }catch(e){}
   return null;
+}
+function maybeGenDaily(){
+  // FIX v19: generate whenever past 22:00 and no good summary exists (covers: page opened
+  // after 22:00, page open exactly at 22:00, data arriving late). Called on boot (delayed)
+  // and every minute; no-ops when a good summary already exists or data isn't ready yet.
+  try{
+    if(new Date().getHours()<22)return;
+    if(getLocalDaily())return;
+    var d=S.data;
+    var hasData=(((d.tweets||{}).tweets||[]).length>0)||
+                (((d.bsc||{}).tokens||[]).length>0)||
+                (((d.sol||{}).tokens||[]).length>0)||
+                (((d.rb||{}).tokens||[]).length>0);
+    if(!hasData)return;
+    generateDailySummaryLocal();
+  }catch(e){}
 }
 function generateDailySummaryLocal(){
   var today=todayBj();
   var key='daily_summary_'+today;
-  // FIX v13: allow regen if existing is empty
+  // FIX v19: don't overwrite a good summary; empty results are never saved
   try{
     var ex=localStorage.getItem(key);
     if(ex){
       var eo=JSON.parse(ex);
-      if(eo&&(eo.tweetCount>0||(eo.tags&&eo.tags.length)))return;
+      if(eo&&eo.generated&&(eo.tweetCount>0||(eo.tags&&eo.tags.length)||(eo.topCoins&&eo.topCoins.length)))return true;
     }
-  }catch(e){return;}
+  }catch(e){}
   var tws=((S.data.tweets||{}).tweets)||[];
   var todays=tws.filter(function(t){return bjDate(t.time)===today;});
   var tags=buildLocalTags();
@@ -812,6 +829,8 @@ function generateDailySummaryLocal(){
   ['bsc','sol','rb'].forEach(function(k){var d=S.data[k];if(d&&Array.isArray(d.tokens))d.tokens.forEach(function(t){allToks.push(t);});});
   var topSmart=allToks.filter(function(t){return (Number(t.smart_count)||0)>=5;})
     .sort(function(a,b){return (Number(b.smart_count)||0)-(Number(a.smart_count)||0);}).slice(0,5);
+  // FIX v19: never save an empty summary — it would poison storage and block later retries
+  if(!todays.length&&!tags.length&&!topSmart.length)return false;
   var summary={
     generated:true, date:today, genTime:new Date().toISOString(),
     tweetCount:todays.length,
@@ -820,11 +839,53 @@ function generateDailySummaryLocal(){
   };
   try{localStorage.setItem(key,JSON.stringify(summary));}catch(e){}
   if(typeof updateSections==='function')updateSections();
+  return true;
+}
+/* FIX v20: daily on-chain heat timeline — each 5-min tag snapshot is appended to
+   localStorage under tags_timeline_YYYY-MM-DD (max 288 entries), rendered newest-first */
+function getTagsTimeline(){
+  try{
+    var raw=localStorage.getItem('tags_timeline_'+todayBj());
+    var arr=JSON.parse(raw||'[]');
+    return Array.isArray(arr)?arr:[];
+  }catch(e){return [];}
+}
+function saveTagsTimeline(tags){
+  try{
+    tags=(Array.isArray(tags)?tags:[]).slice(0,8);
+    if(!tags.length)return;
+    var key='tags_timeline_'+todayBj();
+    var hh=fmtBj(new Date().toISOString()).slice(-5); // "HH:MM" Beijing
+    var arr=getTagsTimeline();
+    if(arr.length&&arr[arr.length-1].time===hh)arr[arr.length-1].tags=tags; // same minute: overwrite
+    else arr.push({time:hh,tags:tags});
+    if(arr.length>288)arr=arr.slice(arr.length-288);
+    localStorage.setItem(key,JSON.stringify(arr));
+  }catch(e){}
 }
 function htmlDaily(){
+  var tl=getTagsTimeline().slice().reverse(); // newest first
+  var h='<div class="card"><div class="sect">📋 今日链上热度时间线'+(tl.length?'（'+tl.length+'条）':'')+updInfo('daily','每5分钟记录')+'</div>';
+  if(tl.length){
+    h+='<div class="small muted" style="margin-bottom:6px">每 5 分钟记录一次 · 点时间展开</div>';
+    h+=tl.map(function(e){
+      var open=!!UI.tlDays[e.time];
+      var first=(e.tags&&e.tags[0]&&e.tags[0].text)||'';
+      return '<div class="dayrow" data-act="tlday" data-d="'+esc(e.time)+'"><span>🕐 '+esc(e.time)+'</span>'
+        +'<span class="spacer"></span><span style="color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:55%">'+esc(first)+'</span>'
+        +'<span class="chev">'+(open?'▲':'▼')+'</span></div>'
+        +(open?'<div class="daytags">'+((e.tags&&e.tags.length)?e.tags.map(tagRow).join(''):'<div class="empty">暂无数据</div>')+'</div>':'');
+    }).join('');
+    return h+'</div>';
+  }
+  // FIX v20 fallback: no timeline entries yet -> keep the old 22:00 formal-summary behaviour
   var dd=S.data.daily||getLocalDaily();
-  var h='<div class="card"><div class="sect">📋 今日链上热度总结</div>';
-  if(!dd)h+='<div class="empty">今晚 22:00 生成正式版</div>';
+  // FIX v19: past 22:00 with no summary yet -> show "generating" (data may still be loading);
+  // before 22:00 -> show the scheduled-time placeholder
+  if(!dd){
+    var _hr=new Date().getHours();
+    h+=_hr>=22?'<div class="empty">正在生成今日总结，请稍候…</div>':'<div class="empty">今晚 22:00 生成正式版</div>';
+  }
   else{
     h+='<div class="small muted" style="margin-bottom:6px">'+esc(dd.date||'')+((dd.genTime||dd.generated)?' · 本地生成':'')+'</div>';
     var tags=Array.isArray(dd.tags)?dd.tags:[];
@@ -851,7 +912,7 @@ function htmlDaily(){
 }
 function htmlBinance(){
   var bn=S.data.binance;
-  var h='<div class="card"><div class="sect">🟡 近一周币安动态</div>';
+  var h='<div class="card"><div class="sect">🟡 近一周币安动态'+updInfo('binance','每5分钟更新')+'</div>';
   if(!bn||!Array.isArray(bn.items)||!bn.items.length)h+='<div class="empty">暂无数据</div>';
   else h+=bn.items.map(function(it){
     var bcls=it.type==='listing'?'listing':(it.type==='delisting'?'delisting':'alpha');
@@ -889,7 +950,7 @@ var SECTIONS=[
   {id:'sec-sol',     sig:function(){return sigData(S.data.sol);}, html:function(){return htmlChain('sol','Solana 战壕',CHAIN_COLOR.Solana);}},
   {id:'sec-rb',      sig:function(){return sigData(S.data.rb);}, html:function(){return htmlChain('rb','Robinhood 战壕',CHAIN_COLOR.Robinhood);}},
   {id:'sec-counts',  sig:function(){return sigData(S.data.tweets)+'|'+(UI.dailyPerson||'');}, html:htmlCounts},
-  {id:'sec-daily',   sig:function(){return sigData(S.data.daily)+'|'+JSON.stringify(UI.days);}, html:htmlDaily},
+  {id:'sec-daily',   sig:function(){return sigData(S.data.daily)+'|'+JSON.stringify(UI.days)+'|'+JSON.stringify(UI.tlDays)+'|'+getTagsTimeline().length;}, html:htmlDaily},
   {id:'sec-binance', sig:function(){return sigData(S.data.binance);}, html:htmlBinance}
 ];
 var SEEN_SIG={};
@@ -949,6 +1010,7 @@ function handleAct(act,el){
     case 'wb-more':UI.wbN=UI.wbN>=20?10:20;updateSections();break;
     case 'daily-person':{var p=el.getAttribute('data-p');UI.dailyPerson=(UI.dailyPerson===p?null:p);updateSections();break;}
     case 'day':{var dd2=el.getAttribute('data-d');UI.days[dd2]=!UI.days[dd2];updateSections();break;}
+    case 'tlday':{var td=el.getAttribute('data-d');UI.tlDays[td]=!UI.tlDays[td];updateSections();break;}
     case 'refresh':refresh();pollWorkerFast();setUpdTime();break;
   }
 }
@@ -1005,24 +1067,57 @@ function parseWorkerTweets(html, channel, defaultPerson){
         });
         var mainText=cleanLines.slice(0,8).join('\n').slice(0,500);
         if(!mainText)return;
-        // FIX v11: extract images/videos from message
+        // FIX v21: extract images/videos — t.me/s renders tweet photos as link previews
+        // (a.tgme_widget_message_link_preview > i.link_preview_image with
+        // background-image CDN thumb), NOT as <img> tags. Videos have no playable
+        // source on t.me/s, so video thumbs are shown as images.
         var media=[];
         try{
+          var seenM={};
+          var bgUrl=function(el){
+            var st=el.getAttribute('style')||'';
+            var m=st.match(/background-image\s*:\s*url\(['"]?([^'")]+)['"]?\)/i);
+            return m?m[1]:'';
+          };
+          var addMedia=function(url,type){
+            if(!url)return;
+            url=String(url).trim();
+            if(url.indexOf('//')===0)url='https:'+url;
+            if(url.indexOf('http')!==0)return;
+            if(seenM[url])return;
+            seenM[url]=1;
+            if(media.length<4)media.push({url:url,type:type||'img'});
+          };
+          // 1) link preview images (tweet photos / video thumbs -> pbs.twimg.com)
+          msg.querySelectorAll('a.tgme_widget_message_link_preview').forEach(function(a){
+            var im=a.querySelector('i.link_preview_image');
+            var u=im?bgUrl(im):'';
+            if(u)addMedia(u,'img');
+          });
+          // 2) direct photo divs (rare)
+          msg.querySelectorAll('div.tgme_widget_message_photo').forEach(function(d){
+            var u=bgUrl(d); if(u)addMedia(u,'img');
+          });
+          // 3) plain <img> (skip avatars / user photos)
           msg.querySelectorAll('img').forEach(function(img){
             var src=img.getAttribute('src')||'';
-            // FIX v13: include all content images (skip avatars/icons by size check)
-            var w=img.getAttribute('width')||img.width||0;
-            if(src&&media.length<4&&src.indexOf('data:')!==0){
-              // Skip tiny avatars (usually <100px)
-              if(w>0&&w<100)return;
-              media.push({url:src,type:'img'});
-            }
+            if(!src||src.indexOf('data:')===0)return;
+            var cls=(img.getAttribute('class')||'');
+            var pn=img.parentNode;
+            var pcls=(pn&&pn.getAttribute)?(pn.getAttribute('class')||''):'';
+            if(/user_photo|avatar|emoji/i.test(cls+' '+pcls))return;
+            var w=parseInt(img.getAttribute('width')||'0',10);
+            if(w>0&&w<100)return;
+            addMedia(src,'img');
           });
+          // 4) <video> elements (playable source preferred, else poster)
           msg.querySelectorAll('video').forEach(function(v){
-            var poster=v.getAttribute('poster')||'';
-            if(poster&&media.length<4)media.push({url:poster,type:'img'});
-            var vsrc=v.querySelector('source');
-            if(vsrc&&vsrc.getAttribute('src')&&media.length<4)media.push({url:vsrc.getAttribute('src'),type:'video'});
+            var srcEl=v.querySelector('source');
+            var ssrc=srcEl?(srcEl.getAttribute('src')||''):'';
+            var vsrc=v.getAttribute('src')||'';
+            if(ssrc)addMedia(ssrc,'video');
+            else if(vsrc)addMedia(vsrc,'video');
+            else{var poster=v.getAttribute('poster')||'';if(poster)addMedia(poster,'img');}
           });
         }catch(me){}
         tweets.push({
@@ -1140,6 +1235,7 @@ function pollWorkerFast(){
   fetchWorkerTweets().then(function(d){
     if(d&&d.tweets&&d.tweets.length){
       S.data.tweets=d;
+      markUpd('tweets');
       updateSections();
       setUpdTime();
     }
@@ -1150,6 +1246,7 @@ function pollWorkerFast(){
       fetchWorkerTrench(k).then(function(d){
         if(d&&d.tokens){
           S.data[k]=d;
+          markUpd('trench');
           updateSections();
         }
       });
@@ -1225,13 +1322,20 @@ function pollWorkerSlow(){
     if(d&&d.hotlist&&d.hotlist.length){
       S.data.douyin=d;
       S.douyinOk=true;
+      markUpd('douyin');
       try{
         var prevSnap=JSON.parse(localStorage.getItem('dy_hotlist_snap')||'null');
         if(prevSnap&&Array.isArray(prevSnap)&&prevSnap.length){
-          S.hotlistRows=diffHotlist(prevSnap,d.hotlist);
+          // FIX v15: if diff is empty, fall back to top-5 — never leave empty
+          var _rows=diffHotlist(prevSnap,d.hotlist);
+          S.hotlistRows=(_rows&&_rows.length)?_rows:topHotlistFallback(d.hotlist);
+        }else{
+          S.hotlistRows=topHotlistFallback(d.hotlist);
         }
         localStorage.setItem('dy_hotlist_snap',JSON.stringify(d.hotlist));
-      }catch(e){}
+      }catch(e){
+        S.hotlistRows=topHotlistFallback(d.hotlist);
+      }
       updateSections();
     }
   });
@@ -1239,9 +1343,21 @@ function pollWorkerSlow(){
   fetchWorkerLiquidity().then(function(d){
     if(d&&d.chains&&d.chains.length){
       S.data.liquidity=d;
+      markUpd('liquidity');
       updateSections();
     }
   });
+  // FIX v14/v18: 5-min summary - rebuild local tags every 5 min with FRESH timestamp
+  try{
+    var lt=buildLocalTags();
+    if(lt&&lt.length){
+      S.data.tags={updated_at:new Date().toISOString(),tags:lt};
+      markUpd('tags');
+      saveTagsTimeline(lt); // FIX v20: append 5-min snapshot to daily timeline
+      markUpd('daily');
+      updateSections();
+    }
+  }catch(e){}
 }
 /* ============ refresh / boot ============ */
 
@@ -1256,7 +1372,7 @@ function refresh(){
     });
     // FIX v13: Don't let stale GitHub JSON overwrite fresh Worker data
     // Worker manages: tweets, bsc, sol, rb, liquidity, douyin
-    var WORKER_KEYS={tweets:1,bsc:1,sol:1,rb:1,liquidity:1,douyin:1};
+    var WORKER_KEYS={tweets:1,bsc:1,sol:1,rb:1,liquidity:1,douyin:1,tags:1};
     Object.keys(data).forEach(function(k){
       if(WORKER_KEYS[k]){
         // Only overwrite if Worker has no data yet AND GitHub has valid data
@@ -1268,16 +1384,27 @@ function refresh(){
         S.data[k]=data[k];
       }
     });
-    S.wb=wb;S.dy=dy;
+    S.wb=wb;S.dy=dy;markUpd('wb');markUpd('dy');markUpd('binance');markUpd('daily');
     var dj=data.douyin;
     S.douyinOk=!!(dj&&Array.isArray(dj.hotlist));
     if(S.douyinOk){
       try{
         var prevSnap=JSON.parse(localStorage.getItem('dy_hotlist_snap')||'null');
-        if(prevSnap&&Array.isArray(prevSnap))S.hotlistRows=diffHotlist(prevSnap,dj.hotlist);
+        if(prevSnap&&Array.isArray(prevSnap)){
+          // FIX v15: if diff is empty, fall back to top-5 — never leave empty
+          var _brows=diffHotlist(prevSnap,dj.hotlist);
+          S.hotlistRows=(_brows&&_brows.length)?_brows:topHotlistFallback(dj.hotlist);
+        }else{
+          S.hotlistRows=topHotlistFallback(dj.hotlist);
+        }
         localStorage.setItem('dy_hotlist_snap',JSON.stringify(dj.hotlist));
       }catch(e){
-        if(S.prevHotlist)S.hotlistRows=diffHotlist(S.prevHotlist,dj.hotlist);
+        if(S.prevHotlist){
+          var _crows=diffHotlist(S.prevHotlist,dj.hotlist);
+          S.hotlistRows=(_crows&&_crows.length)?_crows:topHotlistFallback(dj.hotlist);
+        }else{
+          S.hotlistRows=topHotlistFallback(dj.hotlist);
+        }
       }
       S.prevHotlist=dj.hotlist;
     }
@@ -1299,15 +1426,14 @@ function boot(){
   setInterval(pollWorkerFast, WORKER_POLL_MS);
   setTimeout(pollWorkerSlow, 8000);
   setInterval(pollWorkerSlow, 300000); // 5 min
-  // FIX v11: generate daily summary locally at 22:00 (don't rely on GitHub Actions)
+  // FIX v19: generate daily summary locally whenever past 22:00 and none exists
+  // (covers page opened after 22:00, at 22:00, or data arriving late); maybeGenDaily no-ops otherwise
   setInterval(function(){
-    try{
-      var d=new Date();
-      if(d.getHours()===22&&d.getMinutes()<10)generateDailySummaryLocal();
-    }catch(e){}
+    try{maybeGenDaily();}catch(e){}
   }, 60000);
-  // Also try once on boot if past 22:00
-  try{var _d=new Date();if(_d.getHours()>=22)generateDailySummaryLocal();}catch(e){}
+  // FIX v19: don't call generateDailySummaryLocal() directly on boot (data not loaded yet) —
+  // maybeGenDaily() waits for data and runs 25s after boot instead of waiting for the 22:00 timer
+  setTimeout(function(){try{maybeGenDaily();}catch(e){}},25000);
 }
 document.addEventListener('click',function(e){
   var el=e.target&&e.target.closest?e.target.closest('[data-act]'):null;
