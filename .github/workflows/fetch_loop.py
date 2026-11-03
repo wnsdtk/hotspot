@@ -191,23 +191,41 @@ def tweet_time_iso(lines, msg):
 
 def tweet_media(msg):
     media = []
-    for a in msg.select("a.tgme_widget_message_photo_wrap"):
-        href = (a.get("href") or "").strip()
-        url = ""
-        if href.startswith("http") and ("pbs.twimg.com" in href or "cdn" in href or "/photo" in href or "telegram" in href):
-            url = href
-        else:
-            m = re.search(r"url\('([^']+)'\)", a.get("style", ""))
-            if m:
-                url = m.group(1)
-        if not url:
-            continue
+
+    def add(url):
+        url = (url or "").strip()
+        if url.startswith("//"):
+            url = "https:" + url
+        if not url.startswith("http"):
+            return
         if "pbs.twimg.com" in url:
             # prefer the X original-size image
             url = re.sub(r"([?&])name=[^&]*", r"\1name=orig", url)
             if "name=" not in url:
                 url += ("&" if "?" in url else "?") + "name=orig"
-        media.append({"url": url})
+        media.append({"url": url, "type": "img"})
+
+    def bg(el):
+        st = (el.get("style") or "") if el else ""
+        m = re.search(r"background-image\s*:\s*url\(['\"]?([^'\")]+)['\"]?\)", st, re.I)
+        return m.group(1) if m else ""
+
+    # 1) 引用推文的配图：t.me 渲染成 link preview 的背景图
+    for a in msg.select("a.tgme_widget_message_link_preview"):
+        add(bg(a.select_one("i.link_preview_image")))
+        for v in a.select("i.link_preview_video, video"):
+            add(bg(v) or (v.get("src") or ""))
+
+    # 2) 原生相册
+    for a in msg.select("a.tgme_widget_message_photo_wrap"):
+        href = (a.get("href") or "").strip()
+        add(href if href.startswith("http") else bg(a))
+
+    # 3) 直接 <video>
+    for v in msg.select("video"):
+        src_el = v.select_one("source")
+        add((src_el.get("src") if src_el else "") or v.get("src") or "")
+
     # dedupe, keep order
     seen, out = set(), []
     for m in media:
