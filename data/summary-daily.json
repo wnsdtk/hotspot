@@ -1,0 +1,122 @@
+{
+  "date": "2026-11-03",
+  "generated_at": "2026-11-03T21:01:02.073356+08:00",
+  "source": "tag-log",
+  "periods": {
+    "morning": {
+      "themes": [],
+      "coins": []
+    },
+    "afternoon": {
+      "themes": [
+        {
+          "text": "#新币发行加速",
+          "hits": 11
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 8
+        },
+        {
+          "text": "#AI/Agent概念持续发酵",
+          "hits": 5
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 2
+        },
+        {
+          "text": "#$SI 同名代币",
+          "hits": 1
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$AI",
+          "chain": "sol",
+          "ca": "8ozpQfvuPzxaLiKnX6cqTDbqs8HMzqduHUe1J15mpump",
+          "hits": 8
+        },
+        {
+          "symbol": "$OMBRO",
+          "chain": "sol",
+          "ca": "8DB8Fw5UiC1AzugQAfRyw3qL8omw772LJbdehNWhpump",
+          "hits": 5
+        },
+        {
+          "symbol": "$一本万利",
+          "chain": "bsc",
+          "ca": "0x02a736a276acf0190cedb33f3d8b9f5972b97777",
+          "hits": 3
+        }
+      ]
+    }
+  },
+  "tags": [
+    {
+      "text": "#动物Meme持续发酵",
+      "coin_symbol": "$SI",
+      "coin_ca": "0x5f77d3d852943bac6b976952f80165f33d7f7777",
+      "coin_chain": "bsc"
+    },
+    {
+      "text": "#AI/Agent概念持续发酵",
+      "coin_symbol": "$AI",
+      "coin_ca": "8ozpQfvuPzxaLiKnX6cqTDbqs8HMzqduHUe1J15mpump",
+      "coin_chain": "sol"
+    },
+    {
+      "text": "#新币发行加速",
+      "coin_symbol": "$MOGMAS",
+      "coin_ca": "4yxnt3xAdyBFFbzMWJy9sjGEoiBNkjwdSQZ8ZyULpump",
+      "coin_chain": "sol"
+    }
+  ],
+  "history": {
+    "2026-11-03": {
+      "tags": [
+        {
+          "text": "#动物Meme持续发酵",
+          "coin_symbol": "$SI",
+          "coin_ca": "0x5f77d3d852943bac6b976952f80165f33d7f7777",
+          "coin_chain": "bsc"
+        },
+        {
+          "text": "#AI/Agent概念持续发酵",
+          "coin_symbol": "$AI",
+          "coin_ca": "8ozpQfvuPzxaLiKnX6cqTDbqs8HMzqduHUe1J15mpump",
+          "coin_chain": "sol"
+        },
+        {
+          "text": "#新币发行加速",
+          "coin_symbol": "$MOGMAS",
+          "coin_ca": "4yxnt3xAdyBFFbzMWJy9sjGEoiBNkjwdSQZ8ZyULpump",
+          "coin_chain": "sol"
+        }
+      ],
+      "morning": [],
+      "afternoon": [
+        {
+          "text": "#新币发行加速",
+          "hits": 11
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 8
+        },
+        {
+          "text": "#AI/Agent概念持续发酵",
+          "hits": 5
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 2
+        },
+        {
+          "text": "#$SI 同名代币",
+          "hits": 1
+        }
+      ]
+    }
+  }
+}
