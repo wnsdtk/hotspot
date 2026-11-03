@@ -1170,15 +1170,69 @@ function tgIsNoise(s){
   if(/^推文时间/.test(s))return true;
   return false;
 }
+
+function tgBgUrl(el){
+  if(!el)return '';
+  var st=el.getAttribute('style')||'';
+  var m=st.match(/background-image\s*:\s*url\(['"]?([^'")]+)['"]?\)/i);
+  return m?m[1]:'';
+}
+/* 从一条 TG 消息里提取图片/视频（引用推文的图片是 link preview 的背景图） */
+function tgMsgMedia(msg){
+  var media=[], seen={};
+  function add(u,type){
+    if(!u)return;
+    u=String(u).trim();
+    if(u.indexOf('//')===0)u='https:'+u;
+    if(u.indexOf('http')!==0)return;
+    if(seen[u])return;
+    seen[u]=1;
+    if(media.length<4)media.push({url:u,type:type||'img'});
+  }
+  try{
+    msg.querySelectorAll('a.tgme_widget_message_link_preview').forEach(function(a){
+      add(tgBgUrl(a.querySelector('i.link_preview_image')),'img');
+      var v=a.querySelector('i.link_preview_video, video');
+      if(v)add(tgBgUrl(v)||v.getAttribute('src')||'','video');
+    });
+    msg.querySelectorAll('a.tgme_widget_message_photo_wrap, div.tgme_widget_message_photo').forEach(function(d){
+      add(tgBgUrl(d),'img');
+    });
+    msg.querySelectorAll('video').forEach(function(v){
+      var s=v.querySelector('source');
+      var src=(s&&s.getAttribute('src'))||v.getAttribute('src')||'';
+      if(src)add(src,'video');
+      else add(v.getAttribute('poster')||'','img');
+    });
+    msg.querySelectorAll('img').forEach(function(img){
+      var src=img.getAttribute('src')||'';
+      if(!src||src.indexOf('data:')===0)return;
+      var cls=(img.getAttribute('class')||'')+' '+((img.parentNode&&img.parentNode.getAttribute)?(img.parentNode.getAttribute('class')||''):'');
+      if(/user_photo|avatar|emoji/i.test(cls))return;
+      add(src,'img');
+    });
+  }catch(e){}
+  return media;
+}
+
 function sortTweets(arr){
   return arr.sort(function(a,b){return (Date.parse(b.time)||0)-(Date.parse(a.time)||0);});
 }
 function mergeTweets(base, extra){
-  var seen={}, out=[];
+  var map={}, order=[];
   function key(t){return t.id||t.url||((t.person||'')+'|'+t.time);}
-  (base||[]).forEach(function(t){var k=key(t);if(!k||seen[k])return;seen[k]=1;out.push(t);});
-  (extra||[]).forEach(function(t){var k=key(t);if(!k||seen[k])return;seen[k]=1;out.push(t);});
-  return sortTweets(out).slice(0,80);
+  (base||[]).forEach(function(t){
+    var k=key(t);if(!k)return;
+    if(!map[k]){map[k]=t;order.push(k);}
+  });
+  (extra||[]).forEach(function(t){
+    var k=key(t);if(!k)return;
+    if(!map[k]){map[k]=t;order.push(k);return;}
+    var a=map[k];
+    if((!a.media||!a.media.length)&&t.media&&t.media.length)a.media=t.media;
+    if(!a.text_zh&&t.text_zh)a.text_zh=t.text_zh;
+  });
+  return sortTweets(order.map(function(k){return map[k];})).slice(0,80);
 }
 function parseWorkerTweets(html, channel, defaultPerson){
   var tweets=[];
@@ -1242,7 +1296,7 @@ function parseWorkerTweets(html, channel, defaultPerson){
         tweets.push({
           id:idMatch?idMatch[1]:url, person:person, handle:handle,
           time:time, text:text, text_zh:(textZh&&textZh!==text)?textZh:'',
-          kind:kind, media:[], url:url
+          kind:kind, media:tgMsgMedia(msg), url:url
         });
       }catch(e){}
     });
