@@ -388,7 +388,7 @@ var LIQ_CHAIN={
   xlayer:{name:'XLayer', color:'#C3CBD8', g:'X'},
   pharos:{name:'Pharos', color:'#FF6B6B', g:'P'}
 };
-var LIQ_ORDER=['bsc','eth','solana','base','arc','robinhood','arbitrum','monad','hyperevm','stable','xlayer','pharos'];
+var LIQ_ORDER=['bsc','solana','robinhood','xlayer','arc'];
 var LIQ_IVS=[{k:'1h',t:'1H'},{k:'6h',t:'6H'},{k:'24h',t:'24H'}];
 var PAD_NAME={flap:'Flap', four_meme:'Four', gangfun:'Gang.fun', pumpfun:'pump.fun', believe:'Believe',
   bonk:'BONK', meteora:'Meteora', raydium:'Raydium', virtuals:'Virtuals', clanker:'Clanker',
@@ -505,6 +505,7 @@ function liqTools(){
   var present={}; chains.forEach(function(c){present[c.key]=1;});
   var order=LIQ_ORDER.filter(function(k){return present[k];})
     .concat(chains.map(function(c){return c.key;}).filter(function(k){return LIQ_ORDER.indexOf(k)<0;}));
+  order=order.filter(function(k){return LIQ_ORDER.indexOf(k)>=0;});
   var icons=order.map(function(k){
     var m=liqChainMeta(k);
     return '<button class="ci'+(k===UI.liq.chain?' on':'')+'" data-act="liq-chain" data-c="'+esc(k)+'" title="'+esc(m.name)+'" aria-label="'+esc(m.name)+'">'
