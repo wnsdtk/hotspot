@@ -922,30 +922,121 @@ def build_tags(tokens):
 
 
 # ------------------------------------------------------------ daily summary
-def maybe_summary_daily(out_dir, tags):
+# ------------------------------------------------------------ tag log + daily summary
+TAG_LOG_KEEP_DAYS = 2
+
+
+def tag_log_path(state_dir):
+    return os.path.join(state_dir, "tag-log.json")
+
+
+def append_tag_log(state_dir, tags):
+    """Store one tag snapshot per half-hour slot (feeds the 21:00 daily summary)."""
+    path = tag_log_path(state_dir)
+    log = load_json(path, {})
+    if not isinstance(log, dict):
+        log = {}
+    now = now_sh()
+    today = now.strftime("%Y-%m-%d")
+    slot = "%02d:%s" % (now.hour, "00" if now.minute < 30 else "30")
+    entry = {
+        "t": slot,
+        "tags": [
+            {
+                "text": t.get("text", ""),
+                "symbol": t.get("coin_symbol", ""),
+                "chain": t.get("coin_chain", ""),
+                "ca": t.get("coin_ca", ""),
+            }
+            for t in (tags or [])
+            if t.get("text")
+        ],
+    }
+    day = [e for e in (log.get(today) or []) if e.get("t") != slot]
+    day.append(entry)
+    day.sort(key=lambda e: e.get("t", ""))
+    log[today] = day[-60:]
+    log = {k: log[k] for k in sorted(log.keys())[-TAG_LOG_KEEP_DAYS:]}
+    atomic_write(path, log)
+    return len(log[today])
+
+
+def summarize_period(entries, start_hour, end_hour):
+    """Rank narrative tags / coins inside one time window."""
+    from collections import Counter
+    themes = Counter()
+    coin_hits = {}
+    for e in entries or []:
+        try:
+            hh = int(str(e.get("t", "00:00")).split(":")[0])
+        except Exception:
+            continue
+        if not (start_hour <= hh < end_hour):
+            continue
+        for tg in e.get("tags") or []:
+            txt = (tg.get("text") or "").strip()
+            if txt:
+                themes[txt] += 1
+            sym = (tg.get("symbol") or "").strip()
+            if sym:
+                key = (sym, tg.get("chain") or "")
+                c = coin_hits.setdefault(key, {
+                    "symbol": sym,
+                    "chain": tg.get("chain") or "",
+                    "ca": tg.get("ca") or "",
+                    "hits": 0,
+                })
+                c["hits"] += 1
+    return {
+        "themes": [{"text": t, "hits": n} for t, n in themes.most_common(6)],
+        "coins": sorted(coin_hits.values(), key=lambda c: c["hits"], reverse=True)[:3],
+    }
+
+
+def maybe_summary_daily(out_dir, state_dir, tags):
+    """Beijing 21:00-21:05: what the trenches played in the morning vs the afternoon."""
     path = os.path.join(out_dir, "summary-daily.json")
-    today = now_sh().strftime("%Y-%m-%d")
-    hour = now_sh().hour
+    now = now_sh()
+    today = now.strftime("%Y-%m-%d")
+    if now.hour != 21 or now.minute >= 6:
+        return False, "outside 21:00-21:05 window"
     existing = load_json(path, None)
-    # ONLY generate during Beijing 22:xx and only once per day.
-    if hour != 22:
-        return False, "not 22:xx, untouched"
     if isinstance(existing, dict) and existing.get("date") == today:
         return False, "already generated today"
+    log = load_json(tag_log_path(state_dir), {})
+    entries = (log or {}).get(today) or []
+    morning = summarize_period(entries, 0, 12)
+    afternoon = summarize_period(entries, 12, 21)
+    if not morning["themes"] and not afternoon["themes"]:
+        # never publish an empty block: fall back to the current snapshot
+        afternoon = {
+            "themes": [{"text": t.get("text", ""), "hits": 1}
+                       for t in (tags or []) if t.get("text")][:6],
+            "coins": [{"symbol": t.get("coin_symbol", ""),
+                       "chain": t.get("coin_chain", ""),
+                       "ca": t.get("coin_ca", ""), "hits": 1}
+                      for t in (tags or []) if t.get("coin_symbol")][:3],
+        }
     history = {}
     if isinstance(existing, dict) and isinstance(existing.get("history"), dict):
         history = existing["history"]
-    history[today] = {"tags": tags}
-    # cap 30 days, keep newest
+    history[today] = {
+        "tags": tags,
+        "morning": morning["themes"],
+        "afternoon": afternoon["themes"],
+    }
     for d in sorted(history.keys())[:-30]:
         del history[d]
     atomic_write(path, {
         "date": today,
         "generated_at": iso_now(),
+        "source": "tag-log",
+        "periods": {"morning": morning, "afternoon": afternoon},
         "tags": tags,
         "history": history,
     })
-    return True, f"generated for {today}"
+    return True, ("generated %s (morning themes=%d, afternoon themes=%d)"
+                  % (today, len(morning["themes"]), len(afternoon["themes"])))
 
 
 # ----------------------------------------------------------------- binance
@@ -1073,18 +1164,19 @@ def slow_lane(out_dir, state_dir, tr_cache, cache_path):
     consensus = build_consensus(pool)
     if write_if_changed(os.path.join(out_dir, "consensus.json"), consensus):
         print(f"  [slow] wrote consensus.json lowcap={len(consensus['lowcap'])} rest={len(consensus['rest'])}")
-    # half-hour narrative tags
+    # 30-minute narrative tags: only refresh on :00 / :30 slots (5-min retry window)
     tags = build_tags(all_tokens)
-    if write_if_changed(os.path.join(out_dir, "tags-halfhour.json"),
-                        {"updated_at": iso_now(), "tags": tags}):
-        print(f"  [slow] wrote tags-halfhour.json ({len(tags)} tags)")
-    # daily summary: Beijing 22:00-22:05 window, once per day
     now = now_sh()
-    if now.hour == 22 and now.minute < 5:
-        made, why = maybe_summary_daily(out_dir, tags)
+    if now.minute % 30 < 6:
+        if write_if_changed(os.path.join(out_dir, "tags-halfhour.json"),
+                            {"updated_at": iso_now(), "tags": tags}):
+            print(f"  [slow] wrote tags-halfhour.json ({len(tags)} tags)")
+        slots = append_tag_log(state_dir, tags)
+        made, why = maybe_summary_daily(out_dir, state_dir, tags)
+        print(f"  [slow] tag-log slots={slots}")
         print(f"  [slow] summary-daily {'WROTE' if made else 'skip'}: {why}")
     else:
-        print("  [slow] summary-daily skip: outside 22:00-22:05 window")
+        print("  [slow] tags/summary skip: outside :00/:30 slot")
     # douyin: official first, xxapi fallback
     try:
         dy = fetch_douyin()
