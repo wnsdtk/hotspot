@@ -1125,19 +1125,7 @@ function htmlCounts(){
     h+='</div>';
   }
 
-  var groups={};
-  all.forEach(function(t){var d=bjDate(t.time);(groups[d]=groups[d]||[]).push(t);});
-  var days=Object.keys(groups).sort().reverse().slice(0,HIST_DAYS);
-  h+='<div class="subhead" style="margin-top:16px">\u5168\u90e8\u63a8\u6587</div>';
-  if(!days.length){
-    h+='<div class="empty">\u6682\u65e0\u5386\u53f2\u63a8\u6587\uff08\u6570\u636e\u6bcf 5 \u5206\u949f\u540c\u6b65\uff09</div>';
-  }else{
-    days.forEach(function(d){
-      var rows=groups[d].slice().sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);});
-      h+='<div class="datehead" style="margin-top:14px">'+esc(d)+' <span class="muted small">\u5171 '+rows.length+' \u6761</span></div>';
-      h+=rows.map(histCard).join('');
-    });
-  }
+  if(!all.length)h+='<div class="empty">\u6682\u65e0\u5386\u53f2\u63a8\u6587\uff08\u6570\u636e\u6bcf 5 \u5206\u949f\u540c\u6b65\uff09</div>';
   return h+'</div>';
 }
 function htmlBinance(){
