@@ -1044,6 +1044,18 @@ function histTweets(){
   if(list.length)return list;
   return (S.data.tweets&&S.data.tweets.tweets)||[];
 }
+function cleanParagraph(s){
+  var lines=String(s||'').split('\n').map(function(x){return x.trim();}).filter(Boolean);
+  var out=[];
+  for(var i=0;i<lines.length;i++){
+    var l=lines[i];
+    if(/^@[A-Za-z0-9_]{2,}$/.test(l))continue;
+    if(/^https?:\/\//.test(l))continue;
+    if(out.length&&out[out.length-1]===l)continue;
+    out.push(l);
+  }
+  return out.join('\n');
+}
 function histCard(t){
   var zh=t.text_zh?'<div class="zh"><span class="zhtag">\u8bd1</span>'+nl2br(esc(t.text_zh))+'</div>':'';
   var media=(t.media||[]).map(function(m){
@@ -1054,7 +1066,7 @@ function histCard(t){
   if(t.parent_text){
     var who=t.parent_handle?('@'+String(t.parent_handle).replace(/^@/,'')):(t.parent_author||'');
     parent='<div class="qtw"><div class="qwh">'+(t.kind==='reply'?'\u56de\u590d':'\u5f15\u7528')+' '+esc(who)+'</div>'
-      +'<div class="qtx">'+nl2br(esc(t.parent_text))+'</div></div>';
+      +'<div class="qtx">'+nl2br(esc(cleanParagraph(t.parent_text)))+'</div></div>';
   }
   var kn=KIND_NAME[t.kind]||t.kind||'';
   return '<div class="histitem pt-'+(t.person||'')+'">'
