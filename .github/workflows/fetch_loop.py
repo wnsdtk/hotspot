@@ -362,7 +362,7 @@ def parse_post(msg, default_person):
     inner = msg.select_one("div.tgme_widget_message[data-post]")
     tid = (inner.get("data-post", "") if inner else "").replace("/", "_")
     if not tid:
-        tid = "tg_" + str(abs(hash(text)) % 0xFFFF)
+        tid = "tg_" + hashlib.md5(text.encode("utf-8")).hexdigest()[:12]
 
     return {
         "id": tid,
@@ -449,6 +449,14 @@ def fetch_tweets(state_dir, tr_cache, out_dir=None):
             pruned[tid] = p
             if dt >= cutoff_recent:
                 recent[tid] = p
+    # 去重：同一作者同一时间同一正文只保留一条（修复历史重复）
+    dedup = {}
+    for p in pruned.values():
+        dk = (p.get("person", ""), p.get("time", ""), (p.get("text") or "")[:40])
+        old = dedup.get(dk)
+        if old is None or (len(p.get("parent_text") or "") > len(old.get("parent_text") or "")):
+            dedup[dk] = p
+    pruned = {p["id"]: p for p in dedup.values()}
     tweets = sorted(pruned.values(), key=lambda p: p["time"], reverse=True)
     recent_list = sorted(recent.values(), key=lambda p: p["time"], reverse=True)
     atomic_write(store_path, pruned)
