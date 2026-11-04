@@ -282,6 +282,13 @@ def parse_post(msg, default_person):
             orig_text = "\n".join(buf).strip()
             break
 
+    parent_author, parent_handle = "", ""
+    for _l in lines[:6]:
+        _m = re.search(r"(?:\u56de\u590d\u4e86|\u5f15\u7528\u4e86|\u8f6c\u63a8\u4e86)\s*(.+?)\s+@([A-Za-z0-9_]+)", _l)
+        if _m:
+            parent_author, parent_handle = _m.group(1).strip(), _m.group(2)
+            break
+
     zh = "\n".join(zh_parts).strip()
     en = "\n".join(en_parts).strip()
     if kind in ("reply", "quote"):
@@ -331,10 +338,13 @@ def parse_post(msg, default_person):
         "kind": kind,
         "media": tweet_media(msg),
         "url": url,
+        "parent_text": orig_text,
+        "parent_author": parent_author,
+        "parent_handle": parent_handle,
     }
 
 
-def fetch_tweets(state_dir, tr_cache):
+def fetch_tweets(state_dir, tr_cache, out_dir=None):
     store_path = os.path.join(state_dir, "tweet-store.json")
     store = load_json(store_path, {})
     if not isinstance(store, dict):
@@ -382,9 +392,11 @@ def fetch_tweets(state_dir, tr_cache):
         except Exception as e:
             print(f"  [tweets] {channel} FAILED: {e}", file=sys.stderr)
 
-    # 2-day rolling window
-    cutoff = now_sh() - timedelta(days=2)
+    # 7-day store; tweets.json keeps the newest 2 days, history keeps all 7
+    cutoff = now_sh() - timedelta(days=7)
+    cutoff_recent = now_sh() - timedelta(days=2)
     pruned = {}
+    recent = {}
     for tid, p in store.items():
         try:
             dt = datetime.fromisoformat(p["time"])
@@ -394,9 +406,15 @@ def fetch_tweets(state_dir, tr_cache):
             continue
         if dt >= cutoff:
             pruned[tid] = p
+            if dt >= cutoff_recent:
+                recent[tid] = p
     tweets = sorted(pruned.values(), key=lambda p: p["time"], reverse=True)
+    recent_list = sorted(recent.values(), key=lambda p: p["time"], reverse=True)
     atomic_write(store_path, pruned)
-    return {"updated_at": iso_now(), "tweets": tweets}
+    if out_dir:
+        write_if_changed(os.path.join(out_dir, "tweets-history.json"),
+                         {"updated_at": iso_now(), "days": 7, "tweets": tweets})
+    return {"updated_at": iso_now(), "tweets": recent_list}
 
 # ---------------------------------------------------------------- trenches
 # gmgn (primary, verified 2026-11-02):
@@ -1270,7 +1288,7 @@ def fast_tick(out_dir, state_dir, tr_cache, cache_path):
     except Exception as e:
         print(f"  [fast] liquidity FAILED: {e}", file=sys.stderr)
     try:
-        tweets = fetch_tweets(state_dir, tr_cache)
+        tweets = fetch_tweets(state_dir, tr_cache, out_dir)
         if write_if_changed(os.path.join(out_dir, "tweets.json"), tweets):
             print(f"  [fast] wrote tweets.json ({len(tweets['tweets'])} tweets)")
         write_if_changed(cache_path, tr_cache)
