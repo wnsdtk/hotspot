@@ -308,6 +308,23 @@ a{color:var(--blue); text-decoration:none;}
   transition:opacity .18s ease, transform .18s ease;}
 .totop.show{opacity:1; pointer-events:auto; transform:translateY(0);}
 .totop:active{background:rgba(40,48,62,.95);}
+
+/* ===== v40 · 新币雷达 ===== */
+.radar .rrow{padding:10px 2px; border-bottom:1px solid var(--border,#262d36);}
+.radar .rrow:last-child{border-bottom:none;}
+.radar .rhead{display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+.radar .rsym{font-size:14px; font-weight:700; max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.radar .rnew{font-size:9px; font-weight:700; color:#8fc0ff; border:1px solid rgba(88,166,255,.4);
+  background:rgba(88,166,255,.12); border-radius:5px; padding:0 5px;}
+.radar .rchain{font-size:10px; color:var(--muted,#8d9aac); border:1px solid var(--border,#262d36);
+  border-radius:5px; padding:0 6px;}
+.radar .rage{margin-left:auto; font-size:10.5px; color:var(--dim,#66727f);}
+.radar .rmeta{font-size:11.5px; color:var(--muted,#8d9aac); margin-top:4px;}
+.radar .rbtns{display:flex; gap:6px; flex-wrap:wrap; margin-top:7px;}
+.radar .rbtn{font-size:10.5px; color:var(--muted,#8d9aac); border:1px solid var(--border,#262d36);
+  border-radius:6px; padding:3px 8px; text-decoration:none; background:transparent; cursor:pointer;
+  font-family:inherit; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.radar .rbtn:hover{color:#fff; border-color:var(--border-2,#3a4454);}
 </style>
 </head>
 <body>
@@ -649,6 +666,96 @@ function htmlDaily(){
         +'<span class="dhv">上午 '+esc(m)+'</span><span class="dhv">下午 '+esc(a)+'</span></div>';
     }).join('');
   }
+  return h+'</div>';
+}
+
+/* ============ v40 · 新币雷达 ============ */
+var RADAR={ts:0, items:[], loading:false};
+var RADAR_MS=60000;
+var RADAR_CHAINS={solana:'Solana', bsc:'BSC', robinhood:'Robinhood'};
+function radarFetch(){
+  if(RADAR.loading)return Promise.resolve(RADAR);
+  RADAR.loading=true;
+  return fetch('https://api.dexscreener.com/token-profiles/latest/v1',{cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
+    .then(function(list){
+      var prof=(list||[]).filter(function(x){return RADAR_CHAINS[x.chainId];}).slice(0,20);
+      if(!prof.length)throw new Error('empty');
+      var addrs=prof.map(function(x){return x.tokenAddress;}).join(',');
+      return fetch('https://api.dexscreener.com/latest/dex/tokens/'+addrs,{cache:'no-store'})
+        .then(function(r){return r.json();})
+        .then(function(d){
+          var byAddr={};
+          (d.pairs||[]).forEach(function(p){
+            var a=(p.baseToken&&p.baseToken.address)||'';
+            if(!a)return;
+            var cur=byAddr[a];
+            if(!cur||(p.liquidity&&p.liquidity.usd)>((cur.liquidity&&cur.liquidity.usd)||0))byAddr[a]=p;
+          });
+          var items=[];
+          prof.forEach(function(x){
+            var p=byAddr[x.tokenAddress];
+            if(!p)return;
+            var links={};
+            (x.links||[]).forEach(function(l){if(l&&l.type)links[l.type]=l.url;});
+            items.push({
+              sym:(p.baseToken&&p.baseToken.symbol)||'',
+              name:(p.baseToken&&p.baseToken.name)||'',
+              chain:x.chainId, addr:x.tokenAddress,
+              created:p.pairCreatedAt||0,
+              liq:(p.liquidity&&p.liquidity.usd)||0,
+              vol1h:(p.volume&&p.volume.h1)||0,
+              chg1h:(p.priceChange&&p.priceChange.h1),
+              url:p.url||('https://dexscreener.com/'+x.chainId+'/'+x.tokenAddress),
+              links:links
+            });
+          });
+          items.sort(function(a,b){return (b.created||0)-(a.created||0);});
+          RADAR.items=items.slice(0,12);
+          RADAR.ts=Date.now();
+          return RADAR;
+        });
+    })
+    .catch(function(){return RADAR;})
+    .then(function(r){RADAR.loading=false;return r;});
+}
+function radarShort(a){a=String(a||'');return a.length>12?a.slice(0,6)+'\u2026'+a.slice(-4):a;}
+function radarAge(ms){
+  if(!ms)return '';
+  var m=Math.floor((Date.now()-ms)/60000);
+  if(m<1)return '刚刚';
+  if(m<60)return m+' 分钟前';
+  var h=Math.floor(m/60);
+  if(h<24)return h+' 小时前';
+  return Math.floor(h/24)+' 天前';
+}
+function htmlRadar(){
+  var items=RADAR.items||[];
+  var h='<div class="card radar"><div class="sect">\u{1F680} \u65b0\u5e01\u96f7\u8fbe'+updInfo('radar','\u6bcf60\u79d2\u66f4\u65b0')+'</div>'
+    +'<div class="muted" style="font-size:11px;margin:-4px 0 10px">\u94fe\u4e0a\u521a\u5efa\u6c60\uff08\u6700\u65b0 12 \u4e2a\uff09\u00b7 \u6570\u636e\u6e90 DexScreener</div>';
+  if(!items.length){
+    return h+'<div class="empty">\u52a0\u8f7d\u4e2d\u2026</div></div>';
+  }
+  h+=items.map(function(t){
+    var ch=RADAR_CHAINS[t.chain]||t.chain;
+    var early=t.created&&(Date.now()-t.created)<60*60*1000;
+    var links='';
+    if(t.links.twitter)links+='<a class="rbtn" href="'+esc(t.links.twitter)+'" target="_blank" rel="noopener">X</a>';
+    if(t.links.telegram)links+='<a class="rbtn" href="'+esc(t.links.telegram)+'" target="_blank" rel="noopener">TG</a>';
+    if(t.links.website)links+='<a class="rbtn" href="'+esc(t.links.website)+'" target="_blank" rel="noopener">\u5b98\u7f51</a>';
+    var chg=(t.chg1h==null)?'':'<span class="'+(t.chg1h>=0?'up':'dn')+'">'+(t.chg1h>=0?'+':'')+t.chg1h.toFixed(0)+'%</span>';
+    return '<div class="rrow">'
+      +'<div class="rhead"><span class="rsym">'+esc(t.sym||t.name||'?')+'</span>'
+      +(early?'<span class="rnew">NEW</span>':'')
+      +'<span class="rchain">'+esc(ch)+'</span>'
+      +'<span class="rage">'+esc(radarAge(t.created))+'</span></div>'
+      +'<div class="rmeta">\u6d41\u52a8\u6027 '+fmtUsd(t.liq)+' \u00b7 1h\u91cf '+fmtUsd(t.vol1h)+' '+chg+'</div>'
+      +'<div class="rbtns">'
+      +'<button class="rbtn" data-act="copy" data-ca="'+esc(t.addr)+'">'+esc(radarShort(t.addr))+'</button>'
+      +'<a class="rbtn" href="'+esc(t.url)+'" target="_blank" rel="noopener">DexScreener</a>'
+      +links
+      +'</div></div>';
+  }).join('');
   return h+'</div>';
 }
 /* ============ fetch ============ */
@@ -1155,6 +1262,7 @@ function sigData(d){
   return JSON.stringify(c);
 }
 var SECTIONS=[
+  {id:'sec-radar',   sig:function(){return RADAR.ts+'|'+(RADAR.items||[]).length;}, html:htmlRadar},
   {id:'sec-moves',   sig:function(){return sigData(S.data.bsc)+sigData(S.data.sol)+sigData(S.data.rb);}, html:htmlSmartMoves},
   {id:'sec-dy-trend',sig:function(){var d=S.data.douyin;return JSON.stringify((d&&d.trending)||null);}, html:htmlDyTrend},
   {id:'sec-dy-rise', sig:function(){return (S.douyinOk?'1':'0')+'|'+JSON.stringify(S.hotlistRows);}, html:htmlDyRise},
@@ -1172,7 +1280,7 @@ var SECTIONS=[
 var SEEN_SIG={};
 function setHtml(id,html){var n=document.getElementById(id);if(n)n.innerHTML=html;}
 function buildShell(){
-  setHtml('tab-all','<div id="sec-moves"></div>');
+  setHtml('tab-all','<div id="sec-radar"></div><div id="sec-moves"></div>');
   setHtml('tab-hot','<div id="sec-dy-trend"></div><div id="sec-dy-rise"></div><div id="sec-dy-list"></div><div id="sec-wb-list"></div>');
   setHtml('tab-trench','<div id="sec-liq"></div><div id="sec-tags"></div><div id="sec-bsc"></div><div id="sec-sol"></div><div id="sec-rb"></div>');
   setHtml('tab-summary','<div id="sec-counts"></div><div id="sec-daily"></div><div id="sec-binance"></div>');
@@ -1675,6 +1783,8 @@ function boot(){
   buildShell();
   updateSections();
   fetchLiq(UI.liq.iv,true).then(function(){updateSections();});
+  radarFetch().then(function(){updateSections();});
+  setInterval(function(){if(!document.hidden)radarFetch().then(function(){updateSections();});},RADAR_MS);
   refresh();
   setInterval(refresh,POLL_MS);
   // v9: Worker 10s polling for tweets/trench (real-time)
