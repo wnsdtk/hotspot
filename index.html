@@ -286,6 +286,13 @@ a{color:var(--blue); text-decoration:none;}
 .cstat span{font-size:9.5px; color:var(--dim,#66727f); white-space:nowrap;}
 .cstat.zero b{color:#78838f; font-weight:600;}
 .ccard.open .cnum{color:#ff8a93;}
+
+/* ===== v32 · 历史推文 ===== */
+.qtw{margin-top:9px; padding:8px 10px; border-radius:8px; background:rgba(255,255,255,.035);
+  border-left:2px solid rgba(255,255,255,.18);}
+.qwh{font-size:10.5px; color:var(--dim,#66727f); margin-bottom:3px;}
+.qtx{font-size:12.5px; color:#b6c2d2; line-height:1.55; word-break:break-word;}
+.datehead .small{font-weight:400;}
 </style>
 </head>
 <body>
@@ -302,7 +309,7 @@ a{color:var(--blue); text-decoration:none;}
   <button data-act="tab" data-tab="all" class="active">全部</button>
   <button data-act="tab" data-tab="hot">热搜</button>
   <button data-act="tab" data-tab="trench">战壕</button>
-  <button data-act="tab" data-tab="summary">📝 当日总结</button>
+  <button data-act="tab" data-tab="summary">📝 历史推文</button>
 </nav>
 <main>
   <section id="tab-all" class="tabpane"></section>
@@ -342,7 +349,7 @@ function dataUrl(f){return DATA_BASE+f+'?t='+Date.now();}
 var POLL_MS=15000;
 /* ============ state ============ */
 var S={data:{}, wb:null, dy:null, prevHotlist:null, hotlistRows:null, douyinOk:false, lastUpdate:{}};
-var UI={tab:'all', filter:'all', expanded:{liq:true}, liq:{chain:'bsc', iv:'24h'}, dyN:10, wbN:10, dailyPerson:null, days:{}};
+var UI={tab:'all', filter:'all', expanded:{liq:true}, liq:{chain:'bsc', iv:'24h'}, histPerson:'all', dyN:10, wbN:10, dailyPerson:null, days:{}};
 /* ============ helpers ============ */
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function nl2br(s){return s.replace(/\n/g,'<br>');}
@@ -1005,63 +1012,69 @@ function htmlChain(key,title,color){
 }
 
 /* ============ 当日总结 ============ *//* ============ 当日总结 ============ */
-function countCards(tws){
-  var today=todayBj();
-  var todays=tws.filter(function(t){return bjDate(t.time)===today;});
-  return PEOPLE.map(function(p){
-    var mine=todays.filter(function(t){return t.person===p.key;});
-    var c={original:0,retweet:0,quote:0,reply:0,follow:0,unfollow:0};
-    mine.forEach(function(t){if(c[t.kind]!=null)c[t.kind]++;});
-    var total=mine.length,open=UI.dailyPerson===p.key;
-    var items=[['原创',c.original],['转推',c.retweet],['引用',c.quote],
-               ['回复',c.reply],['关注',c.follow],['取关',c.unfollow]];
-    var face='<div class="cface-name"><span class="cdot" style="background:'+esc(p.color||'#8b949e')+'"></span>'+esc(p.name)+'</div>'
-      +'<div class="cnum">'+total+'<span>条</span></div>'
-      +'<div class="cstat-grid">'+items.map(function(x){
-        return '<div class="cstat'+(x[1]?'':' zero')+'"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>';
-      }).join('')+'</div>'
-      +'<div class="small muted" style="margin-top:7px">'+(open?'收起 ▲':'展开 ▼')+'</div>';
-    return '<div class="ccard pt-'+p.key+(open?' open':'')+'" data-act="daily-person" data-p="'+p.key+'">'+face+'</div>';
-  }).join('');
+var HIST_DAYS=7;
+function histLoad(){
+  if(S.hist)return Promise.resolve(S.hist);
+  if(S.histLoading)return S.histLoading;
+  S.histLoading=fetch(dataUrl('tweets-history.json'),{cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('http');return r.json();})
+    .then(function(d){S.hist=(d&&Array.isArray(d.tweets))?d:{tweets:[]};return S.hist;})
+    .catch(function(){S.hist=S.hist||{tweets:[]};return S.hist;})
+    .then(function(d){delete S.histLoading;if(UI.tab==='summary')updateSections();return d;});
+  return S.histLoading;
 }
-function dailyDetail(tws){
-  var key=UI.dailyPerson;
-  if(!key)return '';
-  var p=null,i;
-  for(i=0;i<PEOPLE.length;i++){if(PEOPLE[i].key===key){p=PEOPLE[i];break;}}
-  if(!p)return '';
-  var today=todayBj();
-  var handle='';
-  var todays=tws.filter(function(t){
-    if(t.person!==key)return false;
-    if(!handle&&t.handle)handle=t.handle;
-    return bjDate(t.time)===today;
-  }).sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);});
-  var items=todays.length?todays.map(function(t){
-    var zh=t.text_zh?'<div class="zh"><span class="zhtag">译</span>'+nl2br(esc(t.text_zh))+'</div>':'';
-    var media=(t.media||[]).map(function(m){
-      if(m.type==='video')return '<video class="timg" controls preload="none" playsinline src="'+esc(m.url)+'"></video>';
-      return '<img class="timg" loading="lazy" src="'+esc(m.url)+'" alt="">';
-    }).join('');
-    return '<div class="histitem pt-'+key+'"><span class="htime">'+fmtBj(t.time)+' · '+relTime(t.time)+'</span>'+kindBadge(t.kind)
-      +'<div style="margin-top:4px">'+nl2br(esc(t.text||''))+'</div>'+zh
-      +(media?'<div class="tmedia">'+media+'</div>':'')
-      +'<div class="tlink" data-act="open-url" data-url="'+esc(t.url||'')+'">查看X原文 →</div></div>';
-  }).join(''):'<div class="empty">今日暂无动态</div>';
-  var htext=esc(p.name)+' · 今日动态';
-  if(handle)htext+=' <span class="thandle muted">'+esc(handle)+'</span>';
-  htext+=' <span class="muted small">· 共 '+todays.length+' 条 · 按时间倒序</span>';
-  return '<div class="card"><div class="sect"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+esc(p.color||'#8b949e')+';margin-right:6px"></span>'+htext
-    +' <span class="spacer"></span><span class="tlink" style="margin-top:0" data-act="daily-person" data-p="'+esc(key)+'">收起 ▲</span></div>'
-    +'<div class="chist" style="border-top:none;padding-top:0;margin-top:0">'+items+'</div></div>';
+function histTweets(){
+  var list=(S.hist&&Array.isArray(S.hist.tweets))?S.hist.tweets:[];
+  if(list.length)return list;
+  return (S.data.tweets&&S.data.tweets.tweets)||[];
+}
+function histCard(t){
+  var zh=t.text_zh?'<div class="zh"><span class="zhtag">\u8bd1</span>'+nl2br(esc(t.text_zh))+'</div>':'';
+  var media=(t.media||[]).map(function(m){
+    if(m.type==='video')return '<video class="timg" controls preload="none" playsinline src="'+esc(m.url)+'"></video>';
+    return '<img class="timg" loading="lazy" src="'+esc(m.url)+'" alt="">';
+  }).join('');
+  var parent='';
+  if(t.parent_text){
+    var who=t.parent_handle?('@'+String(t.parent_handle).replace(/^@/,'')):(t.parent_author||'');
+    parent='<div class="qtw"><div class="qwh">'+(t.kind==='reply'?'\u56de\u590d':'\u5f15\u7528')+' '+esc(who)+'</div>'
+      +'<div class="qtx">'+nl2br(esc(t.parent_text))+'</div></div>';
+  }
+  var kn=KIND_NAME[t.kind]||t.kind||'';
+  return '<div class="histitem pt-'+(t.person||'')+'">'
+    +'<span class="htime">'+fmtBj(t.time)+' \u00b7 '+relTime(t.time)+'</span>'
+    +(kn?'<span class="kbadge">'+esc(kn)+'</span>':'')
+    +'<div style="margin-top:4px">'+nl2br(esc(t.text||''))+'</div>'
+    +zh+(media?'<div class="tmedia">'+media+'</div>':'')+parent
+    +'<div class="tlink" data-act="open-url" data-url="'+esc(t.url||'')+'">\u67e5\u770b X \u539f\u6587 \u2192</div></div>';
 }
 function htmlCounts(){
-  var d=S.data.tweets;
-  var tws=(d&&Array.isArray(d.tweets))?d.tweets.slice().sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);}):[];
-  return '<div class="card"><div class="sect">📝 当日总结'+updInfo('tweets','每30秒更新')+'</div>'
-    +'<div class="datehead">'+esc(todayBj())+'</div>'
-    +'<div class="countcards">'+countCards(tws)+'</div></div>'
-    +dailyDetail(tws);
+  var all=histTweets();
+  var filter=UI.histPerson||'all';
+  if(filter!=='all'&&!PEOPLE.some(function(p){return p.key===filter;}))filter='all';
+  var list=all.filter(function(t){return filter==='all'||t.person===filter;});
+  var h='<div class="card"><div class="sect">\u{1F4DD} \u5386\u53f2\u63a8\u6587'+updInfo('tweets','\u6bcf30\u79d2\u66f4\u65b0')+'</div>';
+  h+='<div class="countcards">'+PEOPLE.map(function(p){
+    var n=all.filter(function(t){return t.person===p.key;}).length;
+    var on=filter===p.key;
+    return '<div class="ccard pt-'+p.key+(on?' open':'')+'" data-act="hist-person" data-p="'+p.key+'">'
+      +'<div class="cface-name"><span class="cdot" style="background:'+esc(p.color||'#8b949e')+'"></span>'+esc(p.name)+'</div>'
+      +'<div class="cnum">'+n+'<span>\u6761</span></div>'
+      +'<div class="small muted">'+(on?'\u5df2\u7b5b\u9009 \u00b7 \u70b9\u53d6\u6d88':'\u70b9\u51fb\u7b5b\u9009')+'</div></div>';
+  }).join('')+'</div>';
+  var groups={};
+  list.forEach(function(t){var d=bjDate(t.time);(groups[d]=groups[d]||[]).push(t);});
+  var days=Object.keys(groups).sort().reverse().slice(0,HIST_DAYS);
+  if(!days.length){
+    h+='<div class="empty">\u6682\u65e0\u5386\u53f2\u63a8\u6587\uff08\u6570\u636e\u6bcf 5 \u5206\u949f\u540c\u6b65\uff09</div>';
+  }else{
+    days.forEach(function(d){
+      var rows=groups[d].slice().sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);});
+      h+='<div class="datehead" style="margin-top:16px">'+esc(d)+' <span class="muted small">\u5171 '+rows.length+' \u6761</span></div>';
+      h+=rows.map(histCard).join('');
+    });
+  }
+  return h+'</div>';
 }
 function htmlBinance(){
   var bn=S.data.binance;
@@ -1100,7 +1113,7 @@ var SECTIONS=[
     {id:'sec-bsc',     sig:function(){return sigData(S.data.bsc);}, html:function(){return htmlChain('bsc','BSC 战壕',CHAIN_COLOR.BSC);}},
   {id:'sec-sol',     sig:function(){return sigData(S.data.sol);}, html:function(){return htmlChain('sol','Solana 战壕',CHAIN_COLOR.Solana);}},
   {id:'sec-rb',      sig:function(){return sigData(S.data.rb);}, html:function(){return htmlChain('rb','Robinhood 战壕',CHAIN_COLOR.Robinhood);}},
-  {id:'sec-counts',  sig:function(){return sigData(S.data.tweets)+'|'+(UI.dailyPerson||'');}, html:htmlCounts},
+  {id:'sec-counts',  sig:function(){var hh=S.hist?(S.hist.updated_at||(S.hist.tweets||[]).length):'0';return hh+'|'+(UI.histPerson||'all')+'|'+sigData(S.data.tweets);}, html:htmlCounts},
   {id:'sec-daily',   sig:function(){return sigData(S.data.daily);}, html:htmlDaily},
   {id:'sec-binance', sig:function(){return sigData(S.data.binance);}, html:htmlBinance}
 ];
@@ -1137,6 +1150,7 @@ function switchTab(tab){
   ['all','hot','trench','summary'].forEach(function(t){
     var n=document.getElementById('tab-'+t);if(n)n.hidden=(t!==tab);
   });
+  if(tab==='summary')histLoad();
 }
 function copyText(t,el){
   function done(){if(el){var old=el.innerHTML;el.innerHTML='已复制';setTimeout(function(){el.innerHTML=old;},1200);}}
@@ -1170,7 +1184,10 @@ function handleAct(act,el){
         fetchLiq(iv,true).then(function(){updateSections();});
       }
       break;}
-    case 'daily-person':{var p=el.getAttribute('data-p');UI.dailyPerson=(UI.dailyPerson===p?null:p);updateSections();break;}
+    case 'hist-person':{
+      var hp=el.getAttribute('data-p');
+      UI.histPerson=(UI.histPerson===hp?'all':hp);
+      updateSections();break;}
     case 'refresh':refresh();pollWorkerFast();setUpdTime();break;
   }
 }
@@ -1260,6 +1277,7 @@ function mergeTweets(base, extra){
     var a=map[k];
     if((!a.media||!a.media.length)&&t.media&&t.media.length)a.media=t.media;
     if(!a.text_zh&&t.text_zh)a.text_zh=t.text_zh;
+    if(!a.parent_text&&t.parent_text){a.parent_text=t.parent_text;a.parent_author=t.parent_author;a.parent_handle=t.parent_handle;}
   });
   return sortTweets(order.map(function(k){return map[k];})).slice(0,80);
 }
@@ -1302,21 +1320,40 @@ function parseWorkerTweets(html, channel, defaultPerson){
         if(!url)return;
         var timeEl=msg.querySelector('time[datetime]');
         var time=timeEl?timeEl.getAttribute('datetime'):'';
-        // 分段：中文翻译块 / 原推块 / 时间行
+        // 分段：本条正文 / 中文翻译 / 被引用原推 / 时间行
         var zhAt=-1, origAt=-1, timeAt=-1;
         for(var k=0;k<lines.length;k++){
           if(zhAt<0&&lines[k].indexOf('中文翻译')>=0)zhAt=k;
-          if(origAt<0&&lines[k].indexOf('原推翻译')>=0)origAt=k;
+          if(origAt<0&&(lines[k].indexOf('原推翻译')>=0||lines[k].indexOf('原推：')>=0||lines[k].indexOf('原推:')>=0))origAt=k;
           if(timeAt<0&&lines[k].indexOf('推文时间')>=0)timeAt=k;
         }
-        var bodyEnd=timeAt>=0?timeAt:lines.length;
-        var bodyStart=origAt>=0?origAt+1:(zhAt>=0?zhAt+1:0);
+        var relAt=-1, relLine='';
+        for(var r=0;r<lines.length;r++){
+          if(/回复了|引用了|转推了|关注了|取关了/.test(lines[r])){relAt=r;relLine=lines[r];break;}
+        }
+        var bodyEnd=Math.min(zhAt>=0?zhAt:1e9, origAt>=0?origAt:1e9, timeAt>=0?timeAt:1e9);
+        if(bodyEnd===1e9)bodyEnd=lines.length;
+        var bodyStart=relAt>=0?relAt+1:0;
+        if(bodyStart===0){
+          for(var w2=0;w2<lines.length;w2++){if(lines[w2].indexOf('\u{1F464}')===0){bodyStart=w2+1;break;}}
+        }
         var body=[],zh=[];
         for(var b=bodyStart;b<bodyEnd;b++){if(!tgIsNoise(lines[b]))body.push(lines[b]);}
         if(zhAt>=0){
-          var zEnd=origAt>=0?origAt:bodyEnd;
+          var zEnd=Math.min(origAt>=0?origAt:1e9, timeAt>=0?timeAt:1e9);
+          if(zEnd===1e9)zEnd=lines.length;
           for(var z=zhAt+1;z<zEnd;z++){if(!tgIsNoise(lines[z]))zh.push(lines[z]);}
         }
+        // 被回复 / 被引用那条推文的原文
+        var parentLines=[];
+        if(origAt>=0){
+          var pEnd=timeAt>=0?timeAt:lines.length;
+          for(var q=origAt+1;q<pEnd;q++){if(!tgIsNoise(lines[q]))parentLines.push(lines[q]);}
+        }
+        var parentText=parentLines.join('\n').trim();
+        var pAuthor='', pHandle='';
+        var pm=relLine.match(/(?:回复了|引用了|转推了)\s*(.+?)\s+@([A-Za-z0-9_]+)/);
+        if(pm){pAuthor=pm[1].trim();pHandle=pm[2];}
         var text=body.join('\n').trim();
         var textZh=zh.join('\n').trim();
         if(!text&&!textZh)return;
@@ -1325,7 +1362,8 @@ function parseWorkerTweets(html, channel, defaultPerson){
         tweets.push({
           id:idMatch?idMatch[1]:url, person:person, handle:handle,
           time:time, text:text, text_zh:(textZh&&textZh!==text)?textZh:'',
-          kind:kind, media:tgMsgMedia(msg), url:url
+          kind:kind, media:tgMsgMedia(msg), url:url,
+          parent_text:parentText, parent_author:pAuthor, parent_handle:pHandle
         });
       }catch(e){}
     });
