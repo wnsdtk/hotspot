@@ -1056,11 +1056,15 @@ function cleanParagraph(s){
   }
   // 同一句被原文/翻译重复时只留一份
   var joined=out.join('\n');
-  var half=Math.floor(joined.length/2);
-  if(joined.length>16&&joined.slice(0,half)===joined.slice(half)){
-    joined=joined.slice(0,half);
+  var parts=joined.split(/(?<=[。！？\n])/);
+  var keep=[];
+  for(var k=0;k<parts.length;k++){
+    var seg=parts[k].trim();
+    if(!seg)continue;
+    if(keep.length&&keep[keep.length-1]===seg)continue;
+    keep.push(seg);
   }
-  return joined;
+  return keep.join('');
 }
 function histCard(t){
   var zh=t.text_zh?'<div class="zh"><span class="zhtag">\u8bd1</span>'+nl2br(esc(t.text_zh))+'</div>':'';
