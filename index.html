@@ -651,23 +651,31 @@ function htmlSmartMoves(){
     if(ts>0)return Math.floor((nowMs-ts*1000)/60000);
     return ageMin(t);
   }
+  function kol(t){return Number(t.smart_count)||0;}
+  function mc(t){return Number(t.market_cap)||0;}
+  // 早期 KOL 关注打分：KOL 数为主，市值越低加权越多
+  function score(t){
+    var low=mc(t)<=1e6?1.6:(mc(t)<=5e6?1.25:1);
+    return kol(t)*low;
+  }
   var CH=[['bsc','BSC','#F0B90B'],['sol','Solana','#A371FF'],['rb','Robinhood','#00C805']];
   var groups=[], total=0;
   CH.forEach(function(c){
     var d=S.data[c[0]];
-    var toks=((d&&d.tokens)||[]).filter(function(t){return ageOf(t)<=5*1440;})
+    var toks=((d&&d.tokens)||[])
+      .filter(function(t){return ageOf(t)<=5*1440 && mc(t)>0;})
       .sort(function(a,b){
-        return (Number(b.smart_count)||0)-(Number(a.smart_count)||0)
-          || (Number(b.vol_1h)||0)-(Number(a.vol_1h)||0);
-      }).slice(0,5);
+        return (score(b)-score(a)) || (mc(a)-mc(b));
+      })
+      .slice(0,5);
     total+=toks.length;
-    groups.push('<div class="subhead" style="color:'+c[2]+'">'+c[1]+' · '+toks.length+' 个 · 5 天内</div>'
+    groups.push('<div class="subhead" style="color:'+c[2]+'">'+c[1]+' · '+toks.length+' 个</div>'
       +(toks.length?toks.map(function(t){return coinCard(t,false,c[2]);}).join('')
                    :'<div class="empty">暂无数据</div>'));
   });
   if(!total)return '';
-  return '<div class="card"><div class="sect">⚡ 聪明钱异动'+updInfo('trench','每30秒更新')+'</div>'
-    +'<div class="muted" style="font-size:11px;margin:-4px 0 10px">按聪明钱/KOL 数量排序 · 只看 5 天内新币</div>'
+  return '<div class="card"><div class="sect">⚡ 早期 KOL 关注'+updInfo('trench','每30秒更新')+'</div>'
+    +'<div class="muted" style="font-size:11px;margin:-4px 0 10px">上线 5 天内 · KOL 数多 · 市值偏低 · 按热度加权排序</div>'
     +groups.join('')+'</div>';
 }
 /* ============ 全部：大佬推文 ============ */
