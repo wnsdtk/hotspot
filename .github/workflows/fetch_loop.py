@@ -965,7 +965,7 @@ def append_tag_log(state_dir, tags):
         log = {}
     now = now_sh()
     today = now.strftime("%Y-%m-%d")
-    slot = "%02d:%s" % (now.hour, "00" if now.minute < 30 else "30")
+    slot = "%02d:00" % now.hour
     entry = {
         "t": slot,
         "tags": [
@@ -1194,7 +1194,7 @@ def slow_lane(out_dir, state_dir, tr_cache, cache_path):
     # 30-minute narrative tags: only refresh on :00 / :30 slots (5-min retry window)
     tags = build_tags(all_tokens)
     now = now_sh()
-    if now.minute % 30 < 6:
+    if now.minute < 6:
         if write_if_changed(os.path.join(out_dir, "tags-halfhour.json"),
                             {"updated_at": iso_now(), "tags": tags}):
             print(f"  [slow] wrote tags-halfhour.json ({len(tags)} tags)")
