@@ -382,6 +382,10 @@ def fetch_tweets(state_dir, tr_cache, out_dir=None):
                         old["text_zh"] = p["_zh_channel"]
                     if (not old.get("url")) and p.get("url"):
                         old["url"] = p["url"]
+                    if (not old.get("parent_text")) and p.get("parent_text"):
+                        old["parent_text"] = p["parent_text"]
+                        old["parent_author"] = p.get("parent_author", "")
+                        old["parent_handle"] = p.get("parent_handle", "")
                     continue
                 # text_zh: channel's own Chinese translation first (free & exact),
                 # else MyMemory for new tweets.
