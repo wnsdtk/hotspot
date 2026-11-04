@@ -1041,8 +1041,16 @@ function histLoad(){
 }
 function histTweets(){
   var list=(S.hist&&Array.isArray(S.hist.tweets))?S.hist.tweets:[];
-  if(list.length)return list;
-  return (S.data.tweets&&S.data.tweets.tweets)||[];
+  if(!list.length)list=(S.data.tweets&&S.data.tweets.tweets)||[];
+  var seen={}, out=[];
+  for(var i=0;i<list.length;i++){
+    var t=list[i];
+    var k=t.id||((t.person||'')+'|'+t.time+'|'+(t.text||'').slice(0,24));
+    if(seen[k])continue;
+    seen[k]=1;
+    out.push(t);
+  }
+  return out;
 }
 function cleanParagraph(s){
   var lines=String(s||'').split('\n').map(function(x){return x.trim();}).filter(Boolean);
@@ -1061,7 +1069,9 @@ function cleanParagraph(s){
   for(var k=0;k<parts.length;k++){
     var seg=parts[k].trim();
     if(!seg)continue;
-    if(keep.length&&keep[keep.length-1]===seg)continue;
+    var prev=keep.length?keep[keep.length-1]:'';
+    if(prev&&prev===seg)continue;
+    if(prev&&prev.length>seg.length+4&&prev.slice(-seg.length)===seg)continue;
     keep.push(seg);
   }
   return keep.join('');
