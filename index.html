@@ -293,6 +293,21 @@ a{color:var(--blue); text-decoration:none;}
 .qwh{font-size:10.5px; color:var(--dim,#66727f); margin-bottom:3px;}
 .qtx{font-size:12.5px; color:#b6c2d2; line-height:1.55; word-break:break-word;}
 .datehead .small{font-weight:400;}
+
+/* ===== v34 · 历史面板 + 返回顶部 ===== */
+.histpanel{margin-top:10px; border-top:1px solid var(--border,#262d36); padding-top:10px;}
+.histpanel .hp-head{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:700;
+  color:var(--muted,#8d9aac); margin-bottom:8px;}
+.histpanel .hp-head .hp-close{margin-left:auto; font-size:11px; color:var(--dim,#66727f);
+  border:1px solid var(--border,#262d36); border-radius:6px; padding:3px 8px; cursor:pointer;}
+.totop{position:fixed; right:14px; bottom:calc(18px + env(safe-area-inset-bottom,0px)); z-index:70;
+  width:38px; height:38px; border-radius:50%; border:1px solid var(--border,#262d36);
+  background:rgba(23,28,38,.92); color:var(--muted,#8d9aac); font-size:16px; cursor:pointer;
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  opacity:0; pointer-events:none; transform:translateY(6px);
+  transition:opacity .18s ease, transform .18s ease;}
+.totop.show{opacity:1; pointer-events:auto; transform:translateY(0);}
+.totop:active{background:rgba(40,48,62,.95);}
 </style>
 </head>
 <body>
@@ -317,6 +332,7 @@ a{color:var(--blue); text-decoration:none;}
   <section id="tab-trench" class="tabpane" hidden></section>
   <section id="tab-summary" class="tabpane" hidden></section>
 </main>
+<button class="totop" id="totop" aria-label="返回顶部">↑</button>
 <script>
 'use strict';
 /* ============ constants ============ */
@@ -349,7 +365,7 @@ function dataUrl(f){return DATA_BASE+f+'?t='+Date.now();}
 var POLL_MS=15000;
 /* ============ state ============ */
 var S={data:{}, wb:null, dy:null, prevHotlist:null, hotlistRows:null, douyinOk:false, lastUpdate:{}};
-var UI={tab:'all', filter:'all', expanded:{liq:true}, liq:{chain:'bsc', iv:'24h'}, histPerson:'all', dyN:10, wbN:10, dailyPerson:null, days:{}};
+var UI={tab:'all', filter:'all', expanded:{liq:true}, liq:{chain:'bsc', iv:'24h'}, histOpen:null, dyN:10, wbN:10, dailyPerson:null, days:{}};
 /* ============ helpers ============ */
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function nl2br(s){return s.replace(/\n/g,'<br>');}
@@ -1050,27 +1066,43 @@ function histCard(t){
 }
 function htmlCounts(){
   var all=histTweets();
-  var filter=UI.histPerson||'all';
-  if(filter!=='all'&&!PEOPLE.some(function(p){return p.key===filter;}))filter='all';
-  var list=all.filter(function(t){return filter==='all'||t.person===filter;});
+  var open=UI.histOpen||null;
   var h='<div class="card"><div class="sect">\u{1F4DD} \u5386\u53f2\u63a8\u6587'+updInfo('tweets','\u6bcf30\u79d2\u66f4\u65b0')+'</div>';
   h+='<div class="countcards">'+PEOPLE.map(function(p){
     var n=all.filter(function(t){return t.person===p.key;}).length;
-    var on=filter===p.key;
-    return '<div class="ccard pt-'+p.key+(on?' open':'')+'" data-act="hist-person" data-p="'+p.key+'">'
+    var on=open===p.key;
+    return '<div class="ccard pt-'+p.key+(on?' open':'')+'" data-act="hist-open" data-p="'+p.key+'">'
       +'<div class="cface-name"><span class="cdot" style="background:'+esc(p.color||'#8b949e')+'"></span>'+esc(p.name)+'</div>'
       +'<div class="cnum">'+n+'<span>\u6761</span></div>'
-      +'<div class="small muted">'+(on?'\u5df2\u7b5b\u9009 \u00b7 \u70b9\u53d6\u6d88':'\u70b9\u51fb\u7b5b\u9009')+'</div></div>';
+      +'<div class="small muted">'+(on?'\u6536\u8d77 \u25b2':'\u5c55\u5f00 \u25bc')+'</div></div>';
   }).join('')+'</div>';
+
+  if(open){
+    var mine=all.filter(function(t){return t.person===open;});
+    var p=personByKey(open);
+    var g={};
+    mine.forEach(function(t){var d=bjDate(t.time);(g[d]=g[d]||[]).push(t);});
+    var ds=Object.keys(g).sort().reverse();
+    h+='<div class="histpanel"><div class="hp-head">'+esc(p.name)+' \u7684\u5386\u53f2\u63a8\u6587 \u00b7 \u5171 '+mine.length+' \u6761'
+      +'<span class="hp-close" data-act="hist-open" data-p="'+esc(open)+'">\u6536\u8d77</span></div>';
+    if(!ds.length)h+='<div class="empty">\u6682\u65e0\u6570\u636e</div>';
+    ds.forEach(function(d){
+      h+='<div class="datehead" style="margin-top:12px">'+esc(d)+' <span class="muted small">\u5171 '+g[d].length+' \u6761</span></div>';
+      h+=g[d].slice().sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);}).map(histCard).join('');
+    });
+    h+='</div>';
+  }
+
   var groups={};
-  list.forEach(function(t){var d=bjDate(t.time);(groups[d]=groups[d]||[]).push(t);});
+  all.forEach(function(t){var d=bjDate(t.time);(groups[d]=groups[d]||[]).push(t);});
   var days=Object.keys(groups).sort().reverse().slice(0,HIST_DAYS);
+  h+='<div class="subhead" style="margin-top:16px">\u5168\u90e8\u63a8\u6587</div>';
   if(!days.length){
     h+='<div class="empty">\u6682\u65e0\u5386\u53f2\u63a8\u6587\uff08\u6570\u636e\u6bcf 5 \u5206\u949f\u540c\u6b65\uff09</div>';
   }else{
     days.forEach(function(d){
       var rows=groups[d].slice().sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);});
-      h+='<div class="datehead" style="margin-top:16px">'+esc(d)+' <span class="muted small">\u5171 '+rows.length+' \u6761</span></div>';
+      h+='<div class="datehead" style="margin-top:14px">'+esc(d)+' <span class="muted small">\u5171 '+rows.length+' \u6761</span></div>';
       h+=rows.map(histCard).join('');
     });
   }
@@ -1113,7 +1145,7 @@ var SECTIONS=[
     {id:'sec-bsc',     sig:function(){return sigData(S.data.bsc);}, html:function(){return htmlChain('bsc','BSC 战壕',CHAIN_COLOR.BSC);}},
   {id:'sec-sol',     sig:function(){return sigData(S.data.sol);}, html:function(){return htmlChain('sol','Solana 战壕',CHAIN_COLOR.Solana);}},
   {id:'sec-rb',      sig:function(){return sigData(S.data.rb);}, html:function(){return htmlChain('rb','Robinhood 战壕',CHAIN_COLOR.Robinhood);}},
-  {id:'sec-counts',  sig:function(){var hh=S.hist?(S.hist.updated_at||(S.hist.tweets||[]).length):'0';return hh+'|'+(UI.histPerson||'all')+'|'+sigData(S.data.tweets);}, html:htmlCounts},
+  {id:'sec-counts',  sig:function(){var hh=S.hist?(S.hist.updated_at||(S.hist.tweets||[]).length):'0';return hh+'|'+(UI.histOpen||'')+'|'+sigData(S.data.tweets);}, html:htmlCounts},
   {id:'sec-daily',   sig:function(){return sigData(S.data.daily);}, html:htmlDaily},
   {id:'sec-binance', sig:function(){return sigData(S.data.binance);}, html:htmlBinance}
 ];
@@ -1184,10 +1216,13 @@ function handleAct(act,el){
         fetchLiq(iv,true).then(function(){updateSections();});
       }
       break;}
-    case 'hist-person':{
+    case 'hist-open':{
       var hp=el.getAttribute('data-p');
-      UI.histPerson=(UI.histPerson===hp?'all':hp);
-      updateSections();break;}
+      UI.histOpen=(UI.histOpen===hp?null:hp);
+      updateSections();
+      var panel=document.querySelector('.histpanel');
+      if(panel&&UI.histOpen)panel.scrollIntoView({behavior:'smooth',block:'start'});
+      break;}
     case 'refresh':refresh();pollWorkerFast();setUpdTime();break;
   }
 }
@@ -1633,6 +1668,15 @@ document.addEventListener('click',function(e){
   var el=e.target&&e.target.closest?e.target.closest('[data-act]'):null;
   if(el)handleAct(el.getAttribute('data-act'),el);
 });
+(function(){
+  var btn=document.getElementById('totop');
+  if(!btn)return;
+  function sync(){btn.classList.toggle('show',(window.scrollY||0)>600);}
+  window.addEventListener('scroll',sync,{passive:true});
+  btn.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+  sync();
+})();
+
 if(typeof globalThis.__TEST__==='undefined'){
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);
   else boot();
