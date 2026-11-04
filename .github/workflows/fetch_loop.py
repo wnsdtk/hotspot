@@ -239,94 +239,130 @@ def parse_post(msg, default_person):
     t = msg.select_one("div.tgme_widget_message_text")
     if not t:
         return None
-    lines = [l for l in t.get_text("\n", strip=True).split("\n")]
+    lines = [l.strip() for l in t.get_text("\n", strip=True).split("\n") if l.strip()]
     if len(lines) < 4:
         return None
-    kind = KIND_MAP.get(lines[1])
+
+    EMO = ("\U0001F4AC", "\U0001F4CC", "\U0001F464", "\U0001F504", "\u2705",
+           "\u274C", "\U0001F5D1", "\U0001F4DD", "\U0001F552", "\U0001F517")
+    LABELS = {"\u56de\u590d", "\u5f15\u7528\u63a8\u6587", "\u8f6c\u63a8",
+              "\u539f\u521b", "\u65b0\u589e\u5173\u6ce8", "\u53d6\u6d88\u5173\u6ce8"}
+
+    def is_meta(l):
+        if l in LABELS or l in EMO:
+            return True
+        if l.startswith("\u00b7") or "\u7c89\u4e1d" in l:
+            return True
+        if l.startswith("\u63a8\u6587\u65f6\u95f4:") or l.startswith("\u67e5\u770b\u539f\u6587"):
+            return True
+        if l in ("\u56de\u590d\u4e86", "\u5f15\u7528\u4e86", "\u8f6c\u63a8\u4e86",
+                 "\u5173\u6ce8\u4e86", "\u53d6\u5173\u4e86"):
+            return True
+        if "@" in l and len(l) < 40 and not l.endswith("\u3002"):
+            return True
+        if re.match(r"^(?:[^\s@]{1,30}\s+)?@[A-Za-z0-9_]{2,}$", l):
+            return True
+        return False
+
+    kind = None
+    for l in lines[:4]:
+        if "\u5f15\u7528\u63a8\u6587" in l:
+            kind = "quote"
+            break
+        if "\u8f6c\u63a8" in l:
+            kind = "retweet"
+            break
+        if "\u56de\u590d" in l:
+            kind = "reply"
+            break
+        if "\u539f\u521b" in l or "\u53d1\u5e03\u65b0\u63a8\u6587" in l:
+            kind = "original"
+            break
     if not kind:
-        return None  # skip 新增关注 / 取消关注 — not tweet kinds
-    person = detect_person(lines[3], default_person)
+        return None
+
+    person = default_person
+    for l in lines[:6]:
+        p2 = detect_person(l, None)
+        if p2:
+            person = p2
+            break
     name, handle = PERSON_INFO[person]
 
-    # --- own words: 中文翻译 section (Chinese, then English in parens)
-    zh_parts, en_parts = [], []
-    ti = -1
-    for _i, _l in enumerate(lines):
-        if "中文翻译" in _l:
-            ti = _i
-            break
-    if ti >= 0:
-        end = len(lines)
-        for j in range(ti + 1, len(lines)):
-            if ("原推" in lines[j]) or ("推文时间" in lines[j]):
-                end = j
-                break
-        in_en = False
-        for s in lines[ti + 1:end]:
-            if s == "(":
-                in_en = True
-                continue
-            if s == ")":
-                in_en = False
-                continue
-            (en_parts if in_en else zh_parts).append(s)
+    def idx_of(keys):
+        for i, l in enumerate(lines):
+            for k in keys:
+                if k in l:
+                    return i
+        return -1
 
-    # --- quoted / replied-to / retweeted original: "原推："/"原推翻译：" section
-    orig_text = ""
-    for j, l in enumerate(lines):
-        if ("原推" in l and ("：" in l or ":" in l)) or ("原文：" in l):
-            buf = []
-            for s in lines[j + 1:]:
-                if s == "🕒" or s.startswith("推文时间:"):
-                    break
-                buf.append(s)
-            orig_text = "\n".join(buf).strip()
-            break
+    i_zh = idx_of(["\u4e2d\u6587\u7ffb\u8bd1"])
+    i_orig = idx_of(["\u539f\u63a8\u7ffb\u8bd1", "\u539f\u63a8\uff1a", "\u539f\u63a8:"])
+    i_time = idx_of(["\u63a8\u6587\u65f6\u95f4"])
+
+    def body(a, b):
+        out = []
+        for i in range(max(a, 0), min(b, len(lines))):
+            if not is_meta(lines[i]):
+                out.append(lines[i])
+        return "\n".join(out).strip()
+
+    if i_zh >= 0:
+        end_zh = i_orig if i_orig > i_zh else (i_time if i_time > i_zh else len(lines))
+        zh_block = body(i_zh + 1, end_zh)
+        own = body(0, i_zh)
+    else:
+        zh_block = ""
+        stop = i_orig if i_orig > 0 else (i_time if i_time > 0 else len(lines))
+        own = body(0, stop)
+
+    parent_text = ""
+    if i_orig >= 0:
+        parent_text = body(i_orig + 1, i_time if i_time > i_orig else len(lines))
 
     parent_author, parent_handle = "", ""
-    for _l in lines[:6]:
-        _m = re.search(r"(?:\u56de\u590d\u4e86|\u5f15\u7528\u4e86|\u8f6c\u63a8\u4e86)\s*(.+?)\s+@([A-Za-z0-9_]+)", _l)
-        if _m:
-            parent_author, parent_handle = _m.group(1).strip(), _m.group(2)
-            break
+    joined = "\n".join(lines[:9])
+    mrel = re.search(r"(?:\u56de\u590d\u4e86|\u5f15\u7528\u4e86|\u8f6c\u63a8\u4e86)\s*\n?\s*(.+?)\s*\n?\s*@([A-Za-z0-9_]+)", joined)
+    if mrel:
+        parent_author, parent_handle = mrel.group(1).strip(), mrel.group(2)
 
+    zh_parts, en_parts = [], []
+    in_en = False
+    for s in zh_block.split("\n"):
+        if s == "(":
+            in_en = True
+            continue
+        if s == ")":
+            in_en = False
+            continue
+        (en_parts if in_en else zh_parts).append(s)
     zh = "\n".join(zh_parts).strip()
     en = "\n".join(en_parts).strip()
+
     if kind in ("reply", "quote"):
-        text = en or zh
-        text_zh = zh if en else ""
+        text = en or zh or own
+        text_zh = zh if (en and zh) else ""
     elif kind == "retweet":
-        text = orig_text
+        text = parent_text or own or zh
         text_zh = ""
-    else:  # original
-        buf = []
-        for s in lines[4:]:
-            if s == "🕒" or s.startswith("推文时间:"):
-                break
-            if s in ("🌐", "中文翻译 ——"):
-                continue
-            buf.append(s)
-        text = "\n".join(buf).strip() or zh or en
+    else:
+        text = own or zh or en
         text_zh = ""
 
-    # --- x.com link + tweet id from "查看原文"
-    url, tid = "", ""
-    for a in t.select("a"):
-        if (a.get_text(strip=True) == "查看原文") and a.get("href"):
-            url = a["href"].strip()
+    if not text:
+        return None
+
+    url = ""
+    for a in msg.select("a"):
+        href = a.get("href") or ""
+        if re.search(r"/status/\d+", href):
+            url = href
             break
-    if not url:
-        for a in t.select("a"):
-            href = a.get("href", "")
-            if "/status/" in href and "x.com" in href:
-                url = href.strip()
-                break
-    m = re.search(r"/status/(\d+)", url or "")
-    if m:
-        tid = m.group(1)
+
+    inner = msg.select_one("div.tgme_widget_message[data-post]")
+    tid = (inner.get("data-post", "") if inner else "").replace("/", "_")
     if not tid:
-        inner = msg.select_one("div.tgme_widget_message")
-        tid = (inner.get("data-post", "") if inner else "").replace("/", "_") or f"tg_{(hash(text) & 0xffff):x}"
+        tid = "tg_" + str(abs(hash(text)) % 0xFFFF)
 
     return {
         "id": tid,
@@ -335,11 +371,11 @@ def parse_post(msg, default_person):
         "handle": handle,
         "time": tweet_time_iso(lines, msg),
         "text": text,
-        "_zh_channel": zh if (kind in ("reply", "quote") and en) else "",
+        "_zh_channel": text_zh,
         "kind": kind,
         "media": tweet_media(msg),
         "url": url,
-        "parent_text": orig_text,
+        "parent_text": parent_text,
         "parent_author": parent_author,
         "parent_handle": parent_handle,
     }
