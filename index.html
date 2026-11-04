@@ -331,7 +331,7 @@ var XXAPI_DY='https://v2.xxapi.cn/api/douyinhot';
    immediately after push (no Pages rebuild wait) with CORS *. */
 var DATA_BASE='https://raw.githubusercontent.com/wnsdtk/hotspot/data/data/';
 var WORKER='https://snowy-mud-3037.rj982946925.workers.dev';
-var WORKER_POLL_MS=10000; // 10 seconds for tweets/trench
+var WORKER_POLL_MS=30000; // 30 seconds
 var DATA_FILES=[
   ['tweets','tweets.json'],['bsc','trench-bsc.json'],['sol','trench-sol.json'],
   ['rb','trench-rb.json'],
@@ -645,25 +645,30 @@ function freshestStamp(){
 }
 /* ============ 全部：聪明钱异动 (NEW) ============ */
 function htmlSmartMoves(){
-  var allToks=[];
   var nowMs=Date.now();
-  ['bsc','sol','rb'].forEach(function(k){
-    var d=S.data[k];
-    if(d&&Array.isArray(d.tokens))d.tokens.forEach(function(t){
-      var sc=Number(t.smart_count)||0;
-      var vol=Number(t.vol_1h)||0;
-      var cts=Number(t.creation_timestamp)||0;
-      if(cts>0&&(nowMs-cts*1000)>10*86400*1000)return; // FIX v11: exclude >10 days
-      if(sc>=3&&vol>0)allToks.push(t);
-    });
+  function ageOf(t){
+    var ts=Number(t.creation_timestamp)||0;
+    if(ts>0)return Math.floor((nowMs-ts*1000)/60000);
+    return ageMin(t);
+  }
+  var CH=[['bsc','BSC','#F0B90B'],['sol','Solana','#A371FF'],['rb','Robinhood','#00C805']];
+  var groups=[], total=0;
+  CH.forEach(function(c){
+    var d=S.data[c[0]];
+    var toks=((d&&d.tokens)||[]).filter(function(t){return ageOf(t)<=5*1440;})
+      .sort(function(a,b){
+        return (Number(b.smart_count)||0)-(Number(a.smart_count)||0)
+          || (Number(b.vol_1h)||0)-(Number(a.vol_1h)||0);
+      }).slice(0,5);
+    total+=toks.length;
+    groups.push('<div class="subhead" style="color:'+c[2]+'">'+c[1]+' · '+toks.length+' 个 · 5 天内</div>'
+      +(toks.length?toks.map(function(t){return coinCard(t,false,c[2]);}).join('')
+                   :'<div class="empty">暂无数据</div>'));
   });
-  if(!allToks.length)return '';
-  // Sort by smart_count desc, take top 5
-  allToks.sort(function(a,b){return (Number(b.smart_count)||0)-(Number(a.smart_count)||0);});
-  var top=allToks.slice(0,5);
-  var h='<div class="card"><div class="sect">⚡ 聪明钱异动'+updInfo('trench','每10秒更新')+'</div>';
-  h+=top.map(function(t){return coinCard(t,false,null,true);}).join('');
-  return h+'</div>';
+  if(!total)return '';
+  return '<div class="card"><div class="sect">⚡ 聪明钱异动'+updInfo('trench','每30秒更新')+'</div>'
+    +'<div class="muted" style="font-size:11px;margin:-4px 0 10px">按聪明钱/KOL 数量排序 · 只看 5 天内新币</div>'
+    +groups.join('')+'</div>';
 }
 /* ============ 全部：大佬推文 ============ */
 function tweetCard(tw){
@@ -685,7 +690,7 @@ function tweetCard(tw){
 function htmlTweets(){
   var d=S.data.tweets;
   if(!d||!Array.isArray(d.tweets)||!d.tweets.length)
-    return '<div class="card"><div class="sect">大佬推文 · 最新'+updInfo('tweets','每10秒更新')+'</div><div class="empty">暂无数据</div></div>';
+    return '<div class="card"><div class="sect">大佬推文 · 最新'+updInfo('tweets','每30秒更新')+'</div><div class="empty">暂无数据</div></div>';
   var tws=d.tweets.slice().sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);});
   var mini=PEOPLE.map(function(p){
     var t=null;
@@ -704,7 +709,7 @@ function htmlTweets(){
     return '<button class="chip'+(UI.filter===f.k?' on':'')+'" data-act="tweet-filter" data-f="'+f.k+'">'+esc(f.t)+'</button>';
   }).join('');
   var list=tws.filter(function(t){return UI.filter==='all'||t.person===UI.filter;}).map(tweetCard).join('');
-  return '<div class="card"><div class="sect">大佬推文 · 最新'+updInfo('tweets','每10秒更新')+'</div>'
+  return '<div class="card"><div class="sect">大佬推文 · 最新'+updInfo('tweets','每30秒更新')+'</div>'
     +'<div class="lsub">📌 最新一条 · 三人分开 · 各自最新一条</div>'+mini
     +'<div class="chips">'+chips+'</div>'
     +'<div class="tlist">'+(list||'<div class="empty">暂无数据</div>')+'</div></div>';
@@ -987,7 +992,7 @@ function htmlChain(key,title,color){
     if(!fresh.length&&!hot.length)cards='<div class="empty">暂无数据</div>';
   }
   var meta=toks.length+' 个币'+((d&&d.source)?' · 数据源 '+esc(d.source):'');
-  return '<div class="card"><div class="sect" style="color:'+color+'">'+esc(title)+updInfo('trench','每10秒更新')+' <span class="muted small" style="color:var(--muted);font-weight:400">'+meta+'</span></div>'
+  return '<div class="card"><div class="sect" style="color:'+color+'">'+esc(title)+updInfo('trench','每30秒更新')+' <span class="muted small" style="color:var(--muted);font-weight:400">'+meta+'</span></div>'
     +'<div class="coinlist" style="background:'+color+'33">'+cards+'</div></div>';
 }
 
@@ -1045,7 +1050,7 @@ function dailyDetail(tws){
 function htmlCounts(){
   var d=S.data.tweets;
   var tws=(d&&Array.isArray(d.tweets))?d.tweets.slice().sort(function(a,b){return Date.parse(b.time)-Date.parse(a.time);}):[];
-  return '<div class="card"><div class="sect">📝 当日总结'+updInfo('tweets','每10秒更新')+'</div>'
+  return '<div class="card"><div class="sect">📝 当日总结'+updInfo('tweets','每30秒更新')+'</div>'
     +'<div class="datehead">'+esc(todayBj())+'</div>'
     +'<div class="countcards">'+countCards(tws)+'</div></div>'
     +dailyDetail(tws);
