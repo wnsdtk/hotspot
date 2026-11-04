@@ -342,7 +342,7 @@ function dataUrl(f){return DATA_BASE+f+'?t='+Date.now();}
 var POLL_MS=15000;
 /* ============ state ============ */
 var S={data:{}, wb:null, dy:null, prevHotlist:null, hotlistRows:null, douyinOk:false, lastUpdate:{}};
-var UI={tab:'all', filter:'all', expanded:{liq:true}, liq:{chain:'bsc', iv:'1h'}, dyN:10, wbN:10, dailyPerson:null, days:{}};
+var UI={tab:'all', filter:'all', expanded:{liq:true}, liq:{chain:'bsc', iv:'24h'}, dyN:10, wbN:10, dailyPerson:null, days:{}};
 /* ============ helpers ============ */
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function nl2br(s){return s.replace(/\n/g,'<br>');}
@@ -913,8 +913,8 @@ function buildLocalTags(){
 function htmlTags(){
   var tg=S.data.tags;
   if(tg&&tg.updated_at){var tt=Date.parse(tg.updated_at);if(!isNaN(tt))S.lastUpdate.tags=tt;}
-  var h='<div class="card"><div class="sect">📋 30分钟热度总结'+updInfo('tags','每30分钟更新')+'</div>';
-  (function(){var tu=(S.data.tags_halfhour&&S.data.tags_halfhour.updated_at)||(S.data.tags&&S.data.tags.updated_at)||'';if(tu){var d=new Date(tu);var s=(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);h+='<div class="dmeta" style="margin:0 0 8px">更新于 '+s+' 北京时间 · 每 30 分钟按最新战壕数据生成</div>';}})();
+  var h='<div class="card"><div class="sect">📋 1小时热度总结'+updInfo('tags','每小时更新')+'</div>';
+  (function(){var tu=(S.data.tags_halfhour&&S.data.tags_halfhour.updated_at)||(S.data.tags&&S.data.tags.updated_at)||'';if(tu){var d=new Date(tu);var s=(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);h+='<div class="dmeta" style="margin:0 0 8px">更新于 '+s+' 北京时间 · 每小时按最新战壕数据生成</div>';}})();
   var tags=(tg&&Array.isArray(tg.tags))?tg.tags.slice():[];
   // Supplement with local tags if fewer than 5
   if(tags.length<5){
@@ -1498,7 +1498,7 @@ function pollWorkerSlow(){
   // 这里只在上游超过 30 分钟未更新时用本地战壕数据兜底，不再每 5 分钟覆盖。
   try{
     var tu=S.data.tags&&S.data.tags.updated_at?Date.parse(S.data.tags.updated_at):0;
-    if(!tu||Date.now()-tu>30*60*1000){
+    if(!tu||Date.now()-tu>60*60*1000){
       var lt=buildLocalTags();
       if(lt&&lt.length){
         S.data.tags={updated_at:new Date().toISOString(),tags:lt};
