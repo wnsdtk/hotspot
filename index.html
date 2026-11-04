@@ -274,6 +274,18 @@ a{color:var(--blue); text-decoration:none;}
 .dhist:last-child{border-bottom:none;}
 .dhist .dhd{font-family:var(--mono,monospace); color:var(--dim,#66727f); flex:none; width:34px;}
 .dhist .dhv{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+
+/* ===== v27 · 当日总结卡片 ===== */
+.ccard .cdot{display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; vertical-align:1px;}
+.ccard .cnum{font-size:24px; font-weight:800; line-height:1.05; color:#fff; margin:3px 0 7px;
+  font-variant-numeric:tabular-nums; letter-spacing:-.02em;}
+.ccard .cnum span{font-size:10px; font-weight:500; color:var(--dim,#66727f); margin-left:2px; letter-spacing:0;}
+.cstat-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px 2px;}
+.cstat{display:flex; flex-direction:column; align-items:center; line-height:1.3; min-width:0;}
+.cstat b{font-size:12.5px; font-weight:700; color:#e6edf6; font-variant-numeric:tabular-nums;}
+.cstat span{font-size:9.5px; color:var(--dim,#66727f); white-space:nowrap;}
+.cstat.zero b{color:#78838f; font-weight:600;}
+.ccard.open .cnum{color:#ff8a93;}
 </style>
 </head>
 <body>
@@ -985,14 +997,17 @@ function countCards(tws){
   var todays=tws.filter(function(t){return bjDate(t.time)===today;});
   return PEOPLE.map(function(p){
     var mine=todays.filter(function(t){return t.person===p.key;});
-    var c={original:0,retweet:0,quote:0,reply:0};
+    var c={original:0,retweet:0,quote:0,reply:0,follow:0,unfollow:0};
     mine.forEach(function(t){if(c[t.kind]!=null)c[t.kind]++;});
     var total=mine.length,open=UI.dailyPerson===p.key;
-    var face='<div class="cface-name"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+esc(p.color||'#8b949e')+';margin-right:6px"></span>'+esc(p.name)+'</div>'
-      +'<div class="cface-total">共 '+total+' 条</div>'
-      +'<div class="cbreak"><span>原创 '+c.original+'</span><span>转推 '+c.retweet+'</span>'
-      +'<span>引用 '+c.quote+'</span><span>回复 '+c.reply+'</span></div>'
-      +'<div class="small muted" style="margin-top:4px">'+(open?'收起 ▲':'展开 ▼')+'</div>';
+    var items=[['原创',c.original],['转推',c.retweet],['引用',c.quote],
+               ['回复',c.reply],['关注',c.follow],['取关',c.unfollow]];
+    var face='<div class="cface-name"><span class="cdot" style="background:'+esc(p.color||'#8b949e')+'"></span>'+esc(p.name)+'</div>'
+      +'<div class="cnum">'+total+'<span>条</span></div>'
+      +'<div class="cstat-grid">'+items.map(function(x){
+        return '<div class="cstat'+(x[1]?'':' zero')+'"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>';
+      }).join('')+'</div>'
+      +'<div class="small muted" style="margin-top:7px">'+(open?'收起 ▲':'展开 ▼')+'</div>';
     return '<div class="ccard pt-'+p.key+(open?' open':'')+'" data-act="daily-person" data-p="'+p.key+'">'+face+'</div>';
   }).join('');
 }
