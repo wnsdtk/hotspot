@@ -1021,22 +1021,41 @@ def summarize_period(entries, start_hour, end_hour):
 
 
 def maybe_summary_daily(out_dir, state_dir, tags):
-    """Beijing 21:00-21:05: what the trenches played in the morning vs the afternoon."""
+    """12:00 -> 上午段; 22:00 -> 下午/晚上段 (accumulated in one file per day)."""
     path = os.path.join(out_dir, "summary-daily.json")
     now = now_sh()
     today = now.strftime("%Y-%m-%d")
-    if now.hour != 21 or now.minute >= 6:
-        return False, "outside 21:00-21:05 window"
+    hour = now.hour
+    if now.minute >= 6 or hour not in (12, 22):
+        return False, "outside 12:00 / 22:00 window"
     existing = load_json(path, None)
-    if isinstance(existing, dict) and existing.get("date") == today:
-        return False, "already generated today"
+    same_day = isinstance(existing, dict) and existing.get("date") == today
+    data = existing if same_day else {}
+    periods = data.get("periods") or {}
+    history = data.get("history") if isinstance(data.get("history"), dict) else {}
+
     log = load_json(tag_log_path(state_dir), {})
     entries = (log or {}).get(today) or []
-    morning = summarize_period(entries, 0, 12)
-    afternoon = summarize_period(entries, 12, 21)
-    if not morning["themes"] and not afternoon["themes"]:
-        # never publish an empty block: fall back to the current snapshot
-        afternoon = {
+    changed = False
+
+    if hour == 12:
+        if not periods.get("morning"):
+            periods["morning"] = summarize_period(entries, 0, 12)
+            changed = True
+        else:
+            return False, "morning already generated today"
+    else:  # 22:00
+        if periods.get("evening"):
+            return False, "evening already generated today"
+        if not periods.get("morning"):
+            periods["morning"] = summarize_period(entries, 0, 12)
+            changed = True
+        periods["evening"] = summarize_period(entries, 12, 22)
+        changed = True
+
+    if not periods.get("morning", {}).get("themes") and not periods.get("evening", {}).get("themes"):
+        # 兜底：tag-log 还没有内容时，用当前快照填充对应时段
+        snapshot = {
             "themes": [{"text": t.get("text", ""), "hits": 1}
                        for t in (tags or []) if t.get("text")][:6],
             "coins": [{"symbol": t.get("coin_symbol", ""),
@@ -1044,26 +1063,27 @@ def maybe_summary_daily(out_dir, state_dir, tags):
                        "ca": t.get("coin_ca", ""), "hits": 1}
                       for t in (tags or []) if t.get("coin_symbol")][:3],
         }
-    history = {}
-    if isinstance(existing, dict) and isinstance(existing.get("history"), dict):
-        history = existing["history"]
+        key = "morning" if hour == 12 else "evening"
+        periods.setdefault(key, snapshot)
+
     history[today] = {
         "tags": tags,
-        "morning": morning["themes"],
-        "afternoon": afternoon["themes"],
+        "morning": (periods.get("morning") or {}).get("themes") or [],
+        "evening": (periods.get("evening") or {}).get("themes") or [],
     }
     for d in sorted(history.keys())[:-30]:
         del history[d]
+
     atomic_write(path, {
         "date": today,
         "generated_at": iso_now(),
         "source": "tag-log",
-        "periods": {"morning": morning, "afternoon": afternoon},
+        "periods": periods,
         "tags": tags,
         "history": history,
     })
-    return True, ("generated %s (morning themes=%d, afternoon themes=%d)"
-                  % (today, len(morning["themes"]), len(afternoon["themes"])))
+    return True, "generated %s at %02d:00 (%s)" % (
+        today, hour, "morning" if hour == 12 else "evening")
 
 
 # ----------------------------------------------------------------- binance
