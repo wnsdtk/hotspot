@@ -1,120 +1,209 @@
 {
-  "date": "2026-11-03",
-  "generated_at": "2026-11-03T21:01:02.073356+08:00",
+  "date": "2026-11-04",
+  "generated_at": "2026-11-04T22:00:36.502519+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
-      "themes": [],
-      "coins": []
-    },
-    "afternoon": {
       "themes": [
         {
           "text": "#新币发行加速",
-          "hits": 11
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "hits": 8
-        },
-        {
-          "text": "#AI/Agent概念持续发酵",
-          "hits": 5
+          "hits": 24
         },
         {
           "text": "#动物Meme持续发酵",
-          "hits": 2
+          "hits": 21
         },
         {
-          "text": "#$SI 同名代币",
-          "hits": 1
+          "text": "#AI/Agent概念持续发酵",
+          "hits": 7
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 6
+        },
+        {
+          "text": "#$AMD 同名代币",
+          "hits": 4
+        },
+        {
+          "text": "#$草台班子 何一提及发酵",
+          "hits": 4
         }
       ],
       "coins": [
         {
-          "symbol": "$AI",
+          "symbol": "$AMD",
           "chain": "sol",
-          "ca": "8ozpQfvuPzxaLiKnX6cqTDbqs8HMzqduHUe1J15mpump",
-          "hits": 8
+          "ca": "DDmGnuvroxVrb7CSyjYcezFU8gnAfhKasg4ZZezmpump",
+          "hits": 21
         },
         {
-          "symbol": "$OMBRO",
-          "chain": "sol",
-          "ca": "8DB8Fw5UiC1AzugQAfRyw3qL8omw772LJbdehNWhpump",
-          "hits": 5
-        },
-        {
-          "symbol": "$一本万利",
+          "symbol": "$AGC",
           "chain": "bsc",
-          "ca": "0x02a736a276acf0190cedb33f3d8b9f5972b97777",
+          "ca": "0x63dea5acdbe1f27c968907d08610a5f0a0284ba6",
+          "hits": 7
+        },
+        {
+          "symbol": "$草台班子",
+          "chain": "bsc",
+          "ca": "0x87c88d7a65f3f98dd5c7247b8ee38be674c57777",
+          "hits": 5
+        }
+      ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#AI/Agent概念持续发酵",
+          "hits": 14
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 14
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 13
+        },
+        {
+          "text": "#$VETO 同名代币",
+          "hits": 7
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 4
+        },
+        {
+          "text": "#$草台班子 何一提及发酵",
           "hits": 3
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$AMD",
+          "chain": "sol",
+          "ca": "DDmGnuvroxVrb7CSyjYcezFU8gnAfhKasg4ZZezmpump",
+          "hits": 14
+        },
+        {
+          "symbol": "$VETO",
+          "chain": "sol",
+          "ca": "HQstiRVdp2cB6s6p3v6WWe23r8K4EP9wnx9gS3yLpump",
+          "hits": 9
+        },
+        {
+          "symbol": "$AGC",
+          "chain": "bsc",
+          "ca": "0x63dea5acdbe1f27c968907d08610a5f0a0284ba6",
+          "hits": 8
         }
       ]
     }
   },
   "tags": [
     {
-      "text": "#动物Meme持续发酵",
-      "coin_symbol": "$SI",
-      "coin_ca": "0x5f77d3d852943bac6b976952f80165f33d7f7777",
+      "text": "#AI/Agent概念持续发酵",
+      "coin_symbol": "$AGC",
+      "coin_ca": "0x63dea5acdbe1f27c968907d08610a5f0a0284ba6",
       "coin_chain": "bsc"
     },
     {
-      "text": "#AI/Agent概念持续发酵",
-      "coin_symbol": "$AI",
-      "coin_ca": "8ozpQfvuPzxaLiKnX6cqTDbqs8HMzqduHUe1J15mpump",
+      "text": "#动物Meme持续发酵",
+      "coin_symbol": "$AMD",
+      "coin_ca": "DDmGnuvroxVrb7CSyjYcezFU8gnAfhKasg4ZZezmpump",
       "coin_chain": "sol"
     },
     {
+      "text": "#BSC链新币最密集",
+      "coin_symbol": "$胖五",
+      "coin_ca": "0x58b2931f2bf31d2a6299e4f987c1d7ac6a967777",
+      "coin_chain": "bsc"
+    },
+    {
       "text": "#新币发行加速",
-      "coin_symbol": "$MOGMAS",
-      "coin_ca": "4yxnt3xAdyBFFbzMWJy9sjGEoiBNkjwdSQZ8ZyULpump",
+      "coin_symbol": "$PAIRITY",
+      "coin_ca": "CaQR7CNrXvXaFQLC2ChWBZHpUed4EYfVVJxjR34ipair",
       "coin_chain": "sol"
     }
   ],
   "history": {
-    "2026-11-03": {
+    "2026-11-04": {
       "tags": [
         {
-          "text": "#动物Meme持续发酵",
-          "coin_symbol": "$SI",
-          "coin_ca": "0x5f77d3d852943bac6b976952f80165f33d7f7777",
+          "text": "#AI/Agent概念持续发酵",
+          "coin_symbol": "$AGC",
+          "coin_ca": "0x63dea5acdbe1f27c968907d08610a5f0a0284ba6",
           "coin_chain": "bsc"
         },
         {
-          "text": "#AI/Agent概念持续发酵",
-          "coin_symbol": "$AI",
-          "coin_ca": "8ozpQfvuPzxaLiKnX6cqTDbqs8HMzqduHUe1J15mpump",
+          "text": "#动物Meme持续发酵",
+          "coin_symbol": "$AMD",
+          "coin_ca": "DDmGnuvroxVrb7CSyjYcezFU8gnAfhKasg4ZZezmpump",
           "coin_chain": "sol"
-        },
-        {
-          "text": "#新币发行加速",
-          "coin_symbol": "$MOGMAS",
-          "coin_ca": "4yxnt3xAdyBFFbzMWJy9sjGEoiBNkjwdSQZ8ZyULpump",
-          "coin_chain": "sol"
-        }
-      ],
-      "morning": [],
-      "afternoon": [
-        {
-          "text": "#新币发行加速",
-          "hits": 11
         },
         {
           "text": "#BSC链新币最密集",
-          "hits": 8
+          "coin_symbol": "$胖五",
+          "coin_ca": "0x58b2931f2bf31d2a6299e4f987c1d7ac6a967777",
+          "coin_chain": "bsc"
         },
         {
-          "text": "#AI/Agent概念持续发酵",
-          "hits": 5
+          "text": "#新币发行加速",
+          "coin_symbol": "$PAIRITY",
+          "coin_ca": "CaQR7CNrXvXaFQLC2ChWBZHpUed4EYfVVJxjR34ipair",
+          "coin_chain": "sol"
+        }
+      ],
+      "morning": [
+        {
+          "text": "#新币发行加速",
+          "hits": 24
         },
         {
           "text": "#动物Meme持续发酵",
-          "hits": 2
+          "hits": 21
         },
         {
-          "text": "#$SI 同名代币",
-          "hits": 1
+          "text": "#AI/Agent概念持续发酵",
+          "hits": 7
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 6
+        },
+        {
+          "text": "#$AMD 同名代币",
+          "hits": 4
+        },
+        {
+          "text": "#$草台班子 何一提及发酵",
+          "hits": 4
+        }
+      ],
+      "evening": [
+        {
+          "text": "#AI/Agent概念持续发酵",
+          "hits": 14
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 14
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 13
+        },
+        {
+          "text": "#$VETO 同名代币",
+          "hits": 7
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 4
+        },
+        {
+          "text": "#$草台班子 何一提及发酵",
+          "hits": 3
         }
       ]
     }
