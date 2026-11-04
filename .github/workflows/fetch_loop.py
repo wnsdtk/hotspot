@@ -248,16 +248,17 @@ def parse_post(msg, default_person):
     person = detect_person(lines[3], default_person)
     name, handle = PERSON_INFO[person]
 
-    # --- person's own words: "中文翻译 ——" section (Chinese, then English in parens)
+    # --- own words: 中文翻译 section (Chinese, then English in parens)
     zh_parts, en_parts = [], []
-    try:
-        ti = lines.index("中文翻译 ——")
-    except ValueError:
-        ti = -1
+    ti = -1
+    for _i, _l in enumerate(lines):
+        if "中文翻译" in _l:
+            ti = _i
+            break
     if ti >= 0:
         end = len(lines)
         for j in range(ti + 1, len(lines)):
-            if lines[j] == "💬":
+            if ("原推" in lines[j]) or ("推文时间" in lines[j]):
                 end = j
                 break
         in_en = False
@@ -273,7 +274,7 @@ def parse_post(msg, default_person):
     # --- quoted / replied-to / retweeted original: "原推："/"原推翻译：" section
     orig_text = ""
     for j, l in enumerate(lines):
-        if l in ("原推：", "原推翻译：", "原推:", "原文："):
+        if ("原推" in l and ("：" in l or ":" in l)) or ("原文：" in l):
             buf = []
             for s in lines[j + 1:]:
                 if s == "🕒" or s.startswith("推文时间:"):
