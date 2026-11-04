@@ -606,14 +606,14 @@ function htmlDaily(){
     var gt=Date.parse(dd.generated_at);
     if(!isNaN(gt))S.lastUpdate.daily=gt;
   }
-  var h='<div class="card"><div class="sect">📋 今日链上热度总结'+updInfo('daily','每晚 21:00 更新')+'</div>';
+  var h='<div class="card"><div class="sect">📋 今日链上热度总结'+updInfo('daily','每天 12:00 / 22:00 更新')+'</div>';
   if(!dd||!dd.periods){
-    h+='<div class="empty">今晚 21:00 生成今日总结（战壕上午 / 下午各在玩什么）</div>';
+    h+='<div class="empty">中午 12:00 出上午段，晚上 22:00 出下午段</div>';
     return h+'</div>';
   }
   h+='<div class="dmeta">'+esc(dd.date||'')+' · 战壕全天叙事 · 生成于 '+esc(fmtHM(dd.generated_at))+'</div>';
   h+=dailyPeriod(dd.periods.morning,'上午','00:00 – 12:00','🌅');
-  h+=dailyPeriod(dd.periods.afternoon,'下午','12:00 – 21:00','🌆');
+  h+=dailyPeriod(dd.periods.evening||dd.periods.afternoon,'下午 / 晚上','12:00 – 22:00','🌆');
   var hist=dd.history||{};
   var days=Object.keys(hist).filter(function(d){return d!==dd.date;}).sort().reverse().slice(0,5);
   if(days.length){
@@ -621,7 +621,7 @@ function htmlDaily(){
     h+=days.map(function(d){
       var e=hist[d]||{};
       var m=((e.morning||[])[0]||{}).text||'—';
-      var a=((e.afternoon||[])[0]||{}).text||'—';
+      var a=((e.evening||e.afternoon||[])[0]||{}).text||'—';
       return '<div class="dhist"><span class="dhd">'+esc(String(d).slice(5))+'</span>'
         +'<span class="dhv">上午 '+esc(m)+'</span><span class="dhv">下午 '+esc(a)+'</span></div>';
     }).join('');
