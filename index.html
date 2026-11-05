@@ -325,6 +325,30 @@ a{color:var(--blue); text-decoration:none;}
   border-radius:6px; padding:3px 8px; text-decoration:none; background:transparent; cursor:pointer;
   font-family:inherit; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .radar .rbtn:hover{color:#fff; border-color:var(--border-2,#3a4454);}
+
+/* ===== v44 · SOL 大事件雷达 ===== */
+.solr .sgrid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin-bottom:10px;}
+.solr .scell{background:rgba(255,255,255,.03); border:1px solid var(--border,#262d36); border-radius:8px; padding:7px 8px;}
+.solr .sk{font-size:9.5px; color:var(--dim,#66727f);}
+.solr .sv{font-size:16px; font-weight:800; margin-top:2px; font-family:var(--mono,monospace);}
+.solr .srow{padding:10px 2px; border-bottom:1px solid var(--border,#262d36);}
+.solr .srow:last-child{border-bottom:none;}
+.solr .shead{display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+.solr .ssym{font-size:14.5px; font-weight:700; max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.solr .stag{font-size:9.5px; padding:1px 6px; border-radius:5px; border:1px solid transparent;}
+.solr .stag.new{color:#8fc0ff; background:rgba(88,166,255,.12); border-color:rgba(88,166,255,.35);}
+.solr .stag.up{color:#2EBD85; background:rgba(46,189,133,.12); border-color:rgba(46,189,133,.35);}
+.solr .stag.down{color:#F6465D; background:rgba(246,70,93,.12); border-color:rgba(246,70,93,.35);}
+.solr .stag.flat{color:var(--muted,#8d9aac); background:rgba(255,255,255,.04); border-color:var(--border,#262d36);}
+.solr .skol{margin-left:auto; font-size:11px; color:#bda4ff; border:1px solid rgba(167,113,255,.35);
+  background:rgba(167,113,255,.1); border-radius:20px; padding:1px 8px;}
+.solr .smeta{font-size:11.5px; color:var(--muted,#8d9aac); margin-top:4px;}
+.solr .sheat{height:5px; border-radius:4px; background:rgba(255,255,255,.06); overflow:hidden; margin:7px 0 4px;}
+.solr .sheat i{display:block; height:100%;}
+.solr .sheat i.cold{background:#5a6472;} .solr .sheat i.warm{background:#f0883e;} .solr .sheat i.hot{background:#F6465D;}
+.solr .sfoot{display:flex; gap:10px; font-size:10.5px; color:var(--dim,#66727f);}
+.solr .sfoot .speak{margin-left:auto; font-family:var(--mono,monospace);}
+.solr .sbtns{display:flex; gap:6px; flex-wrap:wrap; margin-top:7px;}
 </style>
 </head>
 <body>
@@ -755,6 +779,87 @@ function htmlRadar(){
       +'<a class="rbtn" href="'+esc(t.url)+'" target="_blank" rel="noopener">DexScreener</a>'
       +links
       +'</div></div>';
+  }).join('');
+  return h+'</div>';
+}
+
+/* ============ v44 · SOL 大事件雷达 ============ */
+var SOLP_KEY='sol_peak_v2';
+function solPeaks(){
+  try{return JSON.parse(localStorage.getItem(SOLP_KEY)||'{}')||{};}catch(e){return {};}
+}
+function solSave(obj){try{localStorage.setItem(SOLP_KEY,JSON.stringify(obj));}catch(e){}}
+function solScan(){
+  var d=S.data.sol||{};
+  var toks=(d.tokens||[]).slice();
+  var now=Date.now();
+  var mem=solPeaks();
+  var rows=[];
+  toks.forEach(function(t){
+    var ts=Number(t.creation_timestamp)||0;
+    var age=ts>0?Math.floor((now-ts*1000)/60000):99999;
+    if(age>5*1440)return;
+    var addr=t.ca||t.address||'';
+    if(!addr)return;
+    var mc=Number(t.market_cap)||0, vol=Number(t.vol_1h)||0, kol=Number(t.smart_count)||0;
+    var prev=mem[addr]||{peak:0, mc:0, ts:0};
+    var peak=Math.max(Number(prev.peak)||0, mc);
+    var state='持平';
+    if(age<=60)state='新上线';
+    else if(prev.mc>0&&mc>=prev.mc*1.05)state='升温';
+    else if(prev.mc>0&&mc<=prev.mc*0.95)state='回落';
+    var fromPeak=peak>0?Math.round((mc-peak)/peak*100):0;
+    var heat=Math.max(5, Math.min(100, Math.round(kol*4 + Math.log10(vol+10)*6)));
+    mem[addr]={peak:peak, mc:mc, ts:now};
+    rows.push({sym:t.symbol||'', name:t.name||'', addr:addr, mc:mc, vol:vol, kol:kol,
+      age:age, peak:peak, fromPeak:fromPeak, heat:heat, state:state,
+      x:t.x_url||'', chain:'sol'});
+  });
+  solSave(mem);
+  return rows;
+}
+function solScore(r){
+  var s=r.kol*10;
+  if(r.mc>=100000&&r.mc<=300000)s+=30;
+  if(r.state==='升温')s+=25;
+  if(r.state==='新上线')s+=15;
+  if(r.state==='回落')s-=20;
+  if(r.age!=null&&r.age<180)s+=8;
+  s-=Math.abs(r.fromPeak)/6;
+  return s;
+}
+function htmlSolRadar(){
+  var rows=solScan();
+  var n5=rows.length;
+  var nKol=rows.filter(function(r){return r.kol>=10;}).length;
+  var nMid=rows.filter(function(r){return r.mc>=100000&&r.mc<=300000;}).length;
+  var nHot=rows.filter(function(r){return r.state==='升温'||r.state==='新上线';}).length;
+  var h='<div class="card solr"><div class="sect">\u{1F6A8} SOL \u5927\u4e8b\u4ef6\u96f7\u8fbe'+updInfo('solradar','\u6bcf30\u79d2\u626b\u63cf')+'</div>'
+    +'<div class="muted" style="font-size:11px;margin:-4px 0 10px">\u4ec5 SOL \u94fe \u00b7 \u4e0a\u7ebf 5 \u5929\u5185 \u00b7 \u6309 KOL \u6570\u4e0e\u91cf\u80fd\u6392\u5e8f</div>';
+  h+='<div class="sgrid">'
+    +'<div class="scell"><div class="sk">5 天内新币</div><div class="sv">'+n5+'</div></div>'
+    +'<div class="scell"><div class="sk">KOL \u2265 10</div><div class="sv">'+nKol+'</div></div>'
+    +'<div class="scell"><div class="sk">\u5e02\u503c 10-30 \u4e07</div><div class="sv">'+nMid+'</div></div>'
+    +'<div class="scell"><div class="sk">\u5347\u6e29\u4e2d</div><div class="sv">'+nHot+'</div></div>'
+    +'</div>';
+  if(!rows.length)return h+'<div class="empty">\u6682\u65e0\u6570\u636e</div></div>';
+  rows.sort(function(a,b){return solScore(b)-solScore(a);});
+  h+=rows.slice(0,8).map(function(r){
+    var st=({'新上线':'new','升温':'up','回落':'down','持平':'flat'})[r.state]||'flat';
+    var heatCls=r.heat>=60?'hot':(r.heat>=35?'warm':'cold');
+    return '<div class="srow '+st+'">'
+      +'<div class="shead"><span class="ssym">'+esc(r.sym||'?')+'</span>'
+      +'<span class="stag '+st+'">'+esc(r.state)+'</span>'
+      +'<span class="skol">KOL\u00d7'+r.kol+'</span></div>'
+      +'<div class="smeta">\u5e02\u503c '+fmtUsd(r.mc)+' \u00b7 1h\u91cf '+fmtUsd(r.vol)+' \u00b7 '+esc(radarAge(Date.now()-r.age*60000))+'</div>'
+      +'<div class="sheat"><i class="'+heatCls+'" style="width:'+r.heat+'%"></i></div>'
+      +'<div class="sfoot"><span>\u70ed\u5ea6 '+r.heat+'</span>'
+      +'<span class="'+(r.fromPeak<0?'dn':'')+'">\u8ddd\u89c2\u5bdf\u5cf0\u503c '+r.fromPeak+'%</span>'
+      +'<span class="speak">\u5cf0 '+fmtUsd(r.peak)+'</span></div>'
+      +'<div class="sbtns"><button class="rbtn" data-act="copy" data-ca="'+esc(r.addr)+'">'+esc(radarShort(r.addr))+'</button>'
+      +(r.x?'<a class="rbtn" href="'+esc(r.x)+'" target="_blank" rel="noopener">X</a>':'')
+      +'<a class="rbtn" href="https://dexscreener.com/solana/'+esc(r.addr)+'" target="_blank" rel="noopener">DexScreener</a></div>'
+      +'</div>';
   }).join('');
   return h+'</div>';
 }
@@ -1262,6 +1367,7 @@ function sigData(d){
   return JSON.stringify(c);
 }
 var SECTIONS=[
+  {id:'sec-solradar', sig:function(){return sigData(S.data.sol);}, html:htmlSolRadar},
   {id:'sec-moves',   sig:function(){return sigData(S.data.bsc)+sigData(S.data.sol)+sigData(S.data.rb);}, html:htmlSmartMoves},
   {id:'sec-dy-trend',sig:function(){var d=S.data.douyin;return JSON.stringify((d&&d.trending)||null);}, html:htmlDyTrend},
   {id:'sec-dy-rise', sig:function(){return (S.douyinOk?'1':'0')+'|'+JSON.stringify(S.hotlistRows);}, html:htmlDyRise},
@@ -1279,7 +1385,7 @@ var SECTIONS=[
 var SEEN_SIG={};
 function setHtml(id,html){var n=document.getElementById(id);if(n)n.innerHTML=html;}
 function buildShell(){
-  setHtml('tab-all','<div id="sec-moves"></div>');
+  setHtml('tab-all','<div id="sec-solradar"></div><div id="sec-moves"></div>');
   setHtml('tab-hot','<div id="sec-dy-trend"></div><div id="sec-dy-rise"></div><div id="sec-dy-list"></div><div id="sec-wb-list"></div>');
   setHtml('tab-trench','<div id="sec-liq"></div><div id="sec-tags"></div><div id="sec-bsc"></div><div id="sec-sol"></div><div id="sec-rb"></div>');
   setHtml('tab-summary','<div id="sec-counts"></div><div id="sec-daily"></div><div id="sec-binance"></div>');
