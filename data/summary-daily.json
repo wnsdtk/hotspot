@@ -1,6 +1,6 @@
 {
   "date": "2026-11-06",
-  "generated_at": "2026-11-06T12:04:32.313657+08:00",
+  "generated_at": "2026-11-06T22:01:51.342039+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -50,6 +50,54 @@
           "hits": 4
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 6
+        },
+        {
+          "text": "#AI/Agent概念持续发酵",
+          "hits": 5
+        },
+        {
+          "text": "#$RM 同名代币",
+          "hits": 3
+        },
+        {
+          "text": "#$LIMMY 同名代币",
+          "hits": 1
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 1
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$躺枪",
+          "chain": "bsc",
+          "ca": "0xe451b966aa64bee4046cfcb0db5fe6aa9f647777",
+          "hits": 5
+        },
+        {
+          "symbol": "$RM",
+          "chain": "sol",
+          "ca": "R6Y7g7an4GCH9LSm5hsPdnkxUtd6mMeXJdj2517pump",
+          "hits": 4
+        },
+        {
+          "symbol": "$AGC",
+          "chain": "bsc",
+          "ca": "0x63dea5acdbe1f27c968907d08610a5f0a0284ba6",
+          "hits": 3
+        }
+      ]
     }
   },
   "tags": [
@@ -60,9 +108,15 @@
       "coin_chain": "bsc"
     },
     {
+      "text": "#BSC链新币最密集",
+      "coin_symbol": "$RELAY",
+      "coin_ca": "0x50c5fd46f8e8d56f35c358d99b33e67d8f547777",
+      "coin_chain": "bsc"
+    },
+    {
       "text": "#新币发行加速",
-      "coin_symbol": "$callinu",
-      "coin_ca": "fF44qzhsdUR5VQuQAHYxxt25iHCrKadWM3fABAApump",
+      "coin_symbol": "$GM",
+      "coin_ca": "B7tXcd782qYKZiZk3HNu6nDzsYLto8hr23rLUKBCpump",
       "coin_chain": "sol"
     }
   ],
@@ -76,9 +130,15 @@
           "coin_chain": "bsc"
         },
         {
+          "text": "#BSC链新币最密集",
+          "coin_symbol": "$RELAY",
+          "coin_ca": "0x50c5fd46f8e8d56f35c358d99b33e67d8f547777",
+          "coin_chain": "bsc"
+        },
+        {
           "text": "#新币发行加速",
-          "coin_symbol": "$callinu",
-          "coin_ca": "fF44qzhsdUR5VQuQAHYxxt25iHCrKadWM3fABAApump",
+          "coin_symbol": "$GM",
+          "coin_ca": "B7tXcd782qYKZiZk3HNu6nDzsYLto8hr23rLUKBCpump",
           "coin_chain": "sol"
         }
       ],
@@ -108,7 +168,32 @@
           "hits": 1
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 6
+        },
+        {
+          "text": "#AI/Agent概念持续发酵",
+          "hits": 5
+        },
+        {
+          "text": "#$RM 同名代币",
+          "hits": 3
+        },
+        {
+          "text": "#$LIMMY 同名代币",
+          "hits": 1
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 1
+        }
+      ]
     }
   }
 }
