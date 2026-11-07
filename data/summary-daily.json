@@ -1,6 +1,6 @@
 {
   "date": "2026-11-07",
-  "generated_at": "2026-11-07T12:00:41.766002+08:00",
+  "generated_at": "2026-11-07T22:01:16.939180+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -50,25 +50,69 @@
           "hits": 3
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#新币发行加速",
+          "hits": 9
+        },
+        {
+          "text": "#AI/Agent概念持续发酵",
+          "hits": 7
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 6
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 5
+        },
+        {
+          "text": "#$Burn 同名代币",
+          "hits": 1
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$AGC",
+          "chain": "bsc",
+          "ca": "0x63dea5acdbe1f27c968907d08610a5f0a0284ba6",
+          "hits": 5
+        },
+        {
+          "symbol": "$Burn",
+          "chain": "bsc",
+          "ca": "0x7de1606230aa70802caecf1a3e90039a6265b1c4",
+          "hits": 3
+        },
+        {
+          "symbol": "$XiaomiS7",
+          "chain": "bsc",
+          "ca": "0x2567e74882c92ded24f7df2767184af19b1b7777",
+          "hits": 3
+        }
+      ]
     }
   },
   "tags": [
     {
-      "text": "#AI/Agent概念持续发酵",
-      "coin_symbol": "$AGC",
-      "coin_ca": "0x63dea5acdbe1f27c968907d08610a5f0a0284ba6",
-      "coin_chain": "bsc"
-    },
-    {
       "text": "#动物Meme持续发酵",
-      "coin_symbol": "$AMD",
-      "coin_ca": "DDmGnuvroxVrb7CSyjYcezFU8gnAfhKasg4ZZezmpump",
+      "coin_symbol": "$PI",
+      "coin_ca": "Hy4iuJwuo9hAUMgMsNpFXANvKSnGmFFqcjBZuiCFpJCP",
       "coin_chain": "sol"
     },
     {
+      "text": "#BSC链新币最密集",
+      "coin_symbol": "$比特币",
+      "coin_ca": "0x6f6e44925c17e7290c2032fd2d0731ac861e7777",
+      "coin_chain": "bsc"
+    },
+    {
       "text": "#新币发行加速",
-      "coin_symbol": "$Alice",
-      "coin_ca": "BdouwEr3mwXkT6S6EmHNCjn9oEtykRKCKiUSTRF9pump",
+      "coin_symbol": "$debtdog",
+      "coin_ca": "4gyubJ7sqYDySUDmVFEfSdvvC43F1eWLUXgEHDDWpump",
       "coin_chain": "sol"
     }
   ],
@@ -76,21 +120,21 @@
     "2026-11-07": {
       "tags": [
         {
-          "text": "#AI/Agent概念持续发酵",
-          "coin_symbol": "$AGC",
-          "coin_ca": "0x63dea5acdbe1f27c968907d08610a5f0a0284ba6",
-          "coin_chain": "bsc"
-        },
-        {
           "text": "#动物Meme持续发酵",
-          "coin_symbol": "$AMD",
-          "coin_ca": "DDmGnuvroxVrb7CSyjYcezFU8gnAfhKasg4ZZezmpump",
+          "coin_symbol": "$PI",
+          "coin_ca": "Hy4iuJwuo9hAUMgMsNpFXANvKSnGmFFqcjBZuiCFpJCP",
           "coin_chain": "sol"
         },
         {
+          "text": "#BSC链新币最密集",
+          "coin_symbol": "$比特币",
+          "coin_ca": "0x6f6e44925c17e7290c2032fd2d0731ac861e7777",
+          "coin_chain": "bsc"
+        },
+        {
           "text": "#新币发行加速",
-          "coin_symbol": "$Alice",
-          "coin_ca": "BdouwEr3mwXkT6S6EmHNCjn9oEtykRKCKiUSTRF9pump",
+          "coin_symbol": "$debtdog",
+          "coin_ca": "4gyubJ7sqYDySUDmVFEfSdvvC43F1eWLUXgEHDDWpump",
           "coin_chain": "sol"
         }
       ],
@@ -120,7 +164,28 @@
           "hits": 1
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#新币发行加速",
+          "hits": 9
+        },
+        {
+          "text": "#AI/Agent概念持续发酵",
+          "hits": 7
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 6
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 5
+        },
+        {
+          "text": "#$Burn 同名代币",
+          "hits": 1
+        }
+      ]
     }
   }
 }
