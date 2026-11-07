@@ -1,100 +1,52 @@
 {
-  "date": "2026-11-06",
-  "generated_at": "2026-11-06T22:01:51.342039+08:00",
+  "date": "2026-11-07",
+  "generated_at": "2026-11-07T12:00:41.766002+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
       "themes": [
         {
           "text": "#新币发行加速",
-          "hits": 10
-        },
-        {
-          "text": "#AI/Agent概念持续发酵",
-          "hits": 8
+          "hits": 12
         },
         {
           "text": "#动物Meme持续发酵",
-          "hits": 5
+          "hits": 4
         },
         {
-          "text": "#$BenBen 同名代币",
+          "text": "#AI/Agent概念持续发酵",
+          "hits": 4
+        },
+        {
+          "text": "#$SQRL 同名代币",
           "hits": 2
         },
         {
-          "text": "#$COGE 同名代币",
+          "text": "#$FI 同名代币",
           "hits": 1
         },
         {
-          "text": "#$Doubao 同名代币",
-          "hits": 1
-        }
-      ],
-      "coins": [
-        {
-          "symbol": "$AI",
-          "chain": "sol",
-          "ca": "AjZ8JFAvMAdrRFG4yfuozGBnpEM4DKPg1JV5nuNqpump",
-          "hits": 4
-        },
-        {
-          "symbol": "$AMD",
-          "chain": "sol",
-          "ca": "DDmGnuvroxVrb7CSyjYcezFU8gnAfhKasg4ZZezmpump",
-          "hits": 4
-        },
-        {
-          "symbol": "$COGE",
-          "chain": "sol",
-          "ca": "DWdBJoNezK9itTwmPDYrScYpBxvWySxeWWV8N9RcmdrT",
-          "hits": 4
-        }
-      ]
-    },
-    "evening": {
-      "themes": [
-        {
-          "text": "#新币发行加速",
-          "hits": 10
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "hits": 6
-        },
-        {
-          "text": "#AI/Agent概念持续发酵",
-          "hits": 5
-        },
-        {
-          "text": "#$RM 同名代币",
-          "hits": 3
-        },
-        {
-          "text": "#$LIMMY 同名代币",
-          "hits": 1
-        },
-        {
-          "text": "#动物Meme持续发酵",
+          "text": "#$CHICXU 同名代币",
           "hits": 1
         }
       ],
       "coins": [
         {
-          "symbol": "$躺枪",
-          "chain": "bsc",
-          "ca": "0xe451b966aa64bee4046cfcb0db5fe6aa9f647777",
-          "hits": 5
-        },
-        {
-          "symbol": "$RM",
+          "symbol": "$FI",
           "chain": "sol",
-          "ca": "R6Y7g7an4GCH9LSm5hsPdnkxUtd6mMeXJdj2517pump",
+          "ca": "5do6LBiSP7hnm5nRndRe14fMMoYb9JA7aw272YHfMTT5",
           "hits": 4
         },
         {
           "symbol": "$AGC",
           "chain": "bsc",
           "ca": "0x63dea5acdbe1f27c968907d08610a5f0a0284ba6",
+          "hits": 4
+        },
+        {
+          "symbol": "$ZCATS",
+          "chain": "sol",
+          "ca": "CAMJCW5oNwSKtVbaS3GSqjwZ75MXKmgYgs7Bemui4dVq",
           "hits": 3
         }
       ]
@@ -108,20 +60,20 @@
       "coin_chain": "bsc"
     },
     {
-      "text": "#BSC链新币最密集",
-      "coin_symbol": "$RELAY",
-      "coin_ca": "0x50c5fd46f8e8d56f35c358d99b33e67d8f547777",
-      "coin_chain": "bsc"
+      "text": "#动物Meme持续发酵",
+      "coin_symbol": "$AMD",
+      "coin_ca": "DDmGnuvroxVrb7CSyjYcezFU8gnAfhKasg4ZZezmpump",
+      "coin_chain": "sol"
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$GM",
-      "coin_ca": "B7tXcd782qYKZiZk3HNu6nDzsYLto8hr23rLUKBCpump",
+      "coin_symbol": "$Alice",
+      "coin_ca": "BdouwEr3mwXkT6S6EmHNCjn9oEtykRKCKiUSTRF9pump",
       "coin_chain": "sol"
     }
   ],
   "history": {
-    "2026-11-06": {
+    "2026-11-07": {
       "tags": [
         {
           "text": "#AI/Agent概念持续发酵",
@@ -130,70 +82,45 @@
           "coin_chain": "bsc"
         },
         {
-          "text": "#BSC链新币最密集",
-          "coin_symbol": "$RELAY",
-          "coin_ca": "0x50c5fd46f8e8d56f35c358d99b33e67d8f547777",
-          "coin_chain": "bsc"
+          "text": "#动物Meme持续发酵",
+          "coin_symbol": "$AMD",
+          "coin_ca": "DDmGnuvroxVrb7CSyjYcezFU8gnAfhKasg4ZZezmpump",
+          "coin_chain": "sol"
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$GM",
-          "coin_ca": "B7tXcd782qYKZiZk3HNu6nDzsYLto8hr23rLUKBCpump",
+          "coin_symbol": "$Alice",
+          "coin_ca": "BdouwEr3mwXkT6S6EmHNCjn9oEtykRKCKiUSTRF9pump",
           "coin_chain": "sol"
         }
       ],
       "morning": [
         {
           "text": "#新币发行加速",
-          "hits": 10
-        },
-        {
-          "text": "#AI/Agent概念持续发酵",
-          "hits": 8
+          "hits": 12
         },
         {
           "text": "#动物Meme持续发酵",
-          "hits": 5
+          "hits": 4
         },
         {
-          "text": "#$BenBen 同名代币",
+          "text": "#AI/Agent概念持续发酵",
+          "hits": 4
+        },
+        {
+          "text": "#$SQRL 同名代币",
           "hits": 2
         },
         {
-          "text": "#$COGE 同名代币",
+          "text": "#$FI 同名代币",
           "hits": 1
         },
         {
-          "text": "#$Doubao 同名代币",
+          "text": "#$CHICXU 同名代币",
           "hits": 1
         }
       ],
-      "evening": [
-        {
-          "text": "#新币发行加速",
-          "hits": 10
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "hits": 6
-        },
-        {
-          "text": "#AI/Agent概念持续发酵",
-          "hits": 5
-        },
-        {
-          "text": "#$RM 同名代币",
-          "hits": 3
-        },
-        {
-          "text": "#$LIMMY 同名代币",
-          "hits": 1
-        },
-        {
-          "text": "#动物Meme持续发酵",
-          "hits": 1
-        }
-      ]
+      "evening": []
     }
   }
 }
