@@ -1,6 +1,6 @@
 {
   "date": "2026-11-08",
-  "generated_at": "2026-11-08T12:03:56.983804+08:00",
+  "generated_at": "2026-11-08T22:00:41.708439+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -50,21 +50,57 @@
           "hits": 4
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 7
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 5
+        },
+        {
+          "text": "#$José 同名代币",
+          "hits": 4
+        },
+        {
+          "text": "#$MARS 同名代币",
+          "hits": 2
+        },
+        {
+          "text": "#$HABIBI 同名代币",
+          "hits": 1
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$MAGGIE",
+          "chain": "sol",
+          "ca": "8rHoAfpdE89bi1SRRKaYUWfng3YpntoxZQyEQy9GPmZV",
+          "hits": 6
+        },
+        {
+          "symbol": "$José",
+          "chain": "sol",
+          "ca": "87CQtouHSb6YCXaPZ1pp8jD56VudRMXBVqU3oDMD1UJT",
+          "hits": 4
+        },
+        {
+          "symbol": "$犀望",
+          "chain": "bsc",
+          "ca": "0x36551d9a26f2dcbd901c7b7ad04673ccf23e7777",
+          "hits": 4
+        }
+      ]
     }
   },
   "tags": [
-    {
-      "text": "#$HABIBI 同名代币",
-      "coin_symbol": "$HABIBI",
-      "coin_ca": "9GpJDZrgXvGXxGjffCZhhYfyLyZ94QTezQoipn74pump",
-      "coin_chain": "sol"
-    },
-    {
-      "text": "#$José 同名代币",
-      "coin_symbol": "$José",
-      "coin_ca": "87CQtouHSb6YCXaPZ1pp8jD56VudRMXBVqU3oDMD1UJT",
-      "coin_chain": "sol"
-    },
     {
       "text": "#动物Meme持续发酵",
       "coin_symbol": "$MAGGIE",
@@ -73,26 +109,14 @@
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$HABIBI",
-      "coin_ca": "9GpJDZrgXvGXxGjffCZhhYfyLyZ94QTezQoipn74pump",
+      "coin_symbol": "$MELT",
+      "coin_ca": "5PmU19opZfFbRTVHzhFdUDp5Z4RdaMxVh2uHxqbGpump",
       "coin_chain": "sol"
     }
   ],
   "history": {
     "2026-11-08": {
       "tags": [
-        {
-          "text": "#$HABIBI 同名代币",
-          "coin_symbol": "$HABIBI",
-          "coin_ca": "9GpJDZrgXvGXxGjffCZhhYfyLyZ94QTezQoipn74pump",
-          "coin_chain": "sol"
-        },
-        {
-          "text": "#$José 同名代币",
-          "coin_symbol": "$José",
-          "coin_ca": "87CQtouHSb6YCXaPZ1pp8jD56VudRMXBVqU3oDMD1UJT",
-          "coin_chain": "sol"
-        },
         {
           "text": "#动物Meme持续发酵",
           "coin_symbol": "$MAGGIE",
@@ -101,8 +125,8 @@
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$HABIBI",
-          "coin_ca": "9GpJDZrgXvGXxGjffCZhhYfyLyZ94QTezQoipn74pump",
+          "coin_symbol": "$MELT",
+          "coin_ca": "5PmU19opZfFbRTVHzhFdUDp5Z4RdaMxVh2uHxqbGpump",
           "coin_chain": "sol"
         }
       ],
@@ -132,7 +156,32 @@
           "hits": 1
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 7
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 5
+        },
+        {
+          "text": "#$José 同名代币",
+          "hits": 4
+        },
+        {
+          "text": "#$MARS 同名代币",
+          "hits": 2
+        },
+        {
+          "text": "#$HABIBI 同名代币",
+          "hits": 1
+        }
+      ]
     }
   }
 }
