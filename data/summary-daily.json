@@ -1,6 +1,6 @@
 {
   "date": "2026-11-10",
-  "generated_at": "2026-11-10T12:00:45.971079+08:00",
+  "generated_at": "2026-11-10T22:00:41.408818+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -50,19 +50,79 @@
           "hits": 3
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#$AICoin 同名代币",
+          "hits": 10
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 6
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 5
+        },
+        {
+          "text": "#$머스크 马斯克提及发酵",
+          "hits": 3
+        },
+        {
+          "text": "#$MMLI 马斯克提及发酵",
+          "hits": 3
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$머스크",
+          "chain": "bsc",
+          "ca": "0x319f1da78ebb572ac8c450354043b3b738127777",
+          "hits": 8
+        },
+        {
+          "symbol": "$Pepetide",
+          "chain": "sol",
+          "ca": "22JKmY9YZfnQfb3pGYb6hctL5Jyvv3zhL3nQ8oyNuoYp",
+          "hits": 6
+        },
+        {
+          "symbol": "$AICoin",
+          "chain": "bsc",
+          "ca": "0x99c8f3ec34c89b067a0dca66bfb0d7ff82717777",
+          "hits": 6
+        }
+      ]
     }
   },
   "tags": [
     {
+      "text": "#$머스크 马斯克提及发酵",
+      "coin_symbol": "$머스크",
+      "coin_ca": "0x319f1da78ebb572ac8c450354043b3b738127777",
+      "coin_chain": "bsc"
+    },
+    {
       "text": "#$AICoin 同名代币",
       "coin_symbol": "$AICoin",
-      "coin_ca": "B9FgqHbtccsgcL6YPfUhNd81qveNtrTbsfLvcjxtpump",
-      "coin_chain": "sol"
+      "coin_ca": "0x99c8f3ec34c89b067a0dca66bfb0d7ff82717777",
+      "coin_chain": "bsc"
+    },
+    {
+      "text": "#BSC链新币最密集",
+      "coin_symbol": "$머스크",
+      "coin_ca": "0x319f1da78ebb572ac8c450354043b3b738127777",
+      "coin_chain": "bsc"
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$AICoin",
-      "coin_ca": "B9FgqHbtccsgcL6YPfUhNd81qveNtrTbsfLvcjxtpump",
+      "coin_symbol": "$h1t",
+      "coin_ca": "8QCqrCmjCTmFarmq8SxCryuxzMBLVEWasbFaZQgXpump",
       "coin_chain": "sol"
     }
   ],
@@ -70,15 +130,27 @@
     "2026-11-10": {
       "tags": [
         {
+          "text": "#$머스크 马斯克提及发酵",
+          "coin_symbol": "$머스크",
+          "coin_ca": "0x319f1da78ebb572ac8c450354043b3b738127777",
+          "coin_chain": "bsc"
+        },
+        {
           "text": "#$AICoin 同名代币",
           "coin_symbol": "$AICoin",
-          "coin_ca": "B9FgqHbtccsgcL6YPfUhNd81qveNtrTbsfLvcjxtpump",
-          "coin_chain": "sol"
+          "coin_ca": "0x99c8f3ec34c89b067a0dca66bfb0d7ff82717777",
+          "coin_chain": "bsc"
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "coin_symbol": "$머스크",
+          "coin_ca": "0x319f1da78ebb572ac8c450354043b3b738127777",
+          "coin_chain": "bsc"
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$AICoin",
-          "coin_ca": "B9FgqHbtccsgcL6YPfUhNd81qveNtrTbsfLvcjxtpump",
+          "coin_symbol": "$h1t",
+          "coin_ca": "8QCqrCmjCTmFarmq8SxCryuxzMBLVEWasbFaZQgXpump",
           "coin_chain": "sol"
         }
       ],
@@ -108,7 +180,32 @@
           "hits": 2
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#$AICoin 同名代币",
+          "hits": 10
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 6
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 5
+        },
+        {
+          "text": "#$머스크 马斯克提及发酵",
+          "hits": 3
+        },
+        {
+          "text": "#$MMLI 马斯克提及发酵",
+          "hits": 3
+        }
+      ]
     }
   }
 }
