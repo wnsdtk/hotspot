@@ -9603,5 +9603,35 @@
     "parent_author": "Elon Musk",
     "parent_handle": "elonmusk",
     "text_zh": ""
+  },
+  "TechMelonElonMusk_11874": {
+    "id": "TechMelonElonMusk_11874",
+    "person": "elon",
+    "name": "马斯克",
+    "handle": "@elonmusk",
+    "time": "2026-11-10T18:22:36+08:00",
+    "text": "没那么好。 Opus 5.5 是一部杰作。\n但 Grok 5 应该会超过 Opus 5.5，也许这会在 2 到 3 个月内发生，此后会持续加速。",
+    "kind": "reply",
+    "media": [],
+    "url": "https://x.com/elonmusk/status/2120099798078656909",
+    "parent_text": "grok 4.8 与 opus 5.5 相比如何？\n(\nhow will grok 4.8 compare to opus 5.5?\n)",
+    "parent_author": "Dimdv",
+    "parent_handle": "Dimdv99",
+    "text_zh": ""
+  },
+  "TechMelonElonMusk_11875": {
+    "id": "TechMelonElonMusk_11875",
+    "person": "elon",
+    "name": "马斯克",
+    "handle": "@elonmusk",
+    "time": "2026-11-10T18:23:56+08:00",
+    "text": "💯",
+    "kind": "reply",
+    "media": [],
+    "url": "https://x.com/elonmusk/status/2120100134667333652",
+    "parent_text": "i wonder how much of an improvement swapping to the c/c++ stack brought in terms of tokens/s/gpu and how fast each pretraining run can be done.\nif you use jax, at some point you realize you need to rip out xla and rewrite the comms schedule and compute kernels from scratch anyways if you want very high training throughput.",
+    "parent_author": "Zeeshan Patel",
+    "parent_handle": "zeeshanp_",
+    "text_zh": "💯"
   }
 }
