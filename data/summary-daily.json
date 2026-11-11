@@ -1,6 +1,6 @@
 {
   "date": "2026-11-11",
-  "generated_at": "2026-11-11T12:00:41.753322+08:00",
+  "generated_at": "2026-11-11T22:02:19.063779+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -50,9 +50,63 @@
           "hits": 4
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 9
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 7
+        },
+        {
+          "text": "#$fomo 同名代币",
+          "hits": 2
+        },
+        {
+          "text": "#$머스크 马斯克提及发酵",
+          "hits": 2
+        },
+        {
+          "text": "#$莽小六 同名代币",
+          "hits": 1
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$哈基仙人",
+          "chain": "bsc",
+          "ca": "0x977e31be01b82f9e5e82843b6932e11af5447777",
+          "hits": 8
+        },
+        {
+          "symbol": "$HODL",
+          "chain": "bsc",
+          "ca": "0x0fa3924d5fb0dad7924c696c77b2fa99b3627777",
+          "hits": 3
+        },
+        {
+          "symbol": "$mihao",
+          "chain": "bsc",
+          "ca": "0x27484247974bddc145b9d5fa825d8b74bc2e7777",
+          "hits": 3
+        }
+      ]
     }
   },
   "tags": [
+    {
+      "text": "#$NiZhe 同名代币",
+      "coin_symbol": "$NiZhe",
+      "coin_ca": "HgvjNLpb2TVASAM2wgiAsnH5x9R9fYhDvw86P7oppump",
+      "coin_chain": "sol"
+    },
     {
       "text": "#动物Meme持续发酵",
       "coin_symbol": "$哈基仙人",
@@ -61,20 +115,26 @@
     },
     {
       "text": "#BSC链新币最密集",
-      "coin_symbol": "$HODL",
-      "coin_ca": "0x0fa3924d5fb0dad7924c696c77b2fa99b3627777",
+      "coin_symbol": "$猫螂",
+      "coin_ca": "0x1ae0770f9774e10745885f7691855ac8cf9b7777",
       "coin_chain": "bsc"
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$BUZZ",
-      "coin_ca": "B4MEhw1a6Bag8YvZehbqtyejnyLrCDXg5HQdk8tdpump",
+      "coin_symbol": "$NiZhe",
+      "coin_ca": "HgvjNLpb2TVASAM2wgiAsnH5x9R9fYhDvw86P7oppump",
       "coin_chain": "sol"
     }
   ],
   "history": {
     "2026-11-11": {
       "tags": [
+        {
+          "text": "#$NiZhe 同名代币",
+          "coin_symbol": "$NiZhe",
+          "coin_ca": "HgvjNLpb2TVASAM2wgiAsnH5x9R9fYhDvw86P7oppump",
+          "coin_chain": "sol"
+        },
         {
           "text": "#动物Meme持续发酵",
           "coin_symbol": "$哈基仙人",
@@ -83,14 +143,14 @@
         },
         {
           "text": "#BSC链新币最密集",
-          "coin_symbol": "$HODL",
-          "coin_ca": "0x0fa3924d5fb0dad7924c696c77b2fa99b3627777",
+          "coin_symbol": "$猫螂",
+          "coin_ca": "0x1ae0770f9774e10745885f7691855ac8cf9b7777",
           "coin_chain": "bsc"
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$BUZZ",
-          "coin_ca": "B4MEhw1a6Bag8YvZehbqtyejnyLrCDXg5HQdk8tdpump",
+          "coin_symbol": "$NiZhe",
+          "coin_ca": "HgvjNLpb2TVASAM2wgiAsnH5x9R9fYhDvw86P7oppump",
           "coin_chain": "sol"
         }
       ],
@@ -120,7 +180,32 @@
           "hits": 2
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 9
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 7
+        },
+        {
+          "text": "#$fomo 同名代币",
+          "hits": 2
+        },
+        {
+          "text": "#$머스크 马斯克提及发酵",
+          "hits": 2
+        },
+        {
+          "text": "#$莽小六 同名代币",
+          "hits": 1
+        }
+      ]
     }
   }
 }
