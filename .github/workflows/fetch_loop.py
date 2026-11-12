@@ -19,6 +19,7 @@ State (persisted in --state-dir, committed to the data branch):
   translation-cache.json  MyMemory cache keyed by stable id
 """
 import argparse
+import subprocess
 import hashlib
 import json
 import os
@@ -1264,6 +1265,133 @@ JOB_BUDGET_S = 275
 FAST_TICK_S = 10
 
 
+# ------------------------------------------------------------ wallet watch
+WALLET_LIMIT = 60  # 每轮扫多少个 BSC 钱包（轮转）
+
+
+def load_wallets():
+    """wallets.json 存在 main 分支；data 分支上要用 git show 取。"""
+    raw = ""
+    try:
+        raw = subprocess.run(["git", "show", "origin/main:wallets.json"],
+                             capture_output=True, text=True, timeout=30).stdout
+    except Exception:
+        raw = ""
+    if not raw.strip():
+        for p in ("wallets.json", os.path.join(SCRIPT_DIR, "wallets.json")):
+            if os.path.exists(p):
+                raw = open(p, encoding="utf-8").read()
+                break
+    try:
+        data = json.loads(raw)
+        return data if isinstance(data, list) else []
+    except Exception:
+        return []
+
+
+def wallet_scan(out_dir, state_dir):
+    """扫描一轮 BSC 钱包，累积当天买入的代币到 wallet-buys.json。"""
+    key = (os.environ.get("ETHERSCAN_KEY") or "").strip()
+    if not key:
+        print("  [wallets] skip: no ETHERSCAN_KEY")
+        return
+    wallets = [w for w in load_wallets() if w.get("chain") == "bsc"]
+    if not wallets:
+        print("  [wallets] skip: empty wallet list")
+        return
+
+    rot_path = os.path.join(state_dir, "wallet-rot.json")
+    rot = load_json(rot_path, {})
+    start = int(rot.get("i", 0)) % len(wallets)
+    chunk = [wallets[(start + i) % len(wallets)] for i in range(min(WALLET_LIMIT, len(wallets)))]
+
+    today = now_sh().strftime("%Y-%m-%d")
+    t0 = now_sh().replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+    path = os.path.join(out_dir, "wallet-buys.json")
+    cur = load_json(path, {})
+    if not isinstance(cur, dict) or cur.get("date") != today:
+        cur = {"date": today, "tokens": {}, "scanned": 0}
+
+    hit = 0
+    for w in chunk:
+        addr = w.get("addr", "")
+        if not addr:
+            continue
+        try:
+            r = http.get(
+                "https://api.etherscan.io/v2/api",
+                params={
+                    "chainid": 56, "module": "account", "action": "tokentx",
+                    "address": addr, "startblock": 0, "endblock": 99999999,
+                    "page": 1, "offset": 60, "sort": "desc", "apikey": key,
+                },
+                timeout=25,
+            )
+            if r.status_code != 200:
+                continue
+            j = r.json()
+            rows = j.get("result") if isinstance(j, dict) else None
+            if not isinstance(rows, list):
+                continue
+            for tx in rows:
+                try:
+                    ts = int(tx.get("timeStamp") or 0)
+                except Exception:
+                    continue
+                if ts < t0:
+                    continue
+                if (tx.get("to") or "").lower() != addr.lower():
+                    continue  # 只算流入（买入/收到）
+                tok = (tx.get("contractAddress") or "").lower()
+                if not tok:
+                    continue
+                try:
+                    dec = int(tx.get("tokenDecimal") or 18)
+                except Exception:
+                    dec = 18
+                try:
+                    amount = float(tx.get("value") or 0) / (10 ** dec)
+                except Exception:
+                    amount = 0
+                e = cur["tokens"].setdefault(tok, {
+                    "addr": tok, "symbol": tx.get("tokenSymbol") or "",
+                    "name": tx.get("tokenName") or "", "chain": "bsc",
+                    "buyers": {}, "first_ts": ts,
+                })
+                e["first_ts"] = min(e.get("first_ts", ts), ts)
+                if addr not in e["buyers"]:
+                    e["buyers"][addr] = {
+                        "label": w.get("label", ""), "addr": addr,
+                        "amount": amount, "ts": ts,
+                    }
+                    hit += 1
+        except Exception as ex:
+            print(f"  [wallets] {addr[:10]} FAILED: {ex}", file=sys.stderr)
+        time.sleep(0.34)  # Etherscan 免费 3 次/秒
+
+    cur["scanned"] = int(cur.get("scanned", 0)) + len(chunk)
+    cur["updated_at"] = iso_now()
+    cur["wallets_total"] = len(wallets)
+    rot["i"] = (start + len(chunk)) % len(wallets)
+    atomic_write(rot_path, rot)
+    # 只保留今天：把 buyers 转成数组
+    out_tokens = []
+    for e in cur["tokens"].values():
+        buyers = sorted(e["buyers"].values(), key=lambda x: x["ts"], reverse=True)
+        out_tokens.append({
+            "addr": e["addr"], "symbol": e["symbol"], "name": e["name"],
+            "chain": e["chain"], "first_ts": e["first_ts"],
+            "count": len(buyers), "buyers": buyers[:20],
+        })
+    out_tokens.sort(key=lambda x: (-x["count"], x["first_ts"]))
+    write_if_changed(path, {
+        "date": today, "updated_at": iso_now(),
+        "wallets_total": len(wallets), "scanned_total": cur.get("scanned", 0),
+        "tokens": out_tokens[:40],
+    })
+    print(f"  [wallets] scanned {len(chunk)} wallets, new hits {hit}, tokens {len(out_tokens)}")
+
+
 def slow_lane(out_dir, state_dir, tr_cache, cache_path):
     """Runs once at job start. Returns (trench_tokens_all, tags)."""
     print("=== slow lane ===")
@@ -1309,6 +1437,11 @@ def slow_lane(out_dir, state_dir, tr_cache, cache_path):
             print(f"  [slow] wrote binance.json ({len(bn['items'])} items)")
     except Exception as e:
         print(f"  [slow] binance FAILED: {e}", file=sys.stderr)
+    # 聪明钱钱包：今天买了什么
+    try:
+        wallet_scan(out_dir, state_dir)
+    except Exception as e:
+        print(f"  [wallets] FAILED: {e}", file=sys.stderr)
     write_if_changed(cache_path, tr_cache)
     return all_tokens, tags
 
