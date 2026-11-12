@@ -1291,9 +1291,9 @@ def load_wallets():
 
 def wallet_scan(out_dir, state_dir):
     """扫描一轮 BSC 钱包，累积当天买入的代币到 wallet-buys.json。"""
-    key = (os.environ.get("ETHERSCAN_KEY") or "").strip()
+    key = (os.environ.get("BSCSCAN_KEY") or "").strip()
     if not key:
-        print("  [wallets] skip: no ETHERSCAN_KEY")
+        print("  [wallets] skip: no BSCSCAN_KEY")
         return
     wallets = [w for w in load_wallets() if w.get("chain") == "bsc"]
     if not wallets:
@@ -1319,9 +1319,9 @@ def wallet_scan(out_dir, state_dir):
             continue
         try:
             r = http.get(
-                "https://api.etherscan.io/v2/api",
+                "https://api.bscscan.com/api",
                 params={
-                    "chainid": 56, "module": "account", "action": "tokentx",
+                    "module": "account", "action": "tokentx",
                     "address": addr, "startblock": 0, "endblock": 99999999,
                     "page": 1, "offset": 60, "sort": "desc", "apikey": key,
                 },
@@ -1332,6 +1332,8 @@ def wallet_scan(out_dir, state_dir):
             j = r.json()
             rows = j.get("result") if isinstance(j, dict) else None
             if not isinstance(rows, list):
+                if isinstance(j, dict) and j.get("message") == "NOTOK":
+                    print(f"  [wallets] API NOTOK: {str(j.get('result'))[:120]}", file=sys.stderr)
                 continue
             for tx in rows:
                 try:
