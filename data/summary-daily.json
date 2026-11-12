@@ -1,6 +1,6 @@
 {
   "date": "2026-11-12",
-  "generated_at": "2026-11-12T12:01:02.544818+08:00",
+  "generated_at": "2026-11-12T22:02:02.592317+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -50,13 +50,57 @@
           "hits": 2
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#$Max 聪明钱扎堆",
+          "hits": 10
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 8
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 6
+        },
+        {
+          "text": "#$Parrot 同名代币",
+          "hits": 2
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$Max",
+          "chain": "sol",
+          "ca": "5qaP7oKUqKffwwo5DaEqDoTtsBLMpdbQTxEkCDaTpump",
+          "hits": 10
+        },
+        {
+          "symbol": "$updog",
+          "chain": "sol",
+          "ca": "77HqxiDCgYfXUsDXDD6YVefPhTTz1Z2n8jX4gTxipump",
+          "hits": 6
+        },
+        {
+          "symbol": "$DacityCoin",
+          "chain": "sol",
+          "ca": "DZYyPXuMdL74d7opqqLgFh2JYFGFz3LkeFZFAMjwUjUf",
+          "hits": 2
+        }
+      ]
     }
   },
   "tags": [
     {
       "text": "#BSC链新币最密集",
-      "coin_symbol": "$微X",
-      "coin_ca": "0xad4d5ca5534ce4883347bf27d69febe4acde7777",
+      "coin_symbol": "$牛X",
+      "coin_ca": "0x3f3e45b81074dd34dc68ae2d4fe978f49ec87777",
       "coin_chain": "bsc"
     },
     {
@@ -67,8 +111,8 @@
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$DacityCoin",
-      "coin_ca": "DZYyPXuMdL74d7opqqLgFh2JYFGFz3LkeFZFAMjwUjUf",
+      "coin_symbol": "$blackswan",
+      "coin_ca": "Bbh2kpPTxuf3DxcutYq3DofKmeJm5ptCZUUMAF6kpump",
       "coin_chain": "sol"
     }
   ],
@@ -77,8 +121,8 @@
       "tags": [
         {
           "text": "#BSC链新币最密集",
-          "coin_symbol": "$微X",
-          "coin_ca": "0xad4d5ca5534ce4883347bf27d69febe4acde7777",
+          "coin_symbol": "$牛X",
+          "coin_ca": "0x3f3e45b81074dd34dc68ae2d4fe978f49ec87777",
           "coin_chain": "bsc"
         },
         {
@@ -89,8 +133,8 @@
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$DacityCoin",
-          "coin_ca": "DZYyPXuMdL74d7opqqLgFh2JYFGFz3LkeFZFAMjwUjUf",
+          "coin_symbol": "$blackswan",
+          "coin_ca": "Bbh2kpPTxuf3DxcutYq3DofKmeJm5ptCZUUMAF6kpump",
           "coin_chain": "sol"
         }
       ],
@@ -120,7 +164,28 @@
           "hits": 2
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#$Max 聪明钱扎堆",
+          "hits": 10
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 8
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 6
+        },
+        {
+          "text": "#$Parrot 同名代币",
+          "hits": 2
+        }
+      ]
     }
   }
 }
