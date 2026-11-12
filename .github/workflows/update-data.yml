@@ -69,6 +69,9 @@ jobs:
         run: pip install requests beautifulsoup4
 
       - name: Run fetch loop (slow lane once + 30s fast ticks)
+        env:
+          ETHERSCAN_KEY: ${{ secrets.ETHERSCAN_KEY }}
+          HELIUS_KEY: ${{ secrets.HELIUS_KEY }}
         run: python /tmp/work/fetch_loop.py --out-dir ./data --state-dir .
 
       - name: Commit and push (rebase once, retry once)
