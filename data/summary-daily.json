@@ -1,211 +1,126 @@
 {
-  "date": "2026-11-11",
-  "generated_at": "2026-11-11T22:02:19.063779+08:00",
+  "date": "2026-11-12",
+  "generated_at": "2026-11-12T12:01:02.544818+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
       "themes": [
         {
-          "text": "#动物Meme持续发酵",
+          "text": "#新币发行加速",
           "hits": 12
         },
         {
-          "text": "#$머스크 马斯克提及发酵",
-          "hits": 11
+          "text": "#$Max 同名代币",
+          "hits": 6
         },
         {
-          "text": "#新币发行加速",
-          "hits": 11
-        },
-        {
-          "text": "#$ELON 马斯克提及发酵",
-          "hits": 3
-        },
-        {
-          "text": "#$AICoin 同名代币",
-          "hits": 2
-        },
-        {
-          "text": "#人物概念持续发酵",
-          "hits": 2
-        }
-      ],
-      "coins": [
-        {
-          "symbol": "$머스크",
-          "chain": "bsc",
-          "ca": "0x319f1da78ebb572ac8c450354043b3b738127777",
-          "hits": 13
-        },
-        {
-          "symbol": "$HCAT",
-          "chain": "sol",
-          "ca": "BkLCcfBfd4NdyYga2wrGTc1WnujXveBRK1S8VFxopump",
-          "hits": 5
-        },
-        {
-          "symbol": "$BOXCAT",
-          "chain": "sol",
-          "ca": "CQ8zNLYwMEAVVBHEswusZrsUraCvc7HjiBPwgTbRpump",
-          "hits": 4
-        }
-      ]
-    },
-    "evening": {
-      "themes": [
-        {
-          "text": "#新币发行加速",
-          "hits": 10
+          "text": "#$Max 聪明钱扎堆",
+          "hits": 6
         },
         {
           "text": "#动物Meme持续发酵",
-          "hits": 9
+          "hits": 4
         },
         {
-          "text": "#BSC链新币最密集",
-          "hits": 7
-        },
-        {
-          "text": "#$fomo 同名代币",
+          "text": "#$ELON 马斯克提及发酵",
           "hits": 2
         },
         {
-          "text": "#$머스크 马斯克提及发酵",
+          "text": "#$CELON 马斯克提及发酵",
           "hits": 2
-        },
-        {
-          "text": "#$莽小六 同名代币",
-          "hits": 1
         }
       ],
       "coins": [
+        {
+          "symbol": "$Max",
+          "chain": "sol",
+          "ca": "HPSpaNgQxqZRwzoW8E9hecgMq4cDoV1CMCfteyu5h53z",
+          "hits": 14
+        },
+        {
+          "symbol": "$ELON",
+          "chain": "sol",
+          "ca": "4EfKZKVUJAgiQBpq65gRG6Gy4AThZiphmWjDkPfKQbFj",
+          "hits": 2
+        },
         {
           "symbol": "$哈基仙人",
           "chain": "bsc",
           "ca": "0x977e31be01b82f9e5e82843b6932e11af5447777",
-          "hits": 8
-        },
-        {
-          "symbol": "$HODL",
-          "chain": "bsc",
-          "ca": "0x0fa3924d5fb0dad7924c696c77b2fa99b3627777",
-          "hits": 3
-        },
-        {
-          "symbol": "$mihao",
-          "chain": "bsc",
-          "ca": "0x27484247974bddc145b9d5fa825d8b74bc2e7777",
-          "hits": 3
+          "hits": 2
         }
       ]
     }
   },
   "tags": [
     {
-      "text": "#$NiZhe 同名代币",
-      "coin_symbol": "$NiZhe",
-      "coin_ca": "HgvjNLpb2TVASAM2wgiAsnH5x9R9fYhDvw86P7oppump",
+      "text": "#BSC链新币最密集",
+      "coin_symbol": "$微X",
+      "coin_ca": "0xad4d5ca5534ce4883347bf27d69febe4acde7777",
+      "coin_chain": "bsc"
+    },
+    {
+      "text": "#$Max 聪明钱扎堆",
+      "coin_symbol": "$Max",
+      "coin_ca": "5qaP7oKUqKffwwo5DaEqDoTtsBLMpdbQTxEkCDaTpump",
       "coin_chain": "sol"
     },
     {
-      "text": "#动物Meme持续发酵",
-      "coin_symbol": "$哈基仙人",
-      "coin_ca": "0x977e31be01b82f9e5e82843b6932e11af5447777",
-      "coin_chain": "bsc"
-    },
-    {
-      "text": "#BSC链新币最密集",
-      "coin_symbol": "$猫螂",
-      "coin_ca": "0x1ae0770f9774e10745885f7691855ac8cf9b7777",
-      "coin_chain": "bsc"
-    },
-    {
       "text": "#新币发行加速",
-      "coin_symbol": "$NiZhe",
-      "coin_ca": "HgvjNLpb2TVASAM2wgiAsnH5x9R9fYhDvw86P7oppump",
+      "coin_symbol": "$DacityCoin",
+      "coin_ca": "DZYyPXuMdL74d7opqqLgFh2JYFGFz3LkeFZFAMjwUjUf",
       "coin_chain": "sol"
     }
   ],
   "history": {
-    "2026-11-11": {
+    "2026-11-12": {
       "tags": [
         {
-          "text": "#$NiZhe 同名代币",
-          "coin_symbol": "$NiZhe",
-          "coin_ca": "HgvjNLpb2TVASAM2wgiAsnH5x9R9fYhDvw86P7oppump",
+          "text": "#BSC链新币最密集",
+          "coin_symbol": "$微X",
+          "coin_ca": "0xad4d5ca5534ce4883347bf27d69febe4acde7777",
+          "coin_chain": "bsc"
+        },
+        {
+          "text": "#$Max 聪明钱扎堆",
+          "coin_symbol": "$Max",
+          "coin_ca": "5qaP7oKUqKffwwo5DaEqDoTtsBLMpdbQTxEkCDaTpump",
           "coin_chain": "sol"
         },
         {
-          "text": "#动物Meme持续发酵",
-          "coin_symbol": "$哈基仙人",
-          "coin_ca": "0x977e31be01b82f9e5e82843b6932e11af5447777",
-          "coin_chain": "bsc"
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "coin_symbol": "$猫螂",
-          "coin_ca": "0x1ae0770f9774e10745885f7691855ac8cf9b7777",
-          "coin_chain": "bsc"
-        },
-        {
           "text": "#新币发行加速",
-          "coin_symbol": "$NiZhe",
-          "coin_ca": "HgvjNLpb2TVASAM2wgiAsnH5x9R9fYhDvw86P7oppump",
+          "coin_symbol": "$DacityCoin",
+          "coin_ca": "DZYyPXuMdL74d7opqqLgFh2JYFGFz3LkeFZFAMjwUjUf",
           "coin_chain": "sol"
         }
       ],
       "morning": [
         {
-          "text": "#动物Meme持续发酵",
+          "text": "#新币发行加速",
           "hits": 12
         },
         {
-          "text": "#$머스크 马斯克提及发酵",
-          "hits": 11
+          "text": "#$Max 同名代币",
+          "hits": 6
         },
         {
-          "text": "#新币发行加速",
-          "hits": 11
-        },
-        {
-          "text": "#$ELON 马斯克提及发酵",
-          "hits": 3
-        },
-        {
-          "text": "#$AICoin 同名代币",
-          "hits": 2
-        },
-        {
-          "text": "#人物概念持续发酵",
-          "hits": 2
-        }
-      ],
-      "evening": [
-        {
-          "text": "#新币发行加速",
-          "hits": 10
+          "text": "#$Max 聪明钱扎堆",
+          "hits": 6
         },
         {
           "text": "#动物Meme持续发酵",
-          "hits": 9
+          "hits": 4
         },
         {
-          "text": "#BSC链新币最密集",
-          "hits": 7
-        },
-        {
-          "text": "#$fomo 同名代币",
+          "text": "#$ELON 马斯克提及发酵",
           "hits": 2
         },
         {
-          "text": "#$머스크 马斯克提及发酵",
+          "text": "#$CELON 马斯克提及发酵",
           "hits": 2
-        },
-        {
-          "text": "#$莽小六 同名代币",
-          "hits": 1
         }
-      ]
+      ],
+      "evening": []
     }
   }
 }
