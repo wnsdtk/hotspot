@@ -349,6 +349,16 @@ a{color:var(--blue); text-decoration:none;}
 .solr .sfoot{display:flex; gap:10px; font-size:10.5px; color:var(--dim,#66727f);}
 .solr .sfoot .speak{margin-left:auto; font-family:var(--mono,monospace);}
 .solr .sbtns{display:flex; gap:6px; flex-wrap:wrap; margin-top:7px;}
+
+/* ===== v46 · 聪明钱今日买入 ===== */
+.wallet .wrow{padding:9px 2px; border-bottom:1px solid var(--border,#262d36);}
+.wallet .wrow:last-child{border-bottom:none;}
+.wallet .whead{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.wallet .wsym{font-size:14px; font-weight:700; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.wallet .wcount{font-size:10px; color:#ffb84d; border:1px solid rgba(240,185,11,.35);
+  background:rgba(240,185,11,.1); border-radius:20px; padding:1px 7px;}
+.wallet .wtime{margin-left:auto; font-size:10.5px; color:var(--dim,#66727f);}
+.wallet .wmeta{font-size:11px; color:var(--muted,#8d9aac); margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -400,7 +410,7 @@ var DATA_FILES=[
   ['tweets','tweets.json'],['bsc','trench-bsc.json'],['sol','trench-sol.json'],
   ['rb','trench-rb.json'],
   ['douyin','douyin.json'],['tags','tags-halfhour.json'],['daily','summary-daily.json'],
-  ['binance','binance.json']
+  ['binance','binance.json'],['walletbuys','wallet-buys.json']
 ];
 function dataUrl(f){return DATA_BASE+f+'?t='+Date.now();}
 var POLL_MS=15000;
@@ -860,6 +870,33 @@ function htmlSolRadar(){
       +(r.x?'<a class="rbtn" href="'+esc(r.x)+'" target="_blank" rel="noopener">X</a>':'')
       +'<a class="rbtn" href="https://dexscreener.com/solana/'+esc(r.addr)+'" target="_blank" rel="noopener">DexScreener</a></div>'
       +'</div>';
+  }).join('');
+  return h+'</div>';
+}
+
+/* ============ v46 · 聪明钱今日买入 ============ */
+function htmlWallet(){
+  var d=S.data.walletbuys||{};
+  var toks=(d.tokens||[]).slice(0,10);
+  var total=d.wallets_total||0, scanned=d.scanned_total||0;
+  var h='<div class="card wallet"><div class="sect">\u{1F45B} \u806a\u660e\u94b1\u4eca\u65e5\u4e70\u5165'+updInfo('walletbuys','\u6bcf5\u5206\u949f\u8f6e\u626b')+'</div>'
+    +'<div class="muted" style="font-size:11px;margin:-4px 0 10px">'
+    +(total?('BSC \u94b1\u5305 '+total+' \u4e2a \u00b7 \u4eca\u65e5\u5df2\u626b '+scanned+' \u6b21 \u00b7 \u547d\u4e2d '+toks.length+' \u4e2a\u5e01'):'\u7b49\u5f85\u9996\u8f6e\u626b\u63cf')
+    +'</div>';
+  if(!toks.length){
+    return h+'<div class="empty">'+(total?'\u4eca\u65e5\u8fd8\u6ca1\u6709\u547d\u4e2d':'\u6570\u636e\u52a0\u8f7d\u4e2d\u2026')+'</div></div>';
+  }
+  h+=toks.map(function(t){
+    var bs=(t.buyers||[]);
+    var labels=bs.slice(0,3).map(function(b){return b.label||String(b.addr||'').slice(0,6);}).join('\u3001');
+    var more=t.count>3?('\u7b49 '+t.count+' \u4eba'):'';
+    var tm='';
+    if(t.first_ts){var dd=new Date(t.first_ts*1000);tm=('0'+dd.getHours()).slice(-2)+':'+('0'+dd.getMinutes()).slice(-2);}
+    return '<div class="wrow" data-act="open-url" data-url="'+esc('https://dexscreener.com/bsc/'+t.addr)+'">'
+      +'<div class="whead"><span class="wsym">$'+esc(t.symbol||t.name||'?')+'</span>'
+      +'<span class="wcount">'+t.count+' \u4e2a\u94b1\u5305</span>'
+      +(tm?'<span class="wtime">\u9996\u6b21 '+esc(tm)+'</span>':'')+'</div>'
+      +'<div class="wmeta">'+esc(labels)+(more?esc(' '+more):'')+'</div></div>';
   }).join('');
   return h+'</div>';
 }
@@ -1367,6 +1404,7 @@ function sigData(d){
   return JSON.stringify(c);
 }
 var SECTIONS=[
+  {id:'sec-wallet',  sig:function(){return JSON.stringify(S.data.walletbuys||null);}, html:htmlWallet},
   {id:'sec-moves',   sig:function(){return sigData(S.data.bsc)+sigData(S.data.sol)+sigData(S.data.rb);}, html:htmlSmartMoves},
   {id:'sec-dy-trend',sig:function(){var d=S.data.douyin;return JSON.stringify((d&&d.trending)||null);}, html:htmlDyTrend},
   {id:'sec-dy-rise', sig:function(){return (S.douyinOk?'1':'0')+'|'+JSON.stringify(S.hotlistRows);}, html:htmlDyRise},
@@ -1384,7 +1422,7 @@ var SECTIONS=[
 var SEEN_SIG={};
 function setHtml(id,html){var n=document.getElementById(id);if(n)n.innerHTML=html;}
 function buildShell(){
-  setHtml('tab-all','<div id="sec-moves"></div>');
+  setHtml('tab-all','<div id="sec-wallet"></div><div id="sec-moves"></div>');
   setHtml('tab-hot','<div id="sec-dy-trend"></div><div id="sec-dy-rise"></div><div id="sec-dy-list"></div><div id="sec-wb-list"></div>');
   setHtml('tab-trench','<div id="sec-liq"></div><div id="sec-tags"></div><div id="sec-bsc"></div><div id="sec-sol"></div><div id="sec-rb"></div>');
   setHtml('tab-summary','<div id="sec-counts"></div><div id="sec-daily"></div><div id="sec-binance"></div>');
