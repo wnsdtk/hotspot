@@ -1,6 +1,6 @@
 {
   "date": "2026-11-13",
-  "generated_at": "2026-11-13T12:00:46.215719+08:00",
+  "generated_at": "2026-11-13T22:00:47.019524+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -50,9 +50,69 @@
           "hits": 6
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#$Max 聪明钱扎堆",
+          "hits": 10
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 9
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 4
+        },
+        {
+          "text": "#RWA概念持续发酵",
+          "hits": 4
+        },
+        {
+          "text": "#AI/Agent概念持续发酵",
+          "hits": 3
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$Max",
+          "chain": "sol",
+          "ca": "5qaP7oKUqKffwwo5DaEqDoTtsBLMpdbQTxEkCDaTpump",
+          "hits": 10
+        },
+        {
+          "symbol": "$updog",
+          "chain": "sol",
+          "ca": "77HqxiDCgYfXUsDXDD6YVefPhTTz1Z2n8jX4gTxipump",
+          "hits": 4
+        },
+        {
+          "symbol": "$RWA",
+          "chain": "sol",
+          "ca": "BK8ZXzXsVLJzsDdy1paM8Dbcd3qAhMQWcSWq3M6Ypump",
+          "hits": 4
+        }
+      ]
     }
   },
   "tags": [
+    {
+      "text": "#动物Meme持续发酵",
+      "coin_symbol": "$updog",
+      "coin_ca": "77HqxiDCgYfXUsDXDD6YVefPhTTz1Z2n8jX4gTxipump",
+      "coin_chain": "sol"
+    },
+    {
+      "text": "#BSC链新币最密集",
+      "coin_symbol": "$Rocket",
+      "coin_ca": "0xe4ce6f8caa3a76a53fdad70f2af393c01ecd7777",
+      "coin_chain": "bsc"
+    },
     {
       "text": "#$Max 聪明钱扎堆",
       "coin_symbol": "$Max",
@@ -61,14 +121,26 @@
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$cash",
-      "coin_ca": "3ZHz4gzF2AEzoyRkMe1nCbsCms5H5wg3jcphCP4opump",
+      "coin_symbol": "$UwU",
+      "coin_ca": "5mQhQ97wN1cjcZTedLUzkxgHr94MdfmsGq93e1S7pump",
       "coin_chain": "sol"
     }
   ],
   "history": {
     "2026-11-13": {
       "tags": [
+        {
+          "text": "#动物Meme持续发酵",
+          "coin_symbol": "$updog",
+          "coin_ca": "77HqxiDCgYfXUsDXDD6YVefPhTTz1Z2n8jX4gTxipump",
+          "coin_chain": "sol"
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "coin_symbol": "$Rocket",
+          "coin_ca": "0xe4ce6f8caa3a76a53fdad70f2af393c01ecd7777",
+          "coin_chain": "bsc"
+        },
         {
           "text": "#$Max 聪明钱扎堆",
           "coin_symbol": "$Max",
@@ -77,8 +149,8 @@
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$cash",
-          "coin_ca": "3ZHz4gzF2AEzoyRkMe1nCbsCms5H5wg3jcphCP4opump",
+          "coin_symbol": "$UwU",
+          "coin_ca": "5mQhQ97wN1cjcZTedLUzkxgHr94MdfmsGq93e1S7pump",
           "coin_chain": "sol"
         }
       ],
@@ -108,7 +180,32 @@
           "hits": 2
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#$Max 聪明钱扎堆",
+          "hits": 10
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 9
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 4
+        },
+        {
+          "text": "#RWA概念持续发酵",
+          "hits": 4
+        },
+        {
+          "text": "#AI/Agent概念持续发酵",
+          "hits": 3
+        }
+      ]
     }
   }
 }
