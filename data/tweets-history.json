@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T15:15:42.149985+08:00",
+  "updated_at": "2026-11-14T15:19:50.298719+08:00",
   "days": 7,
   "tweets": [
     {
@@ -7671,26 +7671,6 @@
       "parent_author": "",
       "parent_handle": "",
       "text_zh": "是的，我从来没有写过这样的东西。这是编出来的。"
-    },
-    {
-      "id": "TechMelonCzHeyi_3345",
-      "person": "cz",
-      "name": "赵长鹏",
-      "handle": "@cz_binance",
-      "time": "2026-11-07T15:19:50+08:00",
-      "text": "Apps can't protect you from OS vulnerabilities. Update your OS immediately.",
-      "kind": "quote",
-      "media": [
-        {
-          "url": "https://cdn4.telesco.pe/file/ZVnzSx0XuFmdVdi5xyfK2M9msmiPAK4-xpu5R0xoBGviMqnN06kL6DJV0fec9A8ImzoXKLOmaxNXrsDeX9e1A6CHJuwL0ARUbvdowJDL_wrugrcASjmZT8M6BzyXqIQCVGJqNf4SDkY_db_r_Sve23gwWPSjVItQoK8kulfbo-Big_hjxRATt881a-q4AMqSTZvO1FRYqVvf8UQkhyHcTFo9nf7KrKCsyOyNPm2gcWK9BRrKF1joUxTmIO1bp1czP0_m_ci5Hon9GIBalCpGWuz0_tmVVP5bk6rZmpEqf5FOQ6pGzHGNXvJt0iPY3VsrppI6ap2xebCpXpTiiGxZNQ.jpg",
-          "type": "img"
-        }
-      ],
-      "url": "https://x.com/cz_binance/status/2118966640486555947",
-      "parent_text": "🚨\n严重的 Windows Paint 漏洞允许在未经身份验证的情况下远程执行代码，CVE-2026-83844\n微软披露了 Windows Paint 中的一个高严重性漏洞，该漏洞可能允许未经身份验证的攻击者在无需用户交互的情况下远程执行恶意代码。\n该缺陷编号为 CVE-2026-83844，源于越界读取，可能会损害受影响系统的机密性、完整性和可用性。\n该漏洞的 CVSS 评分为 8.1，影响 11.2605.91.0 之前的 Microsoft Paint 版本。微软已经发布了安全修复程序，并敦促管理员确保画图软件得到更新。\n目前还没有关于主动利用的确认报告。",
-      "parent_author": "",
-      "parent_handle": "",
-      "text_zh": "应用程序无法保护您免受操作系统漏洞的影响。立即更新您的操作系统。"
     }
   ]
 }
