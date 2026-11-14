@@ -1,6 +1,6 @@
 {
   "date": "2026-11-14",
-  "generated_at": "2026-11-14T12:03:33.498290+08:00",
+  "generated_at": "2026-11-14T22:00:43.009502+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -50,6 +50,54 @@
           "hits": 3
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#$SWJ 同名代币",
+          "hits": 10
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#$Max 聪明钱扎堆",
+          "hits": 9
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 8
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 3
+        },
+        {
+          "text": "#$FRENS 同名代币",
+          "hits": 1
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$SWJ",
+          "chain": "bsc",
+          "ca": "0x26040e441a7369ccc7bd8bfe96f596df4db87777",
+          "hits": 10
+        },
+        {
+          "symbol": "$Max",
+          "chain": "sol",
+          "ca": "5qaP7oKUqKffwwo5DaEqDoTtsBLMpdbQTxEkCDaTpump",
+          "hits": 9
+        },
+        {
+          "symbol": "$FRENS",
+          "chain": "sol",
+          "ca": "rysLWnWRnvx9TKF76CzqVYeDMYbQAM3Z8PvgDFbpump",
+          "hits": 2
+        }
+      ]
     }
   },
   "tags": [
@@ -60,15 +108,9 @@
       "coin_chain": "bsc"
     },
     {
-      "text": "#动物Meme持续发酵",
-      "coin_symbol": "$CSI",
-      "coin_ca": "6EHTywfoXpDNhL4JGkeYUhiL6mumpmD7j8ByjQaXpump",
-      "coin_chain": "sol"
-    },
-    {
       "text": "#BSC链新币最密集",
-      "coin_symbol": "$CEO",
-      "coin_ca": "0xe1dedb914b81185af10290e2bc107c1807207777",
+      "coin_symbol": "$邪教",
+      "coin_ca": "0x0a90e9911fbb3e18d0aed2eb33b00dcdf1477777",
       "coin_chain": "bsc"
     },
     {
@@ -79,8 +121,8 @@
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$HARAMBE",
-      "coin_ca": "EjoWiu2PLuEs6roeM1H9YxApa3LQ3guo9E27Lcu5pump",
+      "coin_symbol": "$BUSTED",
+      "coin_ca": "FaEooFnn22fcz27CBw93VvFAiE6KMKkB34Q6CT2Ypump",
       "coin_chain": "sol"
     }
   ],
@@ -94,15 +136,9 @@
           "coin_chain": "bsc"
         },
         {
-          "text": "#动物Meme持续发酵",
-          "coin_symbol": "$CSI",
-          "coin_ca": "6EHTywfoXpDNhL4JGkeYUhiL6mumpmD7j8ByjQaXpump",
-          "coin_chain": "sol"
-        },
-        {
           "text": "#BSC链新币最密集",
-          "coin_symbol": "$CEO",
-          "coin_ca": "0xe1dedb914b81185af10290e2bc107c1807207777",
+          "coin_symbol": "$邪教",
+          "coin_ca": "0x0a90e9911fbb3e18d0aed2eb33b00dcdf1477777",
           "coin_chain": "bsc"
         },
         {
@@ -113,8 +149,8 @@
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$HARAMBE",
-          "coin_ca": "EjoWiu2PLuEs6roeM1H9YxApa3LQ3guo9E27Lcu5pump",
+          "coin_symbol": "$BUSTED",
+          "coin_ca": "FaEooFnn22fcz27CBw93VvFAiE6KMKkB34Q6CT2Ypump",
           "coin_chain": "sol"
         }
       ],
@@ -144,7 +180,32 @@
           "hits": 1
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#$SWJ 同名代币",
+          "hits": 10
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#$Max 聪明钱扎堆",
+          "hits": 9
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 8
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 3
+        },
+        {
+          "text": "#$FRENS 同名代币",
+          "hits": 1
+        }
+      ]
     }
   }
 }
