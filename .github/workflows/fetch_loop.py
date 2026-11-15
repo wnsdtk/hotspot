@@ -1264,6 +1264,68 @@ JOB_BUDGET_S = 275
 FAST_TICK_S = 10
 
 
+# ---------------------------------------------------------- tweets daily
+TWEET_PERSONS = [("heyi", "\u4f55\u4e00"), ("cz", "\u8d75\u957f\u9e4f"), ("elon", "\u9a6c\u65af\u514b")]
+
+
+def _first_sentence(txt, limit=60):
+    t = re.sub(r"https?://\S+", "", str(txt or ""))
+    t = re.sub(r"\s+", " ", t).strip()
+    if not t:
+        return ""
+    cut = -1
+    for sep in ("\u3002", "\uff01", "\uff1f", "!", "?"):
+        i = t.find(sep)
+        if 0 <= i < 90 and (cut < 0 or i < cut):
+            cut = i
+    if cut > 0:
+        t = t[:cut]
+    return t[:limit].strip()
+
+
+def maybe_tweets_daily(out_dir, tweets):
+    """\u6bcf\u665a 22:00 \u751f\u6210\u4e00\u6b21\u5f53\u5929\u4e09\u4eba\u7684\u63a8\u6587\u603b\u7ed3\u3002"""
+    path = os.path.join(out_dir, "tweets-daily.json")
+    now = now_sh()
+    today = now.strftime("%Y-%m-%d")
+    existing = load_json(path, None)
+    if isinstance(existing, dict) and existing.get("date") == today:
+        return False, "already generated today"
+    if not (now.hour == 22 and now.minute < 6):
+        return False, "outside 22:00 window"
+
+    items = tweets.get("tweets") or []
+    persons = {}
+    for key, name in TWEET_PERSONS:
+        lst = [t for t in items
+               if (t.get("person") or "") == key and str(t.get("time") or "")[:10] == today]
+        lst.sort(key=lambda t: str(t.get("time") or ""), reverse=True)
+        bullets, seen = [], set()
+        for t in lst:
+            s = _first_sentence(t.get("text_zh") or t.get("text"))
+            if len(s) < 6 or s in seen:
+                continue
+            seen.add(s)
+            bullets.append(s)
+            if len(bullets) >= 4:
+                break
+        latest = lst[0] if lst else None
+        persons[key] = {
+            "name": name,
+            "count": len(lst),
+            "first_time": (lst[-1].get("time") if lst else ""),
+            "last_time": (lst[0].get("time") if lst else ""),
+            "bullets": bullets,
+            "latest": {
+                "time": (latest.get("time") if latest else ""),
+                "text": _first_sentence(latest.get("text_zh") or latest.get("text"), 90) if latest else "",
+                "url": (latest.get("url") if latest else ""),
+            } if latest else None,
+        }
+    wrote = write_if_changed(path, {"updated_at": iso_now(), "date": today, "persons": persons})
+    return wrote, ("wrote" if wrote else "unchanged")
+
+
 def slow_lane(out_dir, state_dir, tr_cache, cache_path):
     """Runs once at job start. Returns (trench_tokens_all, tags)."""
     print("=== slow lane ===")
@@ -1313,6 +1375,21 @@ def slow_lane(out_dir, state_dir, tr_cache, cache_path):
     return all_tokens, tags
 
 
+LIQ_INTERVAL_S = 30 * 60
+
+
+def _liq_due(prev):
+    """liquidity \u6bcf 30 \u5206\u949f\u624d\u6293\u4e00\u6b21\u3002"""
+    ts = prev.get("updated_at") if isinstance(prev, dict) else None
+    if not ts:
+        return True
+    try:
+        t = datetime.datetime.fromisoformat(ts)
+        return (now_sh() - t).total_seconds() >= LIQ_INTERVAL_S
+    except Exception:
+        return True
+
+
 def fast_tick(out_dir, state_dir, tr_cache, cache_path):
     """One 10s fast-lane tick. Never raises."""
     trench_files = {}
@@ -1331,15 +1408,25 @@ def fast_tick(out_dir, state_dir, tr_cache, cache_path):
     except Exception as e:
         print(f"  [fast] consensus FAILED: {e}", file=sys.stderr)
     try:
-        liq = fetch_liquidity(trench_files)
-        if write_if_changed(os.path.join(out_dir, "liquidity.json"), liq):
-            print(f"  [fast] wrote liquidity.json ({len(liq.get('chains', []))} chains)")
+        _lp = os.path.join(out_dir, "liquidity.json")
+        if _liq_due(load_json(_lp, {})):
+            liq = fetch_liquidity(trench_files)
+            if write_if_changed(_lp, liq):
+                print(f"  [fast] wrote liquidity.json ({len(liq.get('chains', []))} chains)")
     except Exception as e:
         print(f"  [fast] liquidity FAILED: {e}", file=sys.stderr)
     try:
         tweets = fetch_tweets(state_dir, tr_cache, out_dir)
         if write_if_changed(os.path.join(out_dir, "tweets.json"), tweets):
             print(f"  [fast] wrote tweets.json ({len(tweets['tweets'])} tweets)")
+        try:
+            made, why = maybe_tweets_daily(out_dir, tweets)
+            if made:
+                print("  [fast] wrote tweets-daily.json")
+            elif why != "outside 22:00 window":
+                print(f"  [fast] tweets-daily skip: {why}")
+        except Exception as de:
+            print(f"  [fast] tweets-daily FAILED: {de}", file=sys.stderr)
         write_if_changed(cache_path, tr_cache)
     except Exception as e:
         print(f"  [fast] tweets FAILED: {e}", file=sys.stderr)
