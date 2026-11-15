@@ -1,6 +1,6 @@
 {
   "date": "2026-11-15",
-  "generated_at": "2026-11-15T12:00:41.893599+08:00",
+  "generated_at": "2026-11-15T22:00:42.100548+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -50,14 +50,62 @@
           "hits": 4
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#$Max 聪明钱扎堆",
+          "hits": 10
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 8
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 6
+        },
+        {
+          "text": "#$NCAT 同名代币",
+          "hits": 2
+        },
+        {
+          "text": "#$Mentat 同名代币",
+          "hits": 1
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$Max",
+          "chain": "sol",
+          "ca": "5qaP7oKUqKffwwo5DaEqDoTtsBLMpdbQTxEkCDaTpump",
+          "hits": 10
+        },
+        {
+          "symbol": "$USDC",
+          "chain": "sol",
+          "ca": "Acgs6mb4PC7tQbDm9T4EeTfNx3ZDh5fNSjHcHZQLpump",
+          "hits": 8
+        },
+        {
+          "symbol": "$Socks",
+          "chain": "sol",
+          "ca": "FS1pBmZKp2Qw1atC64GoLamHstECAos9ot8bGPgDpump",
+          "hits": 3
+        }
+      ]
     }
   },
   "tags": [
     {
-      "text": "#动物Meme持续发酵",
-      "coin_symbol": "$USDC",
-      "coin_ca": "Acgs6mb4PC7tQbDm9T4EeTfNx3ZDh5fNSjHcHZQLpump",
-      "coin_chain": "sol"
+      "text": "#BSC链新币最密集",
+      "coin_symbol": "$屹立不倒",
+      "coin_ca": "0x11156085985d298e67679419cc94f87268a67777",
+      "coin_chain": "bsc"
     },
     {
       "text": "#$Max 聪明钱扎堆",
@@ -67,19 +115,19 @@
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$penny",
-      "coin_ca": "5gmCPpuktJ7Svjgr4PPJBTosAFKB8K6Z45EGfSUmpump",
-      "coin_chain": "sol"
+      "coin_symbol": "$屹立不倒",
+      "coin_ca": "0x11156085985d298e67679419cc94f87268a67777",
+      "coin_chain": "bsc"
     }
   ],
   "history": {
     "2026-11-15": {
       "tags": [
         {
-          "text": "#动物Meme持续发酵",
-          "coin_symbol": "$USDC",
-          "coin_ca": "Acgs6mb4PC7tQbDm9T4EeTfNx3ZDh5fNSjHcHZQLpump",
-          "coin_chain": "sol"
+          "text": "#BSC链新币最密集",
+          "coin_symbol": "$屹立不倒",
+          "coin_ca": "0x11156085985d298e67679419cc94f87268a67777",
+          "coin_chain": "bsc"
         },
         {
           "text": "#$Max 聪明钱扎堆",
@@ -89,9 +137,9 @@
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$penny",
-          "coin_ca": "5gmCPpuktJ7Svjgr4PPJBTosAFKB8K6Z45EGfSUmpump",
-          "coin_chain": "sol"
+          "coin_symbol": "$屹立不倒",
+          "coin_ca": "0x11156085985d298e67679419cc94f87268a67777",
+          "coin_chain": "bsc"
         }
       ],
       "morning": [
@@ -120,7 +168,32 @@
           "hits": 1
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#$Max 聪明钱扎堆",
+          "hits": 10
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 8
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 6
+        },
+        {
+          "text": "#$NCAT 同名代币",
+          "hits": 2
+        },
+        {
+          "text": "#$Mentat 同名代币",
+          "hits": 1
+        }
+      ]
     }
   }
 }
