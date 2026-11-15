@@ -1497,13 +1497,22 @@ function updateSections(){
       if(n){try{n.innerHTML=s.html();}catch(e){n.innerHTML='<div class="empty">渲染异常</div>';}}
     }
   }
-  var st=freshestStamp();
+  var st=0;
+  Object.keys(S.lastUpdate).forEach(function(k){var t=S.lastUpdate[k];if(t&&t>st)st=t;});
+  if(!st)st=freshestStamp();
   var un=document.getElementById('upd-time');
   if(un)un.textContent=st?new Date(st).toLocaleTimeString('zh-CN',{hour12:false}):'—';
   var ny=(typeof window.scrollY==='number')?window.scrollY:(document.documentElement.scrollTop||0);
   if(Math.abs(ny-sy)>1)window.scrollTo(0,sy);
 }
 /* ============ events ============ */
+if(typeof document!=='undefined'&&document.addEventListener){
+  document.addEventListener('visibilitychange',function(){
+    if(!document.hidden){
+      try{refresh();}catch(e){}
+    }
+  });
+}
 function switchTab(tab){
   UI.tab=tab;
   var btns=document.querySelectorAll('.tabs button');
