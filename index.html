@@ -391,9 +391,23 @@ var BIN_TYPE={listing:'上市', delisting:'下架', alpha:'Alpha'};
 var LIQ_LABEL={volume:'交易量',buy_volume:'买入量',sell_volume:'卖出量',wallet_count:'钱包数',token_count:'代币数',token_created_count:'新建代币',token_migrated_count:'迁移代币',tx_count:'交易笔数',volume_change_pct:'量变幅(%)',avg_buy_per_wallet:'户均买入'};
 var XXAPI_WB='https://v2.xxapi.cn/api/weibohot';
 var XXAPI_DY='https://v2.xxapi.cn/api/douyinhot';
-/* Data lives on the "data" branch; raw.githubusercontent.com serves it
-   immediately after push (no Pages rebuild wait) with CORS *. */
-var DATA_BASE='https://raw.githubusercontent.com/wnsdtk/hotspot/data/data/';
+/* Data lives on the "data" branch. raw.githubusercontent.com is reset on some
+   networks (CN), so try several CDN mirrors in order and remember the winner. */
+var DATA_BASES=[
+  'https://fastly.jsdelivr.net/gh/wnsdtk/hotspot@data/data/',
+  'https://gcore.jsdelivr.net/gh/wnsdtk/hotspot@data/data/',
+  'https://ghproxy.net/https://raw.githubusercontent.com/wnsdtk/hotspot/data/data/',
+  'https://raw.githubusercontent.com/wnsdtk/hotspot/data/data/'
+];
+var DATA_BASE=DATA_BASES[0];
+try{
+  var _hb=localStorage.getItem('hotspot:base');
+  if(_hb && DATA_BASES.indexOf(_hb)>=0){
+    DATA_BASES.splice(DATA_BASES.indexOf(_hb),1);
+    DATA_BASES.unshift(_hb);
+    DATA_BASE=_hb;
+  }
+}catch(e){}
 var WORKER='https://snowy-mud-3037.rj982946925.workers.dev';
 var WORKER_POLL_MS=30000; // 30 seconds
 var DATA_FILES=[
@@ -864,6 +878,37 @@ function htmlSolRadar(){
   return h+'</div>';
 }
 /* ============ fetch ============ */
+function fetchTimeout(url,ms){
+  return new Promise(function(res,rej){
+    var done=false;
+    var t=setTimeout(function(){done=true;rej(new Error('timeout'));},ms);
+    fetch(url,{cache:'no-store'}).then(function(r){
+      if(done)return; clearTimeout(t); res(r);
+    }).catch(function(e){
+      if(done)return; clearTimeout(t); rej(e);
+    });
+  });
+}
+var DATA_FAIL={};
+function fetchData(file){
+  var i=0;
+  function next(){
+    if(i>=DATA_BASES.length) return Promise.resolve(null);
+    var base=DATA_BASES[i++];
+    return fetchTimeout(base+file+'?t='+Date.now(),9000)
+      .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
+      .then(function(d){
+        if(DATA_BASE!==base){
+          DATA_BASE=base;
+          try{localStorage.setItem('hotspot:base',base);}catch(e){}
+        }
+        DATA_FAIL[file]=0;
+        return d;
+      })
+      .catch(function(){ DATA_FAIL[file]=(DATA_FAIL[file]||0)+1; return next(); });
+  }
+  return next();
+}
 function fetchJson(url){
   return fetch(url,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
     .catch(function(){return null;});
@@ -1244,8 +1289,7 @@ var HIST_DAYS=7;
 function histLoad(){
   if(S.hist)return Promise.resolve(S.hist);
   if(S.histLoading)return S.histLoading;
-  S.histLoading=fetch(dataUrl('tweets-history.json'),{cache:'no-store'})
-    .then(function(r){if(!r.ok)throw new Error('http');return r.json();})
+  S.histLoading=fetchData('tweets-history.json')
     .then(function(d){S.hist=(d&&Array.isArray(d.tweets))?d:{tweets:[]};return S.hist;})
     .catch(function(){S.hist=S.hist||{tweets:[]};return S.hist;})
     .then(function(d){delete S.histLoading;if(UI.tab==='summary')updateSections();return d;});
@@ -1829,7 +1873,7 @@ function pollWorkerSlow(){
 /* ============ refresh / boot ============ */
 
 function refresh(){
-  var jobs=DATA_FILES.map(function(j){return fetchJson(dataUrl(j[1])).then(function(d){return [j[0],d];});});
+  var jobs=DATA_FILES.map(function(j){return fetchData(j[1]).then(function(d){return [j[0],d];});});
   jobs.push(fetchJson(XXAPI_WB).then(function(d){return ['wb',d];}));
   jobs.push(fetchJson(XXAPI_DY).then(function(d){return ['dy',d];}));
   return Promise.all(jobs).then(function(results){
