@@ -1079,7 +1079,7 @@ function htmlDyRise(){
 }
 function htmlDyList(){
   var dyList=(S.dy&&S.dy.code===200&&Array.isArray(S.dy.data))?S.dy.data:[];
-  var h='<div class="card"><div class="sect">抖音热榜'+updInfo('douyin','每5分钟更新')+'</div>';
+  var h='<div class="card"><div class="sect">抖音热榜'+updInfo('dy','每5分钟更新')+'</div>';
   if(!dyList.length)h+='<div class="empty">暂无数据</div>';
   else{
     h+=dyList.slice(0,UI.dyN).map(function(it,i){
@@ -1942,6 +1942,13 @@ function refresh(){
     results.forEach(function(r){
       if(r[0]==='wb')wb=r[1];else if(r[0]==='dy')dy=r[1];else data[r[0]]=r[1];
     });
+    // v49: 「上次」统一为页面本次获取时间（内容没变时文件时间戳会偏旧）
+    Object.keys(data).forEach(function(k){
+      if(!data[k])return;
+      markUpd((k==='bsc'||k==='sol'||k==='rb')?'trench':k);
+    });
+    if(wb)markUpd('wb');
+    if(dy)markUpd('dy');
     // FIX v13: Don't let stale GitHub JSON overwrite fresh Worker data
     // Worker manages: tweets, bsc, sol, rb, liquidity, douyin
     var WORKER_KEYS={tweets:1,bsc:1,sol:1,rb:1,douyin:1,tags:1};
