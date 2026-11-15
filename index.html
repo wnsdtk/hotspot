@@ -349,6 +349,17 @@ a{color:var(--blue); text-decoration:none;}
 .solr .sfoot{display:flex; gap:10px; font-size:10.5px; color:var(--dim,#66727f);}
 .solr .sfoot .speak{margin-left:auto; font-family:var(--mono,monospace);}
 .solr .sbtns{display:flex; gap:6px; flex-wrap:wrap; margin-top:7px;}
+
+/* ===== v48 · 今日推文总结 ===== */
+.twsum .tsp{border-left:3px solid var(--border,#262d36); padding:2px 0 4px 9px; margin:12px 0;}
+.twsum .tsp:first-of-type{margin-top:4px;}
+.twsum .tsp-head{display:flex; align-items:center; gap:6px;}
+.twsum .tsp-name{font-size:13px; font-weight:700;}
+.twsum .tsp-meta{margin-left:auto; font-size:10.5px; color:var(--dim,#66727f);}
+.twsum .tsp ul{margin:6px 0 0; padding-left:16px;}
+.twsum .tsp li{font-size:12px; line-height:1.65; margin-bottom:2px;}
+.twsum .tsp-hl{margin-top:6px; background:rgba(240,185,11,.08); border:1px solid rgba(240,185,11,.22);
+  border-radius:6px; padding:6px 8px; font-size:11.5px; line-height:1.55; cursor:pointer;}
 </style>
 </head>
 <body>
@@ -413,8 +424,7 @@ var WORKER_POLL_MS=30000; // 30 seconds
 var DATA_FILES=[
   ['tweets','tweets.json'],['bsc','trench-bsc.json'],['sol','trench-sol.json'],
   ['rb','trench-rb.json'],
-  ['douyin','douyin.json'],['tags','tags-halfhour.json'],['daily','summary-daily.json'],
-  ['binance','binance.json']
+  ['douyin','douyin.json'],['tags','tags-halfhour.json'],['daily','summary-daily.json']
 ];
 function dataUrl(f){return DATA_BASE+f+'?t='+Date.now();}
 var POLL_MS=15000;
@@ -426,7 +436,16 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){retur
 function nl2br(s){return s.replace(/\n/g,'<br>');}
 /* v16: update frequency + last update time for every section */
 function fmtTime(ts){if(!ts)return '--:--:--';var d=new Date(ts);return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2);}
-function updInfo(key,freq){var ts=S.lastUpdate[key];return '<span class="upd-info" style="font-weight:400;font-size:11px;color:var(--muted);margin-left:8px">'+esc(freq)+' · 上次 '+fmtTime(ts)+'</span>';}
+function updInfo(key,freq){
+  var ts=S.lastUpdate[key];
+  if(!ts){
+    var _d=S.data[key];
+    if(_d){
+      var _s=_d.updated_at||_d.generated_at;
+      if(_s){var _t=Date.parse(_s);if(!isNaN(_t))ts=_t;}
+    }
+  }
+  return '<span class="upd-info" style="font-weight:400;font-size:11px;color:var(--muted);margin-left:8px">'+esc(freq)+' · 上次 '+fmtTime(ts)+'</span>';}
 function markUpd(key){S.lastUpdate[key]=Date.now();}
 function trunc(s,n){s=String(s||'');return s.length>n?s.slice(0,n)+'…':s;}
 function trim1(x){return String(Math.round(x*10)/10);}
@@ -1060,7 +1079,7 @@ function htmlDyRise(){
 }
 function htmlDyList(){
   var dyList=(S.dy&&S.dy.code===200&&Array.isArray(S.dy.data))?S.dy.data:[];
-  var h='<div class="card"><div class="sect">抖音热榜'+updInfo('dy','每5分钟更新')+'</div>';
+  var h='<div class="card"><div class="sect">抖音热榜'+updInfo('douyin','每5分钟更新')+'</div>';
   if(!dyList.length)h+='<div class="empty">暂无数据</div>';
   else{
     h+=dyList.slice(0,UI.dyN).map(function(it,i){
@@ -1384,6 +1403,48 @@ function htmlCounts(){
   if(!all.length)h+='<div class="empty">\u6682\u65e0\u5386\u53f2\u63a8\u6587\uff08\u6570\u636e\u6bcf 5 \u5206\u949f\u540c\u6b65\uff09</div>';
   return h+'</div>';
 }
+
+/* ============ v48 · 今日推文总结 ============ */
+function fmtHH(iso){var d=new Date(iso);if(isNaN(d))return '--:--';return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
+function twSumLines(list){
+  var out=[];
+  list.forEach(function(t){
+    var txt=String(t.text_zh||t.text||'').replace(/\s+/g,' ').replace(/https?:\/\/\S+/g,'').trim();
+    if(!txt)return;
+    var first=txt.split(/[\u3002\uff01\uff1f!?]/)[0]||txt;
+    first=first.trim();
+    if(first.length<6)return;
+    first=trunc(first,60);
+    if(out.indexOf(first)<0)out.push(first);
+  });
+  return out.slice(0,4);
+}
+function htmlTweetSum(){
+  var all=histTweets(), today=todayBj(), tot=0, body='';
+  PEOPLE.forEach(function(p){
+    var list=all.filter(function(t){return t.person===p.key && bjDate(t.time)===today;})
+      .sort(function(a,b){return new Date(b.time)-new Date(a.time);});
+    tot+=list.length;
+    body+='<div class="tsp"><div class="tsp-head">'
+      +'<span class="cdot" style="background:'+esc(p.color||'#8b949e')+'"></span>'
+      +'<span class="tsp-name">'+esc(p.name)+'</span>'
+      +'<span class="tsp-meta">'+(list.length?(list.length+' \u6761 \u00b7 '+fmtHH(list[list.length-1].time)+'\u2013'+fmtHH(list[0].time)):'\u4eca\u65e5\u6682\u65e0')+'</span>'
+      +'</div>';
+    if(list.length){
+      body+='<ul>'+twSumLines(list).map(function(s){return '<li>'+esc(s)+'</li>';}).join('')+'</ul>';
+      var f=list[0];
+      body+='<div class="tsp-hl" data-act="open-url" data-url="'+esc(f.url||'')+'">'
+        +'<b>\u{1F550} '+esc(fmtHH(f.time))+'</b> '
+        +esc(trunc(String(f.text_zh||f.text||'').replace(/\s+/g,' '),90))
+        +(f.url?' <span class="muted">\u203a</span>':'')
+        +'</div>';
+    }
+    body+='</div>';
+  });
+  return '<div class="card twsum"><div class="sect">\u{1F4CB} \u4eca\u65e5\u63a8\u6587\u603b\u7ed3'+updInfo('tweets','\u6bcf30\u79d2\u66f4\u65b0')+'</div>'
+    +'<div class="muted" style="font-size:11px;margin:-4px 0 8px">'+esc(today)+' \u00b7 \u4e09\u4eba\u5408\u8ba1 '+tot+' \u6761\u63a8\u6587</div>'
+    +body+'</div>';
+}
 function htmlBinance(){
   var bn=S.data.binance;
   var h='<div class="card"><div class="sect">🟡 近一周币安动态'+updInfo('binance','每5分钟更新')+'</div>';
@@ -1423,7 +1484,7 @@ var SECTIONS=[
   {id:'sec-rb',      sig:function(){return sigData(S.data.rb);}, html:function(){return htmlChain('rb','Robinhood 战壕',CHAIN_COLOR.Robinhood);}},
   {id:'sec-counts',  sig:function(){var hh=S.hist?(S.hist.updated_at||(S.hist.tweets||[]).length):'0';return hh+'|'+(UI.histOpen||'')+'|'+sigData(S.data.tweets);}, html:htmlCounts},
   {id:'sec-daily',   sig:function(){return sigData(S.data.daily);}, html:htmlDaily},
-  {id:'sec-binance', sig:function(){return sigData(S.data.binance);}, html:htmlBinance}
+  {id:'sec-tws',     sig:function(){return sigData(S.data.tweets)+'|'+todayBj()+'|'+(S.hist?'1':'0');}, html:htmlTweetSum}
 ];
 var SEEN_SIG={};
 function setHtml(id,html){var n=document.getElementById(id);if(n)n.innerHTML=html;}
@@ -1431,7 +1492,7 @@ function buildShell(){
   setHtml('tab-all','<div id="sec-moves"></div>');
   setHtml('tab-hot','<div id="sec-dy-trend"></div><div id="sec-dy-rise"></div><div id="sec-dy-list"></div><div id="sec-wb-list"></div>');
   setHtml('tab-trench','<div id="sec-liq"></div><div id="sec-tags"></div><div id="sec-bsc"></div><div id="sec-sol"></div><div id="sec-rb"></div>');
-  setHtml('tab-summary','<div id="sec-counts"></div><div id="sec-daily"></div><div id="sec-binance"></div>');
+  setHtml('tab-summary','<div id="sec-counts"></div><div id="sec-daily"></div><div id="sec-tws"></div>');
 }
 function updateSections(){
   var sy=(typeof window.scrollY==='number')?window.scrollY:(document.documentElement.scrollTop||0);
