@@ -749,7 +749,7 @@ def fetch_liquidity(trench_files=None):
                 "chain": label,
                 "net_inflow": buy - sell,
                 "metrics": metrics,
-                "top_tokens": top_tokens,
+                "top_tokens": [],
             })
         print(f"  [liquidity] {len(chains)} chains")
     except Exception as e:
