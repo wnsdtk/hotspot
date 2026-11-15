@@ -1424,13 +1424,16 @@ function htmlTweetSum(){
       +'<span class="cdot" style="background:'+esc(p.color||'#8b949e')+'"></span>'
       +'<span class="tsp-name">'+esc(p.name)+'</span>'
       +'<span class="tsp-meta">'+esc(meta)+'</span></div>';
-    if(n&&x.bullets&&x.bullets.length){
-      h+='<ul>'+x.bullets.map(function(s){return '<li>'+esc(s)+'</li>';}).join('')+'</ul>';
+    var sb=(x.summary&&x.summary.bullets&&x.summary.bullets.length)?x.summary.bullets:(x.bullets||[]);
+    if(n&&sb.length){
+      h+='<ul>'+sb.map(function(s){return '<li>'+esc(s)+'</li>';}).join('')+'</ul>';
     }
+    var ev=(x.summary&&x.summary.event)?x.summary.event:'';
     if(n&&x.latest){
-      h+='<div class="tsp-hl" data-act="open-url" data-url="'+esc(x.latest.url||'')+'">'
-        +'<b>\u{1F550} '+esc(fmtHH(x.latest.time))+'</b> '+esc(x.latest.text||'')
-        +(x.latest.url?' <span class="muted">\u203a</span>':'')
+      var hl=ev?ev:(esc(fmtHH(x.latest.time))+' '+String(x.latest.text||''));
+      h+='<div class="tsp-hl" data-act="open-url" data-url="'+esc((x.latest||{}).url||'')+'">'
+        +'<b>\u{1F50D} \u4e8b\u4ef6</b> '+esc(hl)
+        +((x.latest&&x.latest.url)?' <span class="muted">\u203a</span>':'')
         +'</div>';
     }
     h+='</div>';
