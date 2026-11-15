@@ -1283,6 +1283,66 @@ def _first_sentence(txt, limit=60):
     return t[:limit].strip()
 
 
+LLM_PROMPT = """\u4f60\u662f\u52a0\u5bc6\u5e02\u573a\u8d44\u8baf\u7f16\u8f91\u3002\u4e0b\u9762\u662f {name} \u5728 {date} \u53d1\u5e03\u7684 {n} \u6761\u63a8\u6587\uff08\u542b\u4e2d\u6587\u8bd1\u6587\uff09\u3002
+
+\u8bf7\u603b\u7ed3\u4ed6\u4eca\u5929\u4e3b\u8981\u8bf4\u4e86\u4ec0\u4e48\uff0c\u53ea\u8f93\u51fa JSON\uff1a
+{{"bullets": ["...", "...", "..."], "event": "..."}}
+
+\u8981\u6c42\uff1a
+- bullets 3~4 \u6761\uff0c\u6bcf\u6761 20~45 \u5b57\uff0c\u6982\u62ec\u89c2\u70b9\u4e0e\u4e3b\u9898\uff0c\u4e0d\u8981\u9010\u6761\u590d\u8ff0\u63a8\u6587\uff0c\u4e0d\u8981\u51fa\u73b0"\u63a8\u6587"\u4e8c\u5b57
+- \u6bcf\u6761\u4ee5\u4e00\u4e2a\u6070\u5f53\u7684 emoji \u5f00\u5934
+- event\uff1a\u4e00\u53e5\u8bdd\u70b9\u51fa\u4eca\u5929\u6700\u5173\u952e\u7684\u4e00\u4ef6\u4e8b\uff08\u5305\u542b HH:MM\uff09\uff0c\u6ca1\u6709\u5c31\u7559\u7a7a\u5b57\u7b26\u4e32
+- \u53ea\u8f93\u51fa JSON\uff0c\u4e0d\u8981\u4ee3\u7801\u5757
+
+\u63a8\u6587\uff1a
+{body}"""
+
+
+def llm_summary(name, date, lst):
+    key = (os.environ.get("DEEPSEEK_API_KEY") or "").strip()
+    if not key or not lst:
+        return None
+    lines = []
+    for t in lst[:40]:
+        hhmm = str(t.get("time") or "")[11:16]
+        txt = _first_sentence(t.get("text_zh") or t.get("text"), 110)
+        if txt:
+            lines.append(f"- {hhmm} {txt}")
+    if not lines:
+        return None
+    body = "\n".join(lines)
+    payload = {
+        "model": "deepseek-chat",
+        "messages": [{"role": "user", "content": LLM_PROMPT.format(name=name, date=date, n=len(lines), body=body)}],
+        "temperature": 0.4,
+        "max_tokens": 600,
+    }
+    try:
+        r = http.post("https://api.deepseek.com/chat/completions",
+                      headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"},
+                      json=payload, timeout=60)
+        if r.status_code != 200:
+            print(f"  [llm] HTTP {r.status_code}: {r.text[:120]}", file=sys.stderr)
+            return None
+        txt = ((r.json().get("choices") or [{}])[0].get("message") or {}).get("content") or ""
+        txt = txt.strip()
+        if txt.startswith("```"):
+            txt = re.sub(r"^```[a-z]*\n?", "", txt)
+            txt = re.sub(r"\n?```$", "", txt)
+        i, j = txt.find("{"), txt.rfind("}")
+        if i >= 0 and j > i:
+            txt = txt[i:j + 1]
+        o = json.loads(txt)
+        bullets = [str(x)[:80] for x in (o.get("bullets") or []) if str(x).strip()][:4]
+        event = str(o.get("event") or "")[:120]
+        if not bullets:
+            return None
+        return {"bullets": bullets, "event": event}
+    except Exception as e:
+        print(f"  [llm] FAILED: {e}", file=sys.stderr)
+        return None
+
+
 def maybe_tweets_daily(out_dir, tweets):
     """\u6bcf\u665a 22:00 \u751f\u6210\u4e00\u6b21\u5f53\u5929\u4e09\u4eba\u7684\u63a8\u6587\u603b\u7ed3\u3002"""
     path = os.path.join(out_dir, "tweets-daily.json")
@@ -1310,12 +1370,14 @@ def maybe_tweets_daily(out_dir, tweets):
             if len(bullets) >= 4:
                 break
         latest = lst[0] if lst else None
+        summ = llm_summary(name, today, lst)
         persons[key] = {
             "name": name,
             "count": len(lst),
             "first_time": (lst[-1].get("time") if lst else ""),
             "last_time": (lst[0].get("time") if lst else ""),
             "bullets": bullets,
+            "summary": summ,
             "latest": {
                 "time": (latest.get("time") if latest else ""),
                 "text": _first_sentence(latest.get("text_zh") or latest.get("text"), 90) if latest else "",
