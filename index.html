@@ -424,7 +424,8 @@ var WORKER_POLL_MS=30000; // 30 seconds
 var DATA_FILES=[
   ['tweets','tweets.json'],['bsc','trench-bsc.json'],['sol','trench-sol.json'],
   ['rb','trench-rb.json'],
-  ['douyin','douyin.json'],['tags','tags-halfhour.json'],['daily','summary-daily.json']
+  ['douyin','douyin.json'],['tags','tags-halfhour.json'],['daily','summary-daily.json'],
+  ['twsdaily','tweets-daily.json']
 ];
 function dataUrl(f){return DATA_BASE+f+'?t='+Date.now();}
 var POLL_MS=15000;
@@ -506,7 +507,7 @@ var PAD_COLOR={flap:'#F5A623', four_meme:'#00C805', gangfun:'#F0B90B', pumpfun:'
   believe:'#8B5CF6', bonk:'#F7931A', meteora:'#E8B44A', raydium:'#5D5FEF', virtuals:'#00D1B2',
   clanker:'#FF6B6B', bags:'#4EA1FF', moonshot:'#FF8FB1'};
 var LIQ={cache:{}, loading:{}};
-var LIQ_TTL=60000;
+var LIQ_TTL=1800000; /* 30 \u5206\u949f */
 
 function compactNum(a){
   a=Math.abs(Number(a)||0);
@@ -667,7 +668,7 @@ function liqMetrics(cur){
 function htmlLiquidity(){
   var open=!!UI.expanded.liq;
   var h='<div class="card liq"><div class="sect tog" data-act="toggle" data-key="liq">💧 公链流动性'
-    +updInfo('liquidity','每5分钟更新')+' <span class="chev">'+(open?'▲':'▼')+'</span></div>';
+    +updInfo('liquidity','每30分钟更新')+' <span class="chev">'+(open?'▲':'▼')+'</span></div>';
   if(!open)return h+'</div>';
   var d=LIQ.cache[UI.liq.iv];
   if(!d){h+='<div class="empty">指标加载中…</div>';return h+'</div>';}
@@ -1404,46 +1405,37 @@ function htmlCounts(){
   return h+'</div>';
 }
 
-/* ============ v48 · 今日推文总结 ============ */
+/* ============ v51 · 今日推文总结（每晚 22:00 生成） ============ */
 function fmtHH(iso){var d=new Date(iso);if(isNaN(d))return '--:--';return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
-function twSumLines(list){
-  var out=[];
-  list.forEach(function(t){
-    var txt=String(t.text_zh||t.text||'').replace(/\s+/g,' ').replace(/https?:\/\/\S+/g,'').trim();
-    if(!txt)return;
-    var first=txt.split(/[\u3002\uff01\uff1f!?]/)[0]||txt;
-    first=first.trim();
-    if(first.length<6)return;
-    first=trunc(first,60);
-    if(out.indexOf(first)<0)out.push(first);
-  });
-  return out.slice(0,4);
-}
 function htmlTweetSum(){
-  var all=histTweets(), today=todayBj(), tot=0, body='';
+  var d=S.data.twsdaily||null;
+  var h='<div class="card twsum"><div class="sect">\u{1F4CB} \u4eca\u65e5\u63a8\u6587\u603b\u7ed3'+updInfo('twsdaily','\u6bcf\u665a22:00\u751f\u6210')+'</div>';
+  if(!d||!d.persons){
+    return h+'<div class="empty">\u6bcf\u665a 22:00 \u751f\u6210\u5f53\u65e5\u603b\u7ed3\uff08\u9996\u6b21\u751f\u6210\u540e\u81ea\u52a8\u51fa\u73b0\uff09</div></div>';
+  }
+  var tot=0;
+  PEOPLE.forEach(function(p){var x=d.persons[p.key];tot+=(x&&x.count)||0;});
+  h+='<div class="muted" style="font-size:11px;margin:-4px 0 8px">'+esc(d.date||'')+' \u00b7 \u4e09\u4eba\u5408\u8ba1 '+tot+' \u6761\u63a8\u6587</div>';
   PEOPLE.forEach(function(p){
-    var list=all.filter(function(t){return t.person===p.key && bjDate(t.time)===today;})
-      .sort(function(a,b){return new Date(b.time)-new Date(a.time);});
-    tot+=list.length;
-    body+='<div class="tsp"><div class="tsp-head">'
+    var x=d.persons[p.key]||{};
+    var n=x.count||0;
+    var meta=n?((n+' \u6761 \u00b7 '+fmtHH(x.first_time)+'\u2013'+fmtHH(x.last_time))):'\u5f53\u65e5\u6682\u65e0';
+    h+='<div class="tsp"><div class="tsp-head">'
       +'<span class="cdot" style="background:'+esc(p.color||'#8b949e')+'"></span>'
       +'<span class="tsp-name">'+esc(p.name)+'</span>'
-      +'<span class="tsp-meta">'+(list.length?(list.length+' \u6761 \u00b7 '+fmtHH(list[list.length-1].time)+'\u2013'+fmtHH(list[0].time)):'\u4eca\u65e5\u6682\u65e0')+'</span>'
-      +'</div>';
-    if(list.length){
-      body+='<ul>'+twSumLines(list).map(function(s){return '<li>'+esc(s)+'</li>';}).join('')+'</ul>';
-      var f=list[0];
-      body+='<div class="tsp-hl" data-act="open-url" data-url="'+esc(f.url||'')+'">'
-        +'<b>\u{1F550} '+esc(fmtHH(f.time))+'</b> '
-        +esc(trunc(String(f.text_zh||f.text||'').replace(/\s+/g,' '),90))
-        +(f.url?' <span class="muted">\u203a</span>':'')
+      +'<span class="tsp-meta">'+esc(meta)+'</span></div>';
+    if(n&&x.bullets&&x.bullets.length){
+      h+='<ul>'+x.bullets.map(function(s){return '<li>'+esc(s)+'</li>';}).join('')+'</ul>';
+    }
+    if(n&&x.latest){
+      h+='<div class="tsp-hl" data-act="open-url" data-url="'+esc(x.latest.url||'')+'">'
+        +'<b>\u{1F550} '+esc(fmtHH(x.latest.time))+'</b> '+esc(x.latest.text||'')
+        +(x.latest.url?' <span class="muted">\u203a</span>':'')
         +'</div>';
     }
-    body+='</div>';
+    h+='</div>';
   });
-  return '<div class="card twsum"><div class="sect">\u{1F4CB} \u4eca\u65e5\u63a8\u6587\u603b\u7ed3'+updInfo('tweets','\u6bcf30\u79d2\u66f4\u65b0')+'</div>'
-    +'<div class="muted" style="font-size:11px;margin:-4px 0 8px">'+esc(today)+' \u00b7 \u4e09\u4eba\u5408\u8ba1 '+tot+' \u6761\u63a8\u6587</div>'
-    +body+'</div>';
+  return h+'</div>';
 }
 function htmlBinance(){
   var bn=S.data.binance;
