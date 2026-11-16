@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-11-16T23:50:45.318623+08:00",
+  "updated_at": "2026-11-16T23:55:42.880060+08:00",
   "chains": [
     {
       "chain": "BSC",
-      "net_inflow": 33855.82004114357,
+      "net_inflow": 33855.8200411431,
       "metrics": {
         "volume": 2564213.9865928544,
-        "buy_volume": 1299034.9033169989,
-        "sell_volume": 1265179.0832758553,
+        "buy_volume": 1299034.9033169986,
+        "sell_volume": 1265179.0832758555,
         "wallet_count": 10073.0,
         "token_count": 1264.0,
         "token_created_count": 535.0,
@@ -20,11 +20,11 @@
     },
     {
       "chain": "Solana",
-      "net_inflow": 131590.69551130664,
+      "net_inflow": 131590.6955113085,
       "metrics": {
         "volume": 14339408.03481694,
-        "buy_volume": 7235499.365164123,
-        "sell_volume": 7103908.669652816,
+        "buy_volume": 7235499.3651641235,
+        "sell_volume": 7103908.669652815,
         "wallet_count": 52936.0,
         "token_count": 5843.0,
         "token_created_count": 2039.0,
@@ -39,9 +39,9 @@
       "chain": "Robinhood",
       "net_inflow": -89402.03529008548,
       "metrics": {
-        "volume": 1292330.2271907981,
-        "buy_volume": 601464.0959503563,
-        "sell_volume": 690866.1312404418,
+        "volume": 1292330.2271907984,
+        "buy_volume": 601464.0959503565,
+        "sell_volume": 690866.1312404419,
         "wallet_count": 3986.0,
         "token_count": 675.0,
         "token_created_count": 88.0,
@@ -73,9 +73,9 @@
       "chain": "Base",
       "net_inflow": -4373.349452809729,
       "metrics": {
-        "volume": 101297.01994013798,
-        "buy_volume": 48461.83524366413,
-        "sell_volume": 52835.18469647386,
+        "volume": 101297.01994013801,
+        "buy_volume": 48461.835243664136,
+        "sell_volume": 52835.184696473865,
         "wallet_count": 581.0,
         "token_count": 170.0,
         "token_created_count": 120.0,
@@ -88,11 +88,11 @@
     },
     {
       "chain": "Arc",
-      "net_inflow": 537.2659786024515,
+      "net_inflow": 537.2659786024524,
       "metrics": {
         "volume": 8851.298305385764,
         "buy_volume": 4694.282141994108,
-        "sell_volume": 4157.016163391657,
+        "sell_volume": 4157.016163391656,
         "wallet_count": 91.0,
         "token_count": 12.0,
         "token_created_count": 1.0,
@@ -105,10 +105,10 @@
     },
     {
       "chain": "Ethereum",
-      "net_inflow": -4607.568664920313,
+      "net_inflow": -4607.568664920316,
       "metrics": {
-        "volume": 41689.9038743262,
-        "buy_volume": 18541.167604702943,
+        "volume": 41689.90387432619,
+        "buy_volume": 18541.16760470294,
         "sell_volume": 23148.736269623256,
         "wallet_count": 162.0,
         "token_count": 24.0,
