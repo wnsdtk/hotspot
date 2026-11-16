@@ -1,6 +1,6 @@
 {
   "date": "2026-11-16",
-  "generated_at": "2026-11-16T12:00:38.930267+08:00",
+  "generated_at": "2026-11-16T22:01:01.425716+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -50,25 +50,79 @@
           "hits": 2
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 10
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 5
+        },
+        {
+          "text": "#$Max 聪明钱扎堆",
+          "hits": 4
+        },
+        {
+          "text": "#$Marvin 同名代币",
+          "hits": 3
+        },
+        {
+          "text": "#$देसी 同名代币",
+          "hits": 2
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$Marvin",
+          "chain": "sol",
+          "ca": "HkRQ6Qcadi5yuoNpZdA1Q7yVF3r7LdEmAw1aKkSxpump",
+          "hits": 6
+        },
+        {
+          "symbol": "$WIGGLES",
+          "chain": "sol",
+          "ca": "2kWx47CUrcXtzptFNnbSXKq3vo1ebqyLBhRytKRGpump",
+          "hits": 5
+        },
+        {
+          "symbol": "$Max",
+          "chain": "sol",
+          "ca": "5qaP7oKUqKffwwo5DaEqDoTtsBLMpdbQTxEkCDaTpump",
+          "hits": 4
+        }
+      ]
     }
   },
   "tags": [
     {
-      "text": "#BSC链新币最密集",
-      "coin_symbol": "$BaByAngel",
-      "coin_ca": "0x7b3127191a16ba14c37e77668a3ffe73bf867777",
-      "coin_chain": "bsc"
-    },
-    {
-      "text": "#$Max 聪明钱扎堆",
-      "coin_symbol": "$Max",
-      "coin_ca": "5qaP7oKUqKffwwo5DaEqDoTtsBLMpdbQTxEkCDaTpump",
+      "text": "#动物Meme持续发酵",
+      "coin_symbol": "$WIGGLES",
+      "coin_ca": "2kWx47CUrcXtzptFNnbSXKq3vo1ebqyLBhRytKRGpump",
       "coin_chain": "sol"
     },
     {
+      "text": "#AI/Agent概念持续发酵",
+      "coin_symbol": "$AI时代",
+      "coin_ca": "0xa5c24fb6182c2c91df61078adaa7bf1598a17777",
+      "coin_chain": "bsc"
+    },
+    {
+      "text": "#BSC链新币最密集",
+      "coin_symbol": "$FLAPDOG",
+      "coin_ca": "0x3512cc94709d479430cf9c0102f478c8bb3f7777",
+      "coin_chain": "bsc"
+    },
+    {
       "text": "#新币发行加速",
-      "coin_symbol": "$LMAO",
-      "coin_ca": "FvQ2Ld7m6pV4e5m7jymJtgKEvjp8S7n6L3WTANDvpump",
+      "coin_symbol": "$GTA6",
+      "coin_ca": "AnvhfTgZXdQk3vLmoUxDtYnTb7tpjQkXpFTHDXYFpump",
       "coin_chain": "sol"
     }
   ],
@@ -76,21 +130,27 @@
     "2026-11-16": {
       "tags": [
         {
-          "text": "#BSC链新币最密集",
-          "coin_symbol": "$BaByAngel",
-          "coin_ca": "0x7b3127191a16ba14c37e77668a3ffe73bf867777",
-          "coin_chain": "bsc"
-        },
-        {
-          "text": "#$Max 聪明钱扎堆",
-          "coin_symbol": "$Max",
-          "coin_ca": "5qaP7oKUqKffwwo5DaEqDoTtsBLMpdbQTxEkCDaTpump",
+          "text": "#动物Meme持续发酵",
+          "coin_symbol": "$WIGGLES",
+          "coin_ca": "2kWx47CUrcXtzptFNnbSXKq3vo1ebqyLBhRytKRGpump",
           "coin_chain": "sol"
         },
         {
+          "text": "#AI/Agent概念持续发酵",
+          "coin_symbol": "$AI时代",
+          "coin_ca": "0xa5c24fb6182c2c91df61078adaa7bf1598a17777",
+          "coin_chain": "bsc"
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "coin_symbol": "$FLAPDOG",
+          "coin_ca": "0x3512cc94709d479430cf9c0102f478c8bb3f7777",
+          "coin_chain": "bsc"
+        },
+        {
           "text": "#新币发行加速",
-          "coin_symbol": "$LMAO",
-          "coin_ca": "FvQ2Ld7m6pV4e5m7jymJtgKEvjp8S7n6L3WTANDvpump",
+          "coin_symbol": "$GTA6",
+          "coin_ca": "AnvhfTgZXdQk3vLmoUxDtYnTb7tpjQkXpFTHDXYFpump",
           "coin_chain": "sol"
         }
       ],
@@ -120,7 +180,32 @@
           "hits": 1
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 10
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 5
+        },
+        {
+          "text": "#$Max 聪明钱扎堆",
+          "hits": 4
+        },
+        {
+          "text": "#$Marvin 同名代币",
+          "hits": 3
+        },
+        {
+          "text": "#$देसी 同名代币",
+          "hits": 2
+        }
+      ]
     }
   }
 }
