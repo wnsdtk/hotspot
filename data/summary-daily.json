@@ -1,6 +1,6 @@
 {
   "date": "2026-11-17",
-  "generated_at": "2026-11-17T12:00:46.597036+08:00",
+  "generated_at": "2026-11-17T22:00:55.043430+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -50,19 +50,73 @@
           "hits": 3
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 9
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 4
+        },
+        {
+          "text": "#$ELON 马斯克提及发酵",
+          "hits": 3
+        },
+        {
+          "text": "#$KATIA 同名代币",
+          "hits": 2
+        },
+        {
+          "text": "#$亲爱的埃隆·马斯克 马斯克提及发酵",
+          "hits": 1
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$ELON",
+          "chain": "bsc",
+          "ca": "0xea8ea9e747565ed48744bd7e6314a41f9c307777",
+          "hits": 3
+        },
+        {
+          "symbol": "$Elon",
+          "chain": "sol",
+          "ca": "DrJPPRpJJopB8zG4fM7wUWYFmUJxjV4hdKHTzDQNpump",
+          "hits": 3
+        },
+        {
+          "symbol": "$KATIA",
+          "chain": "sol",
+          "ca": "9a5uUXxa7LzHkT6YUikttpQsUZm4Etw8qhd2HP7xpump",
+          "hits": 3
+        }
+      ]
     }
   },
   "tags": [
     {
+      "text": "#$Grokia 同名代币",
+      "coin_symbol": "$Grokia",
+      "coin_ca": "0x0c966a89a4fb41c5d5806accf91fdc83e0b77777",
+      "coin_chain": "bsc"
+    },
+    {
       "text": "#BSC链新币最密集",
-      "coin_symbol": "$牛来啦",
-      "coin_ca": "0x50613e4e3654024ded4c483a0161aea0e3967777",
+      "coin_symbol": "$FREECZ",
+      "coin_ca": "0xbc164f989302dc5bdb6e3705e6a19e3741b37777",
       "coin_chain": "bsc"
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$WANTED",
-      "coin_ca": "9jhs5qoJnUFU7AZXbsiD1Q6De6FVsino9Ysw8QU6pump",
+      "coin_symbol": "$Grokia",
+      "coin_ca": "4htgg1WaAis8nui7d5PrHiou6YyNykzzA35yA53Vpump",
       "coin_chain": "sol"
     }
   ],
@@ -70,15 +124,21 @@
     "2026-11-17": {
       "tags": [
         {
+          "text": "#$Grokia 同名代币",
+          "coin_symbol": "$Grokia",
+          "coin_ca": "0x0c966a89a4fb41c5d5806accf91fdc83e0b77777",
+          "coin_chain": "bsc"
+        },
+        {
           "text": "#BSC链新币最密集",
-          "coin_symbol": "$牛来啦",
-          "coin_ca": "0x50613e4e3654024ded4c483a0161aea0e3967777",
+          "coin_symbol": "$FREECZ",
+          "coin_ca": "0xbc164f989302dc5bdb6e3705e6a19e3741b37777",
           "coin_chain": "bsc"
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$WANTED",
-          "coin_ca": "9jhs5qoJnUFU7AZXbsiD1Q6De6FVsino9Ysw8QU6pump",
+          "coin_symbol": "$Grokia",
+          "coin_ca": "4htgg1WaAis8nui7d5PrHiou6YyNykzzA35yA53Vpump",
           "coin_chain": "sol"
         }
       ],
@@ -108,7 +168,32 @@
           "hits": 1
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 9
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 4
+        },
+        {
+          "text": "#$ELON 马斯克提及发酵",
+          "hits": 3
+        },
+        {
+          "text": "#$KATIA 同名代币",
+          "hits": 2
+        },
+        {
+          "text": "#$亲爱的埃隆·马斯克 马斯克提及发酵",
+          "hits": 1
+        }
+      ]
     }
   }
 }
