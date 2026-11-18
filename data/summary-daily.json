@@ -1,6 +1,6 @@
 {
   "date": "2026-11-18",
-  "generated_at": "2026-11-18T12:01:46.029449+08:00",
+  "generated_at": "2026-11-18T22:01:23.080233+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -50,25 +50,61 @@
           "hits": 3
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 6
+        },
+        {
+          "text": "#GTA概念持续发酵",
+          "hits": 5
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 5
+        },
+        {
+          "text": "#$Shockcat 同名代币",
+          "hits": 1
+        },
+        {
+          "text": "#$BUCKZ 同名代币",
+          "hits": 1
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$GTAVI",
+          "chain": "sol",
+          "ca": "ERiM8NiCanarGEnWMnURAoxTuTvUXZbtJsPTirnHpump",
+          "hits": 6
+        },
+        {
+          "symbol": "$BI",
+          "chain": "bsc",
+          "ca": "0x999a528a81fdf735e772a7bbbddeb062f0917777",
+          "hits": 4
+        },
+        {
+          "symbol": "$IDRENT",
+          "chain": "bsc",
+          "ca": "0x5b30d8ec99a42b2e6f69f4258721a56d2bc37777",
+          "hits": 4
+        }
+      ]
     }
   },
   "tags": [
     {
-      "text": "#GTA概念持续发酵",
-      "coin_symbol": "$GTAVI",
-      "coin_ca": "ERiM8NiCanarGEnWMnURAoxTuTvUXZbtJsPTirnHpump",
-      "coin_chain": "sol"
-    },
-    {
-      "text": "#BSC链新币最密集",
-      "coin_symbol": "$memes",
-      "coin_ca": "0x645a22d6b07bc4b1c4a9eb28d61a7044725c7777",
-      "coin_chain": "bsc"
-    },
-    {
       "text": "#新币发行加速",
-      "coin_symbol": "$GTAVI",
-      "coin_ca": "GTByzYabeJKXycQcKD39RCqbAbUtsuC3RCzQN9Swpump",
+      "coin_symbol": "$Koda",
+      "coin_ca": "FWrtYbukgGRxozggKzxgMJ78PQDFqgBHSJ8sd1MF1dPx",
       "coin_chain": "sol"
     }
   ],
@@ -76,21 +112,9 @@
     "2026-11-18": {
       "tags": [
         {
-          "text": "#GTA概念持续发酵",
-          "coin_symbol": "$GTAVI",
-          "coin_ca": "ERiM8NiCanarGEnWMnURAoxTuTvUXZbtJsPTirnHpump",
-          "coin_chain": "sol"
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "coin_symbol": "$memes",
-          "coin_ca": "0x645a22d6b07bc4b1c4a9eb28d61a7044725c7777",
-          "coin_chain": "bsc"
-        },
-        {
           "text": "#新币发行加速",
-          "coin_symbol": "$GTAVI",
-          "coin_ca": "GTByzYabeJKXycQcKD39RCqbAbUtsuC3RCzQN9Swpump",
+          "coin_symbol": "$Koda",
+          "coin_ca": "FWrtYbukgGRxozggKzxgMJ78PQDFqgBHSJ8sd1MF1dPx",
           "coin_chain": "sol"
         }
       ],
@@ -120,7 +144,32 @@
           "hits": 1
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 6
+        },
+        {
+          "text": "#GTA概念持续发酵",
+          "hits": 5
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 5
+        },
+        {
+          "text": "#$Shockcat 同名代币",
+          "hits": 1
+        },
+        {
+          "text": "#$BUCKZ 同名代币",
+          "hits": 1
+        }
+      ]
     }
   }
 }
