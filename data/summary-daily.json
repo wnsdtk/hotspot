@@ -1,6 +1,6 @@
 {
-  "date": "2026-11-17",
-  "generated_at": "2026-11-17T22:00:55.043430+08:00",
+  "date": "2026-11-18",
+  "generated_at": "2026-11-18T12:01:46.029449+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -15,86 +15,38 @@
         },
         {
           "text": "#BSC链新币最密集",
-          "hits": 5
-        },
-        {
-          "text": "#$SNUT 同名代币",
           "hits": 4
         },
         {
-          "text": "#$Max 聪明钱扎堆",
+          "text": "#GTA概念持续发酵",
           "hits": 2
         },
         {
-          "text": "#$Trader 同名代币",
+          "text": "#$SWJ 同名代币",
+          "hits": 1
+        },
+        {
+          "text": "#$NVIDIANS 同名代币",
           "hits": 1
         }
       ],
       "coins": [
         {
-          "symbol": "$WIGGLES",
+          "symbol": "$CSI",
           "chain": "sol",
-          "ca": "2kWx47CUrcXtzptFNnbSXKq3vo1ebqyLBhRytKRGpump",
-          "hits": 6
+          "ca": "6EHTywfoXpDNhL4JGkeYUhiL6mumpmD7j8ByjQaXpump",
+          "hits": 7
         },
         {
-          "symbol": "$SNUT",
+          "symbol": "$GTAVI",
           "chain": "sol",
-          "ca": "48UW5PSMpaN1x2YW3ArY4xEiKyP8bJTFfednCHMG3Jcx",
+          "ca": "ERiM8NiCanarGEnWMnURAoxTuTvUXZbtJsPTirnHpump",
           "hits": 4
         },
         {
-          "symbol": "$Smoke",
-          "chain": "sol",
-          "ca": "GLTriRXa9or4bMDs5yyBz52wstM7KUzXRcBsEHoupump",
-          "hits": 3
-        }
-      ]
-    },
-    "evening": {
-      "themes": [
-        {
-          "text": "#新币发行加速",
-          "hits": 10
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "hits": 9
-        },
-        {
-          "text": "#动物Meme持续发酵",
-          "hits": 4
-        },
-        {
-          "text": "#$ELON 马斯克提及发酵",
-          "hits": 3
-        },
-        {
-          "text": "#$KATIA 同名代币",
-          "hits": 2
-        },
-        {
-          "text": "#$亲爱的埃隆·马斯克 马斯克提及发酵",
-          "hits": 1
-        }
-      ],
-      "coins": [
-        {
-          "symbol": "$ELON",
+          "symbol": "$PIKA",
           "chain": "bsc",
-          "ca": "0xea8ea9e747565ed48744bd7e6314a41f9c307777",
-          "hits": 3
-        },
-        {
-          "symbol": "$Elon",
-          "chain": "sol",
-          "ca": "DrJPPRpJJopB8zG4fM7wUWYFmUJxjV4hdKHTzDQNpump",
-          "hits": 3
-        },
-        {
-          "symbol": "$KATIA",
-          "chain": "sol",
-          "ca": "9a5uUXxa7LzHkT6YUikttpQsUZm4Etw8qhd2HP7xpump",
+          "ca": "0xe7ce643ab94d87c7509a53cd06cf92e947096666",
           "hits": 3
         }
       ]
@@ -102,43 +54,43 @@
   },
   "tags": [
     {
-      "text": "#$Grokia 同名代币",
-      "coin_symbol": "$Grokia",
-      "coin_ca": "0x0c966a89a4fb41c5d5806accf91fdc83e0b77777",
-      "coin_chain": "bsc"
+      "text": "#GTA概念持续发酵",
+      "coin_symbol": "$GTAVI",
+      "coin_ca": "ERiM8NiCanarGEnWMnURAoxTuTvUXZbtJsPTirnHpump",
+      "coin_chain": "sol"
     },
     {
       "text": "#BSC链新币最密集",
-      "coin_symbol": "$FREECZ",
-      "coin_ca": "0xbc164f989302dc5bdb6e3705e6a19e3741b37777",
+      "coin_symbol": "$memes",
+      "coin_ca": "0x645a22d6b07bc4b1c4a9eb28d61a7044725c7777",
       "coin_chain": "bsc"
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$Grokia",
-      "coin_ca": "4htgg1WaAis8nui7d5PrHiou6YyNykzzA35yA53Vpump",
+      "coin_symbol": "$GTAVI",
+      "coin_ca": "GTByzYabeJKXycQcKD39RCqbAbUtsuC3RCzQN9Swpump",
       "coin_chain": "sol"
     }
   ],
   "history": {
-    "2026-11-17": {
+    "2026-11-18": {
       "tags": [
         {
-          "text": "#$Grokia 同名代币",
-          "coin_symbol": "$Grokia",
-          "coin_ca": "0x0c966a89a4fb41c5d5806accf91fdc83e0b77777",
-          "coin_chain": "bsc"
+          "text": "#GTA概念持续发酵",
+          "coin_symbol": "$GTAVI",
+          "coin_ca": "ERiM8NiCanarGEnWMnURAoxTuTvUXZbtJsPTirnHpump",
+          "coin_chain": "sol"
         },
         {
           "text": "#BSC链新币最密集",
-          "coin_symbol": "$FREECZ",
-          "coin_ca": "0xbc164f989302dc5bdb6e3705e6a19e3741b37777",
+          "coin_symbol": "$memes",
+          "coin_ca": "0x645a22d6b07bc4b1c4a9eb28d61a7044725c7777",
           "coin_chain": "bsc"
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$Grokia",
-          "coin_ca": "4htgg1WaAis8nui7d5PrHiou6YyNykzzA35yA53Vpump",
+          "coin_symbol": "$GTAVI",
+          "coin_ca": "GTByzYabeJKXycQcKD39RCqbAbUtsuC3RCzQN9Swpump",
           "coin_chain": "sol"
         }
       ],
@@ -153,47 +105,22 @@
         },
         {
           "text": "#BSC链新币最密集",
-          "hits": 5
-        },
-        {
-          "text": "#$SNUT 同名代币",
           "hits": 4
         },
         {
-          "text": "#$Max 聪明钱扎堆",
+          "text": "#GTA概念持续发酵",
           "hits": 2
         },
         {
-          "text": "#$Trader 同名代币",
+          "text": "#$SWJ 同名代币",
+          "hits": 1
+        },
+        {
+          "text": "#$NVIDIANS 同名代币",
           "hits": 1
         }
       ],
-      "evening": [
-        {
-          "text": "#新币发行加速",
-          "hits": 10
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "hits": 9
-        },
-        {
-          "text": "#动物Meme持续发酵",
-          "hits": 4
-        },
-        {
-          "text": "#$ELON 马斯克提及发酵",
-          "hits": 3
-        },
-        {
-          "text": "#$KATIA 同名代币",
-          "hits": 2
-        },
-        {
-          "text": "#$亲爱的埃隆·马斯克 马斯克提及发酵",
-          "hits": 1
-        }
-      ]
+      "evening": []
     }
   }
 }
