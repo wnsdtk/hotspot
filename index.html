@@ -1593,7 +1593,7 @@ var SECTIONS=[
   {id:'sec-sol',     sig:function(){return sigData(S.data.sol);}, html:function(){return htmlChain('sol','Solana 战壕',CHAIN_COLOR.Solana);}},
   {id:'sec-rb',      sig:function(){return sigData(S.data.rb);}, html:function(){return htmlChain('rb','Robinhood 战壕',CHAIN_COLOR.Robinhood);}},
   {id:'sec-counts',  sig:function(){var hh=S.hist?(S.hist.updated_at||(S.hist.tweets||[]).length):'0';return hh+'|'+(UI.histOpen||'')+'|'+sigData(S.data.tweets);}, html:htmlCounts},
-  {id:'sec-daily',   sig:function(){return sigData(S.data.daily);}, html:htmlDaily},
+  {id:'sec-daily',   sig:function(){return sigData(S.data.daily)+'|'+((S.data.trending&&S.data.trending.updated_at)||'') + '|' + ((S.data.weibo&&S.data.weibo.updated_at)||'');}, html:htmlDaily},
 ];
 var SEEN_SIG={};
 function setHtml(id,html){var n=document.getElementById(id);if(n)n.innerHTML=html;}
