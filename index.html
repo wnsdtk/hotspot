@@ -1108,17 +1108,52 @@ function dyUpdInfo(){
   var s=t?fmtHM(u):'—';
   return '<span class="upd-info" style="font-weight:400;font-size:11px;color:var(--muted);margin-left:8px">数据 '+esc(s)+' · 每5分钟抓取</span>';
 }
+function wbRisers(){
+  var list=(S.wb&&S.wb.code===200&&Array.isArray(S.wb.data))?S.wb.data:[];
+  if(!list.length) return {rows:[],seeded:false};
+  var prev=null;
+  try{ prev=JSON.parse(localStorage.getItem('wb_snap_v1')||'null'); }catch(e){}
+  var cur={}; list.forEach(function(x,i){ if(x&&x.title) cur[x.title]=i+1; });
+  var idx={}; list.forEach(function(x){ if(x&&x.title) idx[x.title]=x; });
+  var out=[];
+  if(prev&&prev.map){
+    Object.keys(cur).forEach(function(w){
+      var p=prev.map[w], c=cur[w], it=idx[w]||{};
+      var url=it.url||('https://s.weibo.com/weibo?q='+encodeURIComponent(w));
+      if(!p) out.push({word:w,url:url,badge:'新上榜',rank:c});
+      else if(p-c>=8) out.push({word:w,url:url,badge:'↑'+(p-c)+'位',rank:c});
+    });
+  }
+  try{ localStorage.setItem('wb_snap_v1',JSON.stringify({at:Date.now(),map:cur})); }catch(e){}
+  out.sort(function(a,b){ return a.rank-b.rank; });
+  return {rows:out,seeded:!!prev};
+}
 function htmlDyTrend(){
-  var dj=S.data.douyin;
-  var tr=(dj&&Array.isArray(dj.trending))?dj.trending.slice(0,5):null;
-  var h='<div class="card"><div class="sect">📈 抖音实时上升热点'+dyUpdInfo()+'</div>';
-  if(!dj||!tr)h+='<div class="empty">暂无数据</div>';
-  else if(!tr.length)h+='<div class="empty">暂无数据</div>';
-  else h+=tr.map(function(t){
-    var url=t.url||douyinSearch(t.word||'');
-    return '<div class="hrow" data-act="open-url" data-url="'+esc(url)+'">'
-      +'<span class="word">'+esc(t.word||'')+'</span>'
-      +'<span class="badge green">↑上升中</span><span class="badge blue">抖音</span><span class="go">→</span></div>';
+  var dj=S.data.douyin||{};
+  var hot={}; (dj.hotlist||[]).forEach(function(x){ if(x&&x.word)hot[x.word]=1; });
+  var seen={}, dyRows=[];
+  (dj.trending||[]).concat(dj.rising||[]).forEach(function(t){
+    if(!t||!t.word||seen[t.word]||hot[t.word])return;
+    seen[t.word]=1;
+    dyRows.push({word:t.word,url:t.url||douyinSearch(t.word||''),badge:t.tag||'↑上升中',src:'抖音'});
+  });
+  var wb=wbRisers();
+  var wbRows=(wb.rows||[]).map(function(r){
+    return {word:r.word,url:r.url,badge:r.badge,src:'微博'};
+  });
+  var all=dyRows.concat(wbRows).slice(0,15);
+  var u=dj.updated_at?fmtHM(dj.updated_at):'—';
+  var info='<span class="upd-info" style="font-weight:400;font-size:11px;color:var(--muted);margin-left:8px">抖音数据 '+esc(u)+' · 微博实时 · 每5分钟</span>';
+  var h='<div class="card"><div class="sect">📊 抖音 · 微博 实时上升热点'+info+'</div>';
+  if(!all.length){
+    h+='<div class="empty">'+(wb.seeded?'当前没有新的上升词，稍后再看':'微博首次加载中，5 分钟后开始对比')+'</div>';
+    return h+'</div>';
+  }
+  h+=all.map(function(r){
+    var b='<span class="badge '+((r.badge||'').charAt(0)==='↑'?'green':'orange')+'">'+esc(r.badge)+'</span>';
+    var s='<span class="badge '+(r.src==='微博'?'red':'blue')+'">'+esc(r.src)+'</span>';
+    return '<div class="hrow" data-act="open-url" data-url="'+esc(r.url)+'">'
+      +'<span class="word">'+esc(r.word)+'</span>'+b+s+'<span class="go">→</span></div>';
   }).join('');
   return h+'</div>';
 }
@@ -1530,8 +1565,7 @@ function sigData(d){
 }
 var SECTIONS=[
   {id:'sec-moves',   sig:function(){return sigData(S.data.bsc)+sigData(S.data.sol)+sigData(S.data.rb);}, html:htmlSmartMoves},
-  {id:'sec-dy-trend',sig:function(){var d=S.data.douyin;return JSON.stringify((d&&d.trending)||null);}, html:htmlDyTrend},
-  {id:'sec-dy-rise', sig:function(){var d=S.data.douyin||{};return JSON.stringify(d.trending||[]).length+'-'+JSON.stringify(d.rising||[]).length+'-'+((d.hotlist||[]).length);}, html:htmlDyRise},
+  {id:'sec-dy-trend',sig:function(){var d=S.data.douyin||{};return JSON.stringify(d.trending||[]).length+JSON.stringify(d.rising||[]).length+JSON.stringify((S.wb&&S.wb.data||[]).length);}, html:htmlDyTrend},
   {id:'sec-dy-list', sig:function(){return JSON.stringify(S.dy)+'|'+UI.dyN;}, html:htmlDyList},
   {id:'sec-wb-list', sig:function(){return JSON.stringify(S.wb)+'|'+UI.wbN;}, html:htmlWbList},
   {id:'sec-liq',     sig:function(){var c=LIQ.cache[UI.liq.iv];return (c?c.ts:0)+'|'+UI.liq.iv+'|'+UI.liq.chain+'|'+(UI.expanded.liq?'1':'0');}, html:htmlLiquidity},
