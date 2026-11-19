@@ -418,14 +418,14 @@ var XXAPI_DY='https://v2.xxapi.cn/api/douyinhot';
 /* Data lives on the "data" branch. raw.githubusercontent.com is reset on some
    networks (CN), so try several CDN mirrors in order and remember the winner. */
 var DATA_BASES=[
-  'https://fastly.jsdelivr.net/gh/wnsdtk/hotspot@data/data/',
-  'https://gcore.jsdelivr.net/gh/wnsdtk/hotspot@data/data/',
+  'https://raw.githubusercontent.com/wnsdtk/hotspot/data/data/',
   'https://ghproxy.net/https://raw.githubusercontent.com/wnsdtk/hotspot/data/data/',
-  'https://raw.githubusercontent.com/wnsdtk/hotspot/data/data/'
+  'https://fastly.jsdelivr.net/gh/wnsdtk/hotspot@data/data/',
+  'https://gcore.jsdelivr.net/gh/wnsdtk/hotspot@data/data/'
 ];
 var DATA_BASE=DATA_BASES[0];
 try{
-  var _hb=localStorage.getItem('hotspot:base');
+  var _hb=localStorage.getItem('hotspot:base:v2');
   if(_hb && DATA_BASES.indexOf(_hb)>=0){
     DATA_BASES.splice(DATA_BASES.indexOf(_hb),1);
     DATA_BASES.unshift(_hb);
@@ -972,7 +972,7 @@ function fetchData(file){
       .then(function(d){
         if(DATA_BASE!==base){
           DATA_BASE=base;
-          try{localStorage.setItem('hotspot:base',base);}catch(e){}
+          try{localStorage.setItem('hotspot:base:v2',base);}catch(e){}
         }
         DATA_FAIL[file]=0;
         return d;
@@ -1100,10 +1100,18 @@ function topHotlistFallback(hl){
   var top=(hl||[]).slice().sort(function(a,b){return (Number(b.hot_value)||0)-(Number(a.hot_value)||0);}).slice(0,5);
   return top.map(function(t){return {t:t,badge:'hot'};});
 }
+
+function dyUpdInfo(){
+  var d=S.data.douyin;
+  var u=d&&d.updated_at;
+  var t=u?Date.parse(u):0;
+  var s=t?fmtHM(u):'—';
+  return '<span class="upd-info" style="font-weight:400;font-size:11px;color:var(--muted);margin-left:8px">数据 '+esc(s)+' · 每5分钟抓取</span>';
+}
 function htmlDyTrend(){
   var dj=S.data.douyin;
   var tr=(dj&&Array.isArray(dj.trending))?dj.trending.slice(0,5):null;
-  var h='<div class="card"><div class="sect">📈 抖音实时上升热点'+updInfo('douyin','每5分钟更新')+'</div>';
+  var h='<div class="card"><div class="sect">📈 抖音实时上升热点'+dyUpdInfo()+'</div>';
   if(!dj||!tr)h+='<div class="empty">暂无数据</div>';
   else if(!tr.length)h+='<div class="empty">暂无数据</div>';
   else h+=tr.map(function(t){
@@ -1115,7 +1123,7 @@ function htmlDyTrend(){
   return h+'</div>';
 }
 function htmlDyRise(){
-  var h='<div class="card"><div class="sect">🚀 刚上榜 / 飙升'+updInfo('douyin','每5分钟更新')+'</div>';
+  var h='<div class="card"><div class="sect">🚀 刚上榜 / 飙升'+dyUpdInfo()+'</div>';
   if(!S.douyinOk)h+='<div class="empty">暂无数据</div>';
   else{
     // FIX v15: NEVER empty — fall back to top-5 hottest as 飙升
