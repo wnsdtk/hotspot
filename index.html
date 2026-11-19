@@ -1110,7 +1110,7 @@ function dyUpdInfo(){
 }
 function wbRisers(){
   var list=(S.wb&&S.wb.code===200&&Array.isArray(S.wb.data))?S.wb.data:[];
-  if(!list.length) return {rows:[],seeded:false};
+  if(!list.length) return {rows:[],seeded:false,list:[]};
   var prev=null;
   try{ prev=JSON.parse(localStorage.getItem('wb_snap_v1')||'null'); }catch(e){}
   var cur={}; list.forEach(function(x,i){ if(x&&x.title) cur[x.title]=i+1; });
@@ -1120,58 +1120,59 @@ function wbRisers(){
     Object.keys(cur).forEach(function(w){
       var p=prev.map[w], c=cur[w], it=idx[w]||{};
       var url=it.url||('https://s.weibo.com/weibo?q='+encodeURIComponent(w));
-      if(!p) out.push({word:w,url:url,badge:'新上榜',rank:c});
-      else if(p-c>=8) out.push({word:w,url:url,badge:'↑'+(p-c)+'位',rank:c});
+      if(!p) out.push({word:w,url:url,badge:'新上榜',rank:c,pri:0});
+      else if(p-c>=8) out.push({word:w,url:url,badge:'↑'+(p-c)+'位',rank:c,pri:1});
     });
   }
   try{ localStorage.setItem('wb_snap_v1',JSON.stringify({at:Date.now(),map:cur})); }catch(e){}
-  out.sort(function(a,b){ return a.rank-b.rank; });
-  return {rows:out,seeded:!!prev};
+  out.sort(function(a,b){ return (a.pri-b.pri)||(a.rank-b.rank); });
+  return {rows:out,seeded:!!prev,list:list};
 }
 function htmlDyTrend(){
   var dj=S.data.douyin||{};
   var hot={}; (dj.hotlist||[]).forEach(function(x){ if(x&&x.word)hot[x.word]=1; });
   var seen={}, dyRows=[];
+  // 1) 抖音：还没上榜的上升词
   (dj.trending||[]).concat(dj.rising||[]).forEach(function(t){
     if(!t||!t.word||seen[t.word]||hot[t.word])return;
     seen[t.word]=1;
-    dyRows.push({word:t.word,url:t.url||douyinSearch(t.word||''),badge:t.tag||'↑上升中',src:'抖音'});
+    dyRows.push({word:t.word,url:t.url||douyinSearch(t.word||''),badge:t.tag||'↑上升中',src:'抖音',pri:0});
   });
+  // 2) 微博：新进榜 / 排名跃升
   var wb=wbRisers();
   var wbRows=(wb.rows||[]).map(function(r){
-    return {word:r.word,url:r.url,badge:r.badge,src:'微博'};
+    return {word:r.word,url:r.url,badge:r.badge,src:'微博',pri:r.pri};
   });
-  var all=dyRows.concat(wbRows).slice(0,15);
-  var u=dj.updated_at?fmtHM(dj.updated_at):'—';
-  var info='<span class="upd-info" style="font-weight:400;font-size:11px;color:var(--muted);margin-left:8px">抖音数据 '+esc(u)+' · 微博实时 · 每5分钟</span>';
-  var h='<div class="card"><div class="sect">📊 抖音 · 微博 实时上升热点'+info+'</div>';
-  if(!all.length){
-    h+='<div class="empty">'+(wb.seeded?'当前没有新的上升词，稍后再看':'微博首次加载中，5 分钟后开始对比')+'</div>';
-    return h+'</div>';
+  var all=dyRows.concat(wbRows);
+  // 3) 不足 15 条：微博长尾（30 名以后）补位
+  if(all.length<15 && wb.list && wb.list.length){
+    wb.list.slice(29).forEach(function(x){
+      if(all.length>=15||!x||!x.title)return;
+      if(seen[x.title])return; seen[x.title]=1;
+      all.push({word:x.title,url:x.url||('https://s.weibo.com/weibo?q='+encodeURIComponent(x.title)),badge:'微博#'+(x.index||'?'),src:'微博',pri:9});
+    });
   }
+  // 4) 还不足：抖音榜内「新/热」补位（10 名以后）
+  if(all.length<15){
+    (dj.hotlist||[]).slice(9).forEach(function(x){
+      if(all.length>=15||!x||!x.word||seen[x.word])return;
+      if(!(x.label===1||x.label===3))return;
+      seen[x.word]=1;
+      all.push({word:x.word,url:douyinSearch(x.word),badge:'抖音'+(x.label===3?'热':'新'),src:'抖音',pri:9});
+    });
+  }
+  all=all.slice(0,15);
+  var u=dj.updated_at?fmtHM(dj.updated_at):'—';
+  var dyN=all.filter(function(r){return r.src==='抖音';}).length;
+  var wbN=all.length-dyN;
+  var info='<span class="upd-info" style="font-weight:400;font-size:11px;color:var(--muted);margin-left:8px">抖音数据 '+esc(u)+' · 抖音 '+dyN+' / 微博 '+wbN+' · 每5分钟</span>';
+  var h='<div class="card"><div class="sect">📊 抖音 · 微博 实时上升热点'+info+'</div>';
+  if(!all.length){ h+='<div class="empty">数据加载中…</div>'; return h+'</div>'; }
   h+=all.map(function(r){
     var b='<span class="badge '+((r.badge||'').charAt(0)==='↑'?'green':'orange')+'">'+esc(r.badge)+'</span>';
     var s='<span class="badge '+(r.src==='微博'?'red':'blue')+'">'+esc(r.src)+'</span>';
     return '<div class="hrow" data-act="open-url" data-url="'+esc(r.url)+'">'
       +'<span class="word">'+esc(r.word)+'</span>'+b+s+'<span class="go">→</span></div>';
-  }).join('');
-  return h+'</div>';
-}
-function htmlDyRise(){
-  var dj=S.data.douyin||{};
-  var hot={}; (dj.hotlist||[]).forEach(function(x){ if(x&&x.word)hot[x.word]=1; });
-  var seen={}, rows=[];
-  (dj.trending||[]).concat(dj.rising||[]).forEach(function(t){
-    if(!t||!t.word||seen[t.word]||hot[t.word])return;
-    seen[t.word]=1; rows.push(t);
-  });
-  var h='<div class="card"><div class="sect">🌱 还没上榜的热点'+dyUpdInfo()+'</div>';
-  if(!rows.length){ return h+'<div class="empty">当前上升词都已上榜，稍后再看</div></div>'; }
-  h+=rows.slice(0,8).map(function(t){
-    var url=t.url||douyinSearch(t.word||'');
-    var b=t.tag?'<span class="badge orange">'+esc(t.tag)+'</span>':'<span class="badge green">↑上升中</span>';
-    return '<div class="hrow" data-act="open-url" data-url="'+esc(url)+'">'
-      +'<span class="word">'+esc(t.word)+'</span>'+b+'<span class="badge blue">抖音</span><span class="go">→</span></div>';
   }).join('');
   return h+'</div>';
 }
