@@ -721,7 +721,7 @@ function chainNarrative(dd){
     if(!keys.length) keys=Object.keys(t.chains).filter(function(k){return (t.chains[k]||[]).length;});
     if(keys.length){
       var rows=keys.map(function(k){
-        var list=(t.chains[k]||[]).slice(0,5);
+        var seen={},list=[];(t.chains[k]||[]).forEach(function(c){ if(!c||!c.symbol)return; var sy=String(c.symbol).toUpperCase(); if(seen[sy])return; seen[sy]=1; list.push(c); }); list=list.slice(0,5);
         var chips=list.map(function(c){
           var chg=(c.chg24==null||isNaN(c.chg24))?'':((c.chg24>=0?'+':'')+Number(c.chg24).toFixed(1)+'%');
           var col=(c.chg24>=0)?'#00C805':'#e5484d';
