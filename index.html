@@ -731,7 +731,8 @@ function chainNarrative(dd){
           return '<a class="cnc" href="'+esc(debotUrl(CHKEY[k]||'bsc', c.ca))+'">$'+esc(c.symbol)
             +(chg?'<i style="color:'+col+'">'+chg+'</i>':'')+'</a>';
         }).join('');
-        return '<div class="cnrow"><div class="cnh"><b>'+esc(k)+'</b><em>'+list.length+' 个热门</em></div><div class="cnl">'+chips+'</div></div>';
+        var CC={BSC:'#F0B90B',Solana:'#A371FF',Ethereum:'#58a6ff',Base:'#0052FF'};
+        return '<div class="cnrow"><div class="cnh"><b style="color:'+(CC[k]||'#e6edf3')+'">'+esc(k)+'</b><em>'+list.length+' 个热门</em></div><div class="cnl">'+chips+'</div></div>';
       }).join('');
       var tm=t.updated_at?fmtHM(t.updated_at):'—';
       var seenT={},main=[];
@@ -2177,6 +2178,10 @@ if(typeof globalThis.__TEST__==='undefined'){
   border-bottom:1px solid var(--border,#262d36);}
 #eqn-news .eqn-title{font-weight:700; font-size:13.5px; color:#e6edf3;}
 #eqn-news .eqn-open{margin-left:auto; font-size:12px; color:var(--blue,#58a6ff);}
+.cnh b{font-size:14px; font-weight:800; letter-spacing:.2px;}
+.cnl{gap:7px;}
+.cnc{font-size:13px; padding:3px 10px;}
+.cnc i{font-size:11.5px;}
 #eqn-news .eqn-box{width:100%; height:620px; overflow:hidden; background:#fff;}
 /* zoom 而不是 transform：文字按 78% 重新排版，边缘清晰不糊；795*0.78≈620 */
 #eqn-news .eqn-box iframe{display:block; width:100%; height:795px; border:0; zoom:.78; background:#fff;}
@@ -2184,10 +2189,10 @@ if(typeof globalThis.__TEST__==='undefined'){
   #eqn-news{margin:6px 0 60px; border-radius:10px;}
   #eqn-news .eqn-head{padding:6px 10px;}
   #eqn-news .eqn-title{font-size:12.5px;}
-  #eqn-news .eqn-box{height:66vh; min-height:560px; position:relative;}
-  /* iOS Safari 不支持 iframe 上的 zoom，用 transform 等比缩小；192.3%*0.52=100% */
-  #eqn-news .eqn-box iframe{position:absolute; top:0; left:0; width:192.3%; height:127vh;
-    min-height:1077px; transform:scale(.52); transform-origin:0 0; zoom:1;}
+  #eqn-news .eqn-box{height:68vh; min-height:580px; position:relative;}
+  /* iOS Safari 不支持 iframe 上的 zoom，用 transform 等比缩小；149.3%*0.67≈100% */
+  #eqn-news .eqn-box iframe{position:absolute; top:0; left:0; width:149.3%; height:100vh;
+    min-height:860px; transform:scale(.67); transform-origin:0 0; zoom:1;}
 }
 </style>
 <div id="eqn-news" class="tabpane" hidden>
