@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://ghproxy.net" crossorigin>
+<link rel="dns-prefetch" href="https://raw.githubusercontent.com">
+<link rel="dns-prefetch" href="https://eqn.news">
 <title>手机热点监控</title>
 <style>
 :root{
@@ -997,9 +1000,21 @@ function fetchData(file){
   }
   return next();
 }
+function cacheKey(u){var s=String(u).split('?')[0];return 'hs:'+s.slice(s.lastIndexOf('/')+1);}
 function fetchJson(url){
+  var key=cacheKey(url), cached=null;
+  try{var o=JSON.parse(localStorage.getItem(key)||'null');if(o&&o.d)cached=o.d;}catch(e){}
   return fetch(url,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
-    .catch(function(){return null;});
+    .then(function(d){try{var s=JSON.stringify(d);if(s.length<300000)localStorage.setItem(key,JSON.stringify({t:Date.now(),d:d}));}catch(e){}return d;})
+    .catch(function(){return cached;});
+}
+function hydrateCache(){
+  try{
+    DATA_FILES.forEach(function(j){
+      var o=JSON.parse(localStorage.getItem('hs:'+j[1])||'null');
+      if(o&&o.d&&!S.data[j[0]])S.data[j[0]]=o.d;
+    });
+  }catch(e){}
 }
 function freshestStamp(){
   var best=null,bt=0;
@@ -2122,6 +2137,7 @@ function boot(){
   var b=document.getElementById('xbtn-zb');
   if(b)b.href='https://x.com/search?q=%40cz_binance%20since:'+y+'&f=top';
   buildShell();
+  hydrateCache();
   updateSections();
   fetchLiq(UI.liq.iv,true).then(function(){updateSections();});
   refresh();
@@ -2181,7 +2197,7 @@ if(typeof globalThis.__TEST__==='undefined'){
     <a class="eqn-open" href="https://eqn.news/?ch=pricechange" target="_blank" rel="noopener">新窗口打开 ↗</a>
   </div>
   <div class="eqn-box">
-    <iframe src="https://eqn.news/?ch=pricechange" title="方程式新闻 Equation News"
+    <iframe data-src="https://eqn.news/?ch=pricechange" title="方程式新闻 Equation News"
       loading="lazy" referrerpolicy="no-referrer-when-downgrade" allow="clipboard-write"></iframe>
   </div>
 </div>
@@ -2189,7 +2205,7 @@ if(typeof globalThis.__TEST__==='undefined'){
 (function(){
   var card=document.getElementById('eqn-news'), pane=document.getElementById('tab-summary');
   if(!card||!pane) return;
-  function sync(){ card.hidden = !!pane.hidden; }
+  function sync(){ card.hidden = !!pane.hidden; var f=card.querySelector('iframe'); if(f&&!f.src&&!pane.hidden&&f.getAttribute('data-src')){ f.src=f.getAttribute('data-src'); } }
   try{ new MutationObserver(sync).observe(pane,{attributes:true,attributeFilter:['hidden','class','style']}); }catch(e){}
   document.addEventListener('click',function(){ setTimeout(sync,0); },true);
   sync();
