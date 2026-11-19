@@ -437,7 +437,7 @@ var WORKER_POLL_MS=30000; // 30 seconds
 var DATA_FILES=[
   ['tweets','tweets.json'],['bsc','trench-bsc.json'],['sol','trench-sol.json'],
   ['rb','trench-rb.json'],
-  ['douyin','douyin.json'],['weibo','weibo.json'],['tags','tags-halfhour.json'],['daily','summary-daily.json'],
+  ['douyin','douyin.json'],['weibo','weibo.json'],['trending','trending.json'],['tags','tags-halfhour.json'],['daily','summary-daily.json'],
   ['twsdaily','tweets-daily.json']
 ];
 function dataUrl(f){return DATA_BASE+f+'?t='+Date.now();}
@@ -713,22 +713,42 @@ function dailyPeriod(p,label,range,emoji){
 }
 
 function chainNarrative(dd){
-  var CHAIN_LABEL={Sol:'Solana',BSC:'BSC',ETH:'Ethereum',Base:'Base',Arc:'Arc',Robinhood:'Robinhood','OKX':'OKX'};
+  var t=S.data.trending;
+  var CHKEY={BSC:'bsc',Solana:'sol',Ethereum:'eth',Base:'base'};
+  if(t&&t.chains){
+    var order=['BSC','Solana','Ethereum','Base'];
+    var keys=order.filter(function(k){return t.chains[k]&&t.chains[k].length;});
+    if(!keys.length) keys=Object.keys(t.chains).filter(function(k){return (t.chains[k]||[]).length;});
+    if(keys.length){
+      var rows=keys.map(function(k){
+        var list=(t.chains[k]||[]).slice(0,5);
+        var chips=list.map(function(c){
+          var chg=(c.chg24==null||isNaN(c.chg24))?'':((c.chg24>=0?'+':'')+Number(c.chg24).toFixed(1)+'%');
+          var col=(c.chg24>=0)?'#00C805':'#e5484d';
+          return '<a class="cnc" href="'+esc(debotUrl(CHKEY[k]||'bsc', c.ca))+'">$'+esc(c.symbol)
+            +(chg?'<i style="color:'+col+'">'+chg+'</i>':'')+'</a>';
+        }).join('');
+        return '<div class="cnrow"><div class="cnh"><b>'+esc(k)+'</b><em>'+list.length+' 个热门</em></div><div class="cnl">'+chips+'</div></div>';
+      }).join('');
+      var tm=t.updated_at?fmtHM(t.updated_at):'—';
+      return '<div class="dperiod"><div class="dph">🌐 各公链在玩什么 <span>24h 成交额 Top · '+esc(tm)+'</span></div>'+rows+'</div>';
+    }
+  }
+  // 回退：用热度总结里的币聚合
   var map={};
   ['morning','evening','afternoon'].forEach(function(k){
-    var p=dd.periods[k]; if(!p||!p.coins) return;
+    var p=dd&&dd.periods&&dd.periods[k]; if(!p||!p.coins) return;
     p.coins.forEach(function(c){
       var cn=chainName(c.chain)||c.chain||'其他';
-      if(CHAIN_LABEL[cn])cn=CHAIN_LABEL[cn];
       var m=map[cn]||(map[cn]={hits:0,coins:[]});
       m.hits+=Number(c.hits)||0; m.coins.push(c);
     });
   });
-  var keys=Object.keys(map);
-  if(!keys.length) return '';
-  var max=0; keys.forEach(function(k){ if(map[k].hits>max)max=map[k].hits; });
-  keys.sort(function(a,b){ return map[b].hits-map[a].hits; });
-  var rows=keys.map(function(k){
+  var ks=Object.keys(map);
+  if(!ks.length) return '';
+  var max=0; ks.forEach(function(k){ if(map[k].hits>max)max=map[k].hits; });
+  ks.sort(function(a,b){ return map[b].hits-map[a].hits; });
+  var r2=ks.map(function(k){
     var m=map[k];
     var top=m.coins.slice().sort(function(a,b){ return (b.hits||0)-(a.hits||0); }).slice(0,4).map(function(c){
       return '<a class="cnc" href="'+esc(debotUrl(c.chain,c.ca))+'">$'+esc(String(c.symbol||'').replace(/^\$/,''))+'<i>×'+esc(c.hits)+'</i></a>';
@@ -736,18 +756,7 @@ function chainNarrative(dd){
     var pct=max?Math.max(6,Math.round(m.hits/max*100)):6;
     return '<div class="cnrow"><div class="cnh"><b>'+esc(k)+'</b><span class="cnbar"><i style="width:'+pct+'%"></i></span><em>'+m.hits+' 次</em></div><div class="cnl">'+top+'</div></div>';
   }).join('');
-  // 今日主线：两段 themes 去重后取前 4 个
-  var seen={}, main=[];
-  ['morning','evening','afternoon'].forEach(function(k){
-    var p=dd.periods[k]; if(!p||!p.themes) return;
-    p.themes.forEach(function(t){
-      var s=(t&&t.text)||''; if(!s||seen[s])return; seen[s]=1; main.push(s);
-    });
-  });
-  var mainHtml=main.slice(0,4).map(function(s){return '<span class="dchip">'+esc(s)+'</span>';}).join('');
-  return '<div class="dperiod"><div class="dph">🌐 各公链在玩什么 <span>按提及次数排序</span></div>'
-    +(mainHtml?'<div class="dchips" style="margin-bottom:8px">'+mainHtml+'</div>':'')
-    +rows+'</div>';
+  return '<div class="dperiod"><div class="dph">🌐 各公链在玩什么 <span>按提及次数排序</span></div>'+r2+'</div>';
 }
 function htmlDaily(){
   var dd=S.data.daily;
