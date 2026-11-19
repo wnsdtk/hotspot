@@ -418,8 +418,8 @@ var XXAPI_DY='https://v2.xxapi.cn/api/douyinhot';
 /* Data lives on the "data" branch. raw.githubusercontent.com is reset on some
    networks (CN), so try several CDN mirrors in order and remember the winner. */
 var DATA_BASES=[
-  'https://raw.githubusercontent.com/wnsdtk/hotspot/data/data/',
   'https://ghproxy.net/https://raw.githubusercontent.com/wnsdtk/hotspot/data/data/',
+  'https://raw.githubusercontent.com/wnsdtk/hotspot/data/data/',
   'https://fastly.jsdelivr.net/gh/wnsdtk/hotspot@data/data/',
   'https://gcore.jsdelivr.net/gh/wnsdtk/hotspot@data/data/'
 ];
@@ -2168,10 +2168,10 @@ if(typeof globalThis.__TEST__==='undefined'){
   #eqn-news{margin:6px 0 60px; border-radius:10px;}
   #eqn-news .eqn-head{padding:6px 10px;}
   #eqn-news .eqn-title{font-size:12.5px;}
-  #eqn-news .eqn-box{height:62vh; min-height:520px; position:relative;}
-  /* iOS Safari 不支持对 iframe 生效的 zoom，这里改用 transform（等比例缩小） */
-  #eqn-news .eqn-box iframe{position:absolute; top:0; left:0; width:250%; height:155vh;
-    min-height:1300px; transform:scale(.40); transform-origin:0 0; zoom:1;}
+  #eqn-news .eqn-box{height:66vh; min-height:560px; position:relative;}
+  /* iOS Safari 不支持 iframe 上的 zoom，用 transform 等比缩小；192.3%*0.52=100% */
+  #eqn-news .eqn-box iframe{position:absolute; top:0; left:0; width:192.3%; height:127vh;
+    min-height:1077px; transform:scale(.52); transform-origin:0 0; zoom:1;}
 }
 </style>
 <div id="eqn-news" class="tabpane" hidden>
