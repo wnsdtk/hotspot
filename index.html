@@ -723,7 +723,7 @@ function chainNarrative(dd){
   var t=S.data.trending;
   var CHKEY={BSC:'bsc',Solana:'sol',Ethereum:'eth',Base:'base'};
   if(t&&t.chains){
-    var order=['BSC','Solana','Ethereum','Base'];
+    var order=['BSC','Solana','Ethereum'];
     var keys=order.filter(function(k){return t.chains[k]&&t.chains[k].length;});
     if(!keys.length) keys=Object.keys(t.chains).filter(function(k){return (t.chains[k]||[]).length;});
     if(keys.length){
