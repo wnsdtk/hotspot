@@ -437,7 +437,7 @@ var WORKER_POLL_MS=30000; // 30 seconds
 var DATA_FILES=[
   ['tweets','tweets.json'],['bsc','trench-bsc.json'],['sol','trench-sol.json'],
   ['rb','trench-rb.json'],
-  ['douyin','douyin.json'],['tags','tags-halfhour.json'],['daily','summary-daily.json'],
+  ['douyin','douyin.json'],['weibo','weibo.json'],['tags','tags-halfhour.json'],['daily','summary-daily.json'],
   ['twsdaily','tweets-daily.json']
 ];
 function dataUrl(f){return DATA_BASE+f+'?t='+Date.now();}
@@ -1109,7 +1109,16 @@ function dyUpdInfo(){
   return '<span class="upd-info" style="font-weight:400;font-size:11px;color:var(--muted);margin-left:8px">数据 '+esc(s)+' · 每5分钟抓取</span>';
 }
 function wbRisers(){
+  var f=S.data.weibo;
   var list=(S.wb&&S.wb.code===200&&Array.isArray(S.wb.data))?S.wb.data:[];
+  if(f&&Array.isArray(f.rising)&&f.rising.length){
+    var rows=f.rising.map(function(r){
+      return {word:r.word,url:r.url,badge:r.tag||'新上榜',rank:Number(r.to)||99,
+              pri:(String(r.tag||'').charAt(0)==='↑')?1:0};
+    });
+    rows.sort(function(a,b){return (a.pri-b.pri)||(a.rank-b.rank);});
+    return {rows:rows,seeded:true,list:list,source:'file'};
+  }
   if(!list.length) return {rows:[],seeded:false,list:[]};
   var prev=null;
   try{ prev=JSON.parse(localStorage.getItem('wb_snap_v1')||'null'); }catch(e){}
@@ -1126,7 +1135,7 @@ function wbRisers(){
   }
   try{ localStorage.setItem('wb_snap_v1',JSON.stringify({at:Date.now(),map:cur})); }catch(e){}
   out.sort(function(a,b){ return (a.pri-b.pri)||(a.rank-b.rank); });
-  return {rows:out,seeded:!!prev,list:list};
+  return {rows:out,seeded:!!prev,list:list,source:'local'};
 }
 function htmlDyTrend(){
   var dj=S.data.douyin||{};
