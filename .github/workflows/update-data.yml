@@ -74,6 +74,16 @@ jobs:
           HELIUS_KEY: ${{ secrets.HELIUS_KEY }}
         run: python /tmp/work/fetch_loop.py --out-dir ./data --state-dir .
 
+      - name: Fetch weibo + trending (inline)
+        continue-on-error: true
+        run: |
+          git show origin/main:scripts/fetch-weibo.mjs > /tmp/work/fetch-weibo.mjs 2>/dev/null || true
+          git show origin/main:scripts/fetch-trending.mjs > /tmp/work/fetch-trending.mjs 2>/dev/null || true
+          if [ -s /tmp/work/fetch-weibo.mjs ]; then node /tmp/work/fetch-weibo.mjs || true; fi
+          LAST=$(git log -1 --format=%ct -- data/trending.json 2>/dev/null || echo 0)
+          NOW=$(date +%s)
+          if [ -s /tmp/work/fetch-trending.mjs ] && [ $((NOW-LAST)) -ge 1800 ]; then node /tmp/work/fetch-trending.mjs || true; fi
+
       - name: Commit and push (rebase once, retry once)
         run: |
           set -e
@@ -90,10 +100,3 @@ jobs:
             git push origin data
           fi
 
-      - name: Trigger side workflows (weibo / trending)
-        if: always()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh workflow run fetch-weibo.yml --ref main || true
-          gh workflow run fetch-trending.yml --ref main || true
