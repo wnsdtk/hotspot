@@ -27,6 +27,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: update-data
@@ -88,3 +89,11 @@ jobs:
             git pull --rebase origin data
             git push origin data
           fi
+
+      - name: Trigger side workflows (weibo / trending)
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run fetch-weibo.yml --ref main || true
+          gh workflow run fetch-trending.yml --ref main || true
