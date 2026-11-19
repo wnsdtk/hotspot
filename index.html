@@ -2030,16 +2030,22 @@ if(typeof globalThis.__TEST__==='undefined'){
   else boot();
 }
 </script>
+
 <!-- ===== v54 · 方程式新闻 eqn.news ===== -->
 <style>
 #eqn-news{margin:12px 12px 80px; border:1px solid var(--border,#262d36); border-radius:12px;
   background:var(--card,#161b22); overflow:hidden;}
-#eqn-news .eqn-head{display:flex; align-items:center; gap:8px; padding:10px 12px;
+#eqn-news .eqn-head{display:flex; align-items:center; gap:8px; padding:9px 12px;
   border-bottom:1px solid var(--border,#262d36);}
 #eqn-news .eqn-title{font-weight:700; font-size:13.5px; color:#e6edf3;}
 #eqn-news .eqn-open{margin-left:auto; font-size:12px; color:var(--blue,#58a6ff);}
-#eqn-news iframe{display:block; width:100%; height:560px; border:0; background:#0d1117;}
-@media(max-width:420px){#eqn-news iframe{height:460px;}}
+#eqn-news .eqn-box{position:relative; width:100%; height:620px; overflow:hidden; background:#fff;}
+#eqn-news .eqn-box iframe{position:absolute; top:0; left:0; width:128%; height:128%;
+  transform:scale(.78); transform-origin:0 0; border:0; background:#fff;}
+@media(max-width:420px){
+  #eqn-news .eqn-box{height:520px;}
+  #eqn-news .eqn-box iframe{width:135%; height:135%; transform:scale(.74);}
+}
 </style>
 <div id="eqn-news" class="tabpane" hidden>
   <div class="eqn-head">
@@ -2047,8 +2053,10 @@ if(typeof globalThis.__TEST__==='undefined'){
     <span class="small muted">7×24 秒级加密货币快讯</span>
     <a class="eqn-open" href="https://eqn.news/?ch=pricechange" target="_blank" rel="noopener">新窗口打开 ↗</a>
   </div>
-  <iframe src="https://eqn.news/?ch=pricechange" title="方程式新闻 Equation News"
-    loading="lazy" referrerpolicy="no-referrer-when-downgrade" allow="clipboard-write"></iframe>
+  <div class="eqn-box">
+    <iframe src="https://eqn.news/?ch=pricechange" title="方程式新闻 Equation News"
+      loading="lazy" referrerpolicy="no-referrer-when-downgrade" allow="clipboard-write"></iframe>
+  </div>
 </div>
 <script>
 (function(){
