@@ -721,7 +721,7 @@ function chainNarrative(dd){
     if(!keys.length) keys=Object.keys(t.chains).filter(function(k){return (t.chains[k]||[]).length;});
     if(keys.length){
       var rows=keys.map(function(k){
-        var seen={},list=[];(t.chains[k]||[]).forEach(function(c){ if(!c||!c.symbol)return; var sy=String(c.symbol).toUpperCase(); if(seen[sy])return; seen[sy]=1; list.push(c); }); list=list.slice(0,5);
+        var seen={},list=[];(t.chains[k]||[]).forEach(function(c){ if(!c||!c.symbol)return; var sy=String(c.symbol).toUpperCase(); if(seen[sy])return; seen[sy]=1; list.push(c); }); list=list.slice(0,8);
         var chips=list.map(function(c){
           var chg=(c.chg24==null||isNaN(c.chg24))?'':((c.chg24>=0?'+':'')+Number(c.chg24).toFixed(1)+'%');
           var col=(c.chg24>=0)?'#00C805':'#e5484d';
@@ -2158,10 +2158,11 @@ if(typeof globalThis.__TEST__==='undefined'){
 /* zoom 而不是 transform：文字按 78% 重新排版，边缘清晰不糊；795*0.78≈620 */
 #eqn-news .eqn-box iframe{display:block; width:100%; height:795px; border:0; zoom:.78; background:#fff;}
 @media(max-width:620px){
-  #eqn-news{margin:8px 0 64px; border-radius:10px;}
-  #eqn-news .eqn-head{padding:7px 10px;}
-  #eqn-news .eqn-box{height:640px;}
-  #eqn-news .eqn-box iframe{height:1032px; zoom:.62;}
+  #eqn-news{margin:6px 0 60px; border-radius:10px;}
+  #eqn-news .eqn-head{padding:6px 10px;}
+  #eqn-news .eqn-title{font-size:12.5px;}
+  #eqn-news .eqn-box{height:680px;}
+  #eqn-news .eqn-box iframe{height:1360px; zoom:.50;}
 }
 </style>
 <div id="eqn-news" class="tabpane" hidden>
