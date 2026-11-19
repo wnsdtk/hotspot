@@ -360,6 +360,19 @@ a{color:var(--blue); text-decoration:none;}
 .twsum .tsp li{font-size:12px; line-height:1.65; margin-bottom:2px;}
 .twsum .tsp-hl{margin-top:6px; background:rgba(240,185,11,.08); border:1px solid rgba(240,185,11,.22);
   border-radius:6px; padding:6px 8px; font-size:11.5px; line-height:1.55; cursor:pointer;}
+
+/* ===== v55 · 各公链今日主线 ===== */
+.cnrow{padding:8px 2px; border-bottom:1px dashed rgba(255,255,255,.07);}
+.cnrow:last-child{border-bottom:none;}
+.cnh{display:flex; align-items:center; gap:8px; font-size:12.5px;}
+.cnh b{min-width:64px; color:#e6edf3;}
+.cnh em{margin-left:auto; font-style:normal; color:var(--dim,#66727f); font-size:11px;}
+.cnbar{flex:1; height:5px; border-radius:3px; background:rgba(255,255,255,.08); overflow:hidden;}
+.cnbar i{display:block; height:100%; border-radius:3px; background:linear-gradient(90deg,#1f6feb,#58a6ff);}
+.cnl{margin-top:6px; display:flex; flex-wrap:wrap; gap:6px;}
+.cnc{font-size:12px; color:#e6edf3; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08);
+  border-radius:999px; padding:2px 9px; text-decoration:none; white-space:nowrap;}
+.cnc i{font-style:normal; color:var(--yellow,#F0B90B); font-size:10.5px; margin-left:3px;}
 </style>
 </head>
 <body>
@@ -698,6 +711,44 @@ function dailyPeriod(p,label,range,emoji){
     +(chips?'<div class="dchips">'+chips+'</div>':'')
     +(rows?'<div class="dcoins">'+rows+'</div>':'')+'</div>';
 }
+
+function chainNarrative(dd){
+  var CHAIN_LABEL={Sol:'Solana',BSC:'BSC',ETH:'Ethereum',Base:'Base',Arc:'Arc',Robinhood:'Robinhood','OKX':'OKX'};
+  var map={};
+  ['morning','evening','afternoon'].forEach(function(k){
+    var p=dd.periods[k]; if(!p||!p.coins) return;
+    p.coins.forEach(function(c){
+      var cn=chainName(c.chain)||c.chain||'其他';
+      if(CHAIN_LABEL[cn])cn=CHAIN_LABEL[cn];
+      var m=map[cn]||(map[cn]={hits:0,coins:[]});
+      m.hits+=Number(c.hits)||0; m.coins.push(c);
+    });
+  });
+  var keys=Object.keys(map);
+  if(!keys.length) return '';
+  var max=0; keys.forEach(function(k){ if(map[k].hits>max)max=map[k].hits; });
+  keys.sort(function(a,b){ return map[b].hits-map[a].hits; });
+  var rows=keys.map(function(k){
+    var m=map[k];
+    var top=m.coins.slice().sort(function(a,b){ return (b.hits||0)-(a.hits||0); }).slice(0,4).map(function(c){
+      return '<a class="cnc" href="'+esc(debotUrl(c.chain,c.ca))+'">$'+esc(String(c.symbol||'').replace(/^\$/,''))+'<i>×'+esc(c.hits)+'</i></a>';
+    }).join('');
+    var pct=max?Math.max(6,Math.round(m.hits/max*100)):6;
+    return '<div class="cnrow"><div class="cnh"><b>'+esc(k)+'</b><span class="cnbar"><i style="width:'+pct+'%"></i></span><em>'+m.hits+' 次</em></div><div class="cnl">'+top+'</div></div>';
+  }).join('');
+  // 今日主线：两段 themes 去重后取前 4 个
+  var seen={}, main=[];
+  ['morning','evening','afternoon'].forEach(function(k){
+    var p=dd.periods[k]; if(!p||!p.themes) return;
+    p.themes.forEach(function(t){
+      var s=(t&&t.text)||''; if(!s||seen[s])return; seen[s]=1; main.push(s);
+    });
+  });
+  var mainHtml=main.slice(0,4).map(function(s){return '<span class="dchip">'+esc(s)+'</span>';}).join('');
+  return '<div class="dperiod"><div class="dph">🌐 各公链在玩什么 <span>按提及次数排序</span></div>'
+    +(mainHtml?'<div class="dchips" style="margin-bottom:8px">'+mainHtml+'</div>':'')
+    +rows+'</div>';
+}
 function htmlDaily(){
   var dd=S.data.daily;
   if(dd&&dd.generated_at){
@@ -712,6 +763,7 @@ function htmlDaily(){
   h+='<div class="dmeta">'+esc(dd.date||'')+' · 战壕全天叙事 · 生成于 '+esc(fmtHM(dd.generated_at))+'</div>';
   h+=dailyPeriod(dd.periods.morning,'上午','00:00 – 12:00','🌅');
   h+=dailyPeriod(dd.periods.evening||dd.periods.afternoon,'下午 / 晚上','12:00 – 22:00','🌆');
+  h+=chainNarrative(dd);
   var hist=dd.history||{};
   var days=Object.keys(hist).filter(function(d){return d!==dd.date;}).sort().reverse().slice(0,5);
   if(days.length){
