@@ -731,7 +731,14 @@ function chainNarrative(dd){
         return '<div class="cnrow"><div class="cnh"><b>'+esc(k)+'</b><em>'+list.length+' 个热门</em></div><div class="cnl">'+chips+'</div></div>';
       }).join('');
       var tm=t.updated_at?fmtHM(t.updated_at):'—';
-      return '<div class="dperiod"><div class="dph">🌐 各公链在玩什么 <span>24h 成交额 Top · '+esc(tm)+'</span></div>'+rows+'</div>';
+      var seenT={},main=[];
+      ['morning','evening','afternoon'].forEach(function(k){
+        var p=dd&&dd.periods&&dd.periods[k]; if(!p||!p.themes) return;
+        p.themes.forEach(function(x){ var s=(x&&x.text)||''; if(!s||seenT[s])return; seenT[s]=1; main.push(s); });
+      });
+      var mainHtml=main.slice(0,5).map(function(s){return '<span class="dchip">'+esc(s)+'</span>';}).join('');
+
+      return '<div class="dperiod"><div class="dph">🌐 各公链在玩什么 <span>24h 成交额 Top · '+esc(tm)+'</span></div>'+(mainHtml?'<div class="dchips" style="margin-bottom:8px">'+mainHtml+'</div>':'')+rows+'</div>';
     }
   }
   // 回退：用热度总结里的币聚合
@@ -2161,8 +2168,8 @@ if(typeof globalThis.__TEST__==='undefined'){
   #eqn-news{margin:6px 0 60px; border-radius:10px;}
   #eqn-news .eqn-head{padding:6px 10px;}
   #eqn-news .eqn-title{font-size:12.5px;}
-  #eqn-news .eqn-box{height:680px;}
-  #eqn-news .eqn-box iframe{height:1360px; zoom:.50;}
+  #eqn-news .eqn-box{height:720px;}
+  #eqn-news .eqn-box iframe{height:1600px; zoom:.45;}
 }
 </style>
 <div id="eqn-news" class="tabpane" hidden>
