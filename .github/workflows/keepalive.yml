@@ -1,0 +1,77 @@
+name: keepalive
+
+# 保底任务：即使外面的定时触发停了，这个每小时自己跑一轮，
+# 每 ~5 分钟抓一次数据并提交，保证数据不会长时间断更。
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: keepalive
+  cancel-in-progress: false
+
+jobs:
+  loop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 58
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare data branch and extract scripts
+        run: |
+          set -e
+          git config user.name "hotspot-bot"
+          git config user.email "hotspot-bot@users.noreply.github.com"
+          mkdir -p /tmp/work
+          git show origin/main:.github/workflows/fetch_loop.py > /tmp/work/fetch_loop.py
+          git show origin/main:scripts/fetch-weibo.mjs > /tmp/work/fetch-weibo.mjs 2>/dev/null || true
+          git show origin/main:scripts/fetch-trending.mjs > /tmp/work/fetch-trending.mjs 2>/dev/null || true
+          python3 -m py_compile /tmp/work/fetch_loop.py
+          if git ls-remote --heads origin data | grep -q 'refs/heads/data'; then
+            git fetch origin data
+            git checkout data
+          else
+            git checkout --orphan data
+            git rm -rf . || true
+            git commit --allow-empty -m "init data branch" || true
+          fi
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Continuous fetch loop (6 cycles, ~5 min apart)
+        env:
+          HELIUS_KEY: ${{ secrets.HELIUS_KEY }}
+        run: |
+          set +e
+          for i in $(seq 1 6); do
+            echo "===== cycle $i $(date -u +%H:%M:%SZ) ====="
+            python /tmp/work/fetch_loop.py --out-dir ./data --state-dir . || true
+            if [ -s /tmp/work/fetch-weibo.mjs ]; then node /tmp/work/fetch-weibo.mjs || true; fi
+            LAST=$(git log -1 --format=%ct -- data/trending.json 2>/dev/null || echo 0)
+            NOW=$(date +%s)
+            if [ -s /tmp/work/fetch-trending.mjs ] && [ $((NOW-LAST)) -ge 1800 ]; then
+              node /tmp/work/fetch-trending.mjs || true
+            fi
+            git add -A || true
+            if ! git diff --cached --quiet; then
+              git commit -m "data: $(date -u +%Y-%m-%dT%H:%M:%SZ)" || true
+              git pull --rebase origin data || true
+              git push origin data || { sleep 5; git pull --rebase origin data; git push origin data; } || true
+            else
+              echo "no changes"
+            fi
+            if [ "$i" -lt 6 ]; then sleep 240; fi
+          done
