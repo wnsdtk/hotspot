@@ -1123,19 +1123,21 @@ function htmlDyTrend(){
   return h+'</div>';
 }
 function htmlDyRise(){
-  var h='<div class="card"><div class="sect">🚀 刚上榜 / 飙升'+dyUpdInfo()+'</div>';
-  if(!S.douyinOk)h+='<div class="empty">暂无数据</div>';
-  else{
-    // FIX v15: NEVER empty — fall back to top-5 hottest as 飙升
-    var rows=(S.hotlistRows&&S.hotlistRows.length)?S.hotlistRows:topHotlistFallback();
-    if(!rows.length)h+='<div class="empty">等待数据加载…</div>';
-    else h+=rows.map(function(r){
-      var t=r.t,url=t.url||douyinSearch(t.word||'');
-      var b=r.badge==='new'?'<span class="badge red">新上榜</span>':'<span class="badge orange">飙升</span>';
-      return '<div class="hrow" data-act="open-url" data-url="'+esc(url)+'">'
-        +'<span class="word">'+esc(t.word||'')+'</span>'+b+'<span class="badge blue">抖音</span><span class="go">→</span></div>';
-    }).join('');
-  }
+  var dj=S.data.douyin||{};
+  var hot={}; (dj.hotlist||[]).forEach(function(x){ if(x&&x.word)hot[x.word]=1; });
+  var seen={}, rows=[];
+  (dj.trending||[]).concat(dj.rising||[]).forEach(function(t){
+    if(!t||!t.word||seen[t.word]||hot[t.word])return;
+    seen[t.word]=1; rows.push(t);
+  });
+  var h='<div class="card"><div class="sect">🌱 还没上榜的热点'+dyUpdInfo()+'</div>';
+  if(!rows.length){ return h+'<div class="empty">当前上升词都已上榜，稍后再看</div></div>'; }
+  h+=rows.slice(0,8).map(function(t){
+    var url=t.url||douyinSearch(t.word||'');
+    var b=t.tag?'<span class="badge orange">'+esc(t.tag)+'</span>':'<span class="badge green">↑上升中</span>';
+    return '<div class="hrow" data-act="open-url" data-url="'+esc(url)+'">'
+      +'<span class="word">'+esc(t.word)+'</span>'+b+'<span class="badge blue">抖音</span><span class="go">→</span></div>';
+  }).join('');
   return h+'</div>';
 }
 function htmlDyList(){
@@ -1529,7 +1531,7 @@ function sigData(d){
 var SECTIONS=[
   {id:'sec-moves',   sig:function(){return sigData(S.data.bsc)+sigData(S.data.sol)+sigData(S.data.rb);}, html:htmlSmartMoves},
   {id:'sec-dy-trend',sig:function(){var d=S.data.douyin;return JSON.stringify((d&&d.trending)||null);}, html:htmlDyTrend},
-  {id:'sec-dy-rise', sig:function(){return (S.douyinOk?'1':'0')+'|'+JSON.stringify(S.hotlistRows);}, html:htmlDyRise},
+  {id:'sec-dy-rise', sig:function(){var d=S.data.douyin||{};return JSON.stringify(d.trending||[]).length+'-'+JSON.stringify(d.rising||[]).length+'-'+((d.hotlist||[]).length);}, html:htmlDyRise},
   {id:'sec-dy-list', sig:function(){return JSON.stringify(S.dy)+'|'+UI.dyN;}, html:htmlDyList},
   {id:'sec-wb-list', sig:function(){return JSON.stringify(S.wb)+'|'+UI.wbN;}, html:htmlWbList},
   {id:'sec-liq',     sig:function(){var c=LIQ.cache[UI.liq.iv];return (c?c.ts:0)+'|'+UI.liq.iv+'|'+UI.liq.chain+'|'+(UI.expanded.liq?'1':'0');}, html:htmlLiquidity},
