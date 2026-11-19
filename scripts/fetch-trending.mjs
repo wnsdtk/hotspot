@@ -8,8 +8,8 @@ const OUT = 'data/trending.json';
 const TOPN = 8;
 const UA = { accept: 'application/json', 'user-agent': 'hotspot-bot/1.0' };
 
-const DS_CHAIN = { BSC: 'bsc', Solana: 'solana', Ethereum: 'ethereum', Base: 'base' };
-const GT_NET = { BSC: 'bsc', Solana: 'solana', Ethereum: 'eth', Base: 'base' };
+const DS_CHAIN = { BSC: 'bsc', Solana: 'solana', Ethereum: 'ethereum' };
+const GT_NET = { BSC: 'bsc', Solana: 'solana', Ethereum: 'eth' };
 
 const BLACKLIST = new Set([
   'USDT','USDC','PYUSD','USDS','DAI','TUSD','FDUSD','XAUT','PAXG','WBTC','WETH','STETH','WSTETH',
