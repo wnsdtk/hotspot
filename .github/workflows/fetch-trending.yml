@@ -41,7 +41,12 @@ jobs:
           git add data/trending.json
           if git diff --staged --quiet; then
             echo "no change"
-          else
-            git commit -m "chore(trending): $(date -u +%Y-%m-%dT%H:%MZ)"
-            git push
+            exit 0
+          fi
+          git commit -m "chore(trending): $(date -u +%Y-%m-%dT%H:%MZ)"
+          git pull --rebase origin data || true
+          if ! git push origin HEAD:data; then
+            echo "push retry after rebase"
+            git pull --rebase origin data
+            git push origin HEAD:data
           fi
