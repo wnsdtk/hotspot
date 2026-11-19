@@ -1,9 +1,9 @@
 name: fetch-trending
 
-# 每 15 分钟抓一次各公链热门池（GeckoTerminal 公开 API），写入 data 分支的 data/trending.json
+# 每 30 分钟抓一次各公链热门池（GeckoTerminal 公开 API），写入 data 分支的 data/trending.json
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 permissions:
