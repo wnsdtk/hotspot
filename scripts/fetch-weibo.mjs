@@ -46,7 +46,8 @@ if (prevFile) {
 }
 
 const rising = [];
-for (const it of list) {
+// 首次运行没有上一版快照 → 不做「新上榜」判断，避免全部误标
+for (const it of (prevFile ? list : [])) {
   const p = prevMap[it.title];
   if (!p) rising.push({ word: it.title, url: it.url, tag: '新上榜', from: null, to: it.index });
   else if (p - it.index >= RANK_JUMP) rising.push({ word: it.title, url: it.url, tag: '↑' + (p - it.index) + '位', from: p, to: it.index });
