@@ -2,14 +2,14 @@
 // 主源：Dexscreener 公开 API（token-boosts / token-profiles 发现 + /latest/dex/tokens 取详情）
 // 兜底：GeckoTerminal trending_pools（Dexscreener 覆盖不足的链）
 // 输出 data/trending.json：{ updated_at, chains: { BSC: [...], Solana: [...], ... } }
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs';
 
 const OUT = 'data/trending.json';
 const TOPN = 8;
 const UA = { accept: 'application/json', 'user-agent': 'hotspot-bot/1.0' };
 
-const DS_CHAIN = { BSC: 'bsc', Solana: 'solana', Ethereum: 'ethereum' };
-const GT_NET = { BSC: 'bsc', Solana: 'solana', Ethereum: 'eth' };
+const DS_CHAIN = { BSC: 'bsc', Solana: 'solana', Ethereum: 'ethereum', Base: 'base' };
+const GT_NET = { BSC: 'bsc', Solana: 'solana', Ethereum: 'eth', Base: 'base' };
 
 const BLACKLIST = new Set([
   'USDT','USDC','PYUSD','USDS','DAI','TUSD','FDUSD','XAUT','PAXG','WBTC','WETH','STETH','WSTETH',
@@ -87,7 +87,15 @@ async function details(addresses) {
 // ---------- 2. GeckoTerminal 兜底 ----------
 async function gecko(network) {
   const url = `https://api.geckoterminal.com/api/v2/networks/${network}/trending_pools?page=1&duration=24h`;
-  const j = await jget(url);
+  let j = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try { j = await jget(url); break; }
+    catch (e) {
+      console.log('gecko retry', network, e.message);
+      await sleep(25000);
+    }
+  }
+  if (!j) throw new Error('gecko unavailable');
   const rows = [];
   for (const p of j.data || []) {
     const a = p.attributes || {};
@@ -107,6 +115,9 @@ async function gecko(network) {
 }
 
 // ---------- 主流程 ----------
+let prevData = null;
+try { if (existsSync(OUT)) prevData = JSON.parse(readFileSync(OUT, 'utf8')); } catch {}
+
 const buckets = await discover();
 const chains = {};
 
@@ -130,6 +141,10 @@ for (const [label, cid] of Object.entries(DS_CHAIN)) {
     } catch (e) {
       console.log(`${label} gecko fallback fail`, e.message);
     }
+  }
+  if (rows.length < 4 && prevData && prevData.chains && Array.isArray(prevData.chains[label]) && prevData.chains[label].length) {
+    rows = prevData.chains[label];
+    console.log(`${label}: reuse previous (${rows.length})`);
   }
   rows.sort((a, b) => (b.vol24 || 0) - (a.vol24 || 0));
   chains[label] = rows.slice(0, TOPN);
