@@ -428,7 +428,7 @@ var DATA_BASES=[
 ];
 var DATA_BASE=DATA_BASES[0];
 try{
-  var _hb=localStorage.getItem('hotspot:base:v2');
+  var _hb=localStorage.getItem('hotspot:base:v3');
   if(_hb && DATA_BASES.indexOf(_hb)>=0){
     DATA_BASES.splice(DATA_BASES.indexOf(_hb),1);
     DATA_BASES.unshift(_hb);
@@ -991,7 +991,7 @@ function fetchData(file){
       .then(function(d){
         if(DATA_BASE!==base){
           DATA_BASE=base;
-          try{localStorage.setItem('hotspot:base:v2',base);}catch(e){}
+          try{localStorage.setItem('hotspot:base:v3',base);}catch(e){}
         }
         DATA_FAIL[file]=0;
         return d;
