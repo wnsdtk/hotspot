@@ -1,122 +1,122 @@
 {
-  "updated_at": "2026-11-20T18:50:21.436727+08:00",
+  "updated_at": "2026-11-20T18:55:17.643449+08:00",
   "chains": [
     {
       "chain": "BSC",
-      "net_inflow": 31018.960685318336,
+      "net_inflow": 33442.17158060148,
       "metrics": {
-        "volume": 3462528.7217984376,
-        "buy_volume": 1746773.841241878,
-        "sell_volume": 1715754.8805565597,
-        "wallet_count": 13842.0,
-        "token_count": 1211.0,
-        "token_created_count": 569.0,
-        "token_migrated_count": 5.0,
-        "tx_count": 46563.0,
-        "volume_change_pct": -22.55,
-        "avg_buy_per_wallet": 126.19
+        "volume": 3330679.8726687916,
+        "buy_volume": 1682061.0221246965,
+        "sell_volume": 1648618.850544095,
+        "wallet_count": 13291.0,
+        "token_count": 1191.0,
+        "token_created_count": 554.0,
+        "token_migrated_count": 4.0,
+        "tx_count": 44707.0,
+        "volume_change_pct": -22.92,
+        "avg_buy_per_wallet": 126.56
       },
       "top_tokens": []
     },
     {
       "chain": "Solana",
-      "net_inflow": 54420.02263832791,
+      "net_inflow": -195.27716925740242,
       "metrics": {
-        "volume": 8002219.661879139,
-        "buy_volume": 4028319.8422587337,
-        "sell_volume": 3973899.819620406,
-        "wallet_count": 28977.0,
-        "token_count": 4398.0,
-        "token_created_count": 1288.0,
-        "token_migrated_count": 34.0,
-        "tx_count": 227307.0,
-        "volume_change_pct": -3.13,
-        "avg_buy_per_wallet": 139.02
+        "volume": 8350919.731593677,
+        "buy_volume": 4175362.2272122097,
+        "sell_volume": 4175557.504381467,
+        "wallet_count": 30982.0,
+        "token_count": 4420.0,
+        "token_created_count": 1328.0,
+        "token_migrated_count": 32.0,
+        "tx_count": 234034.0,
+        "volume_change_pct": 3.74,
+        "avg_buy_per_wallet": 134.77
       },
       "top_tokens": []
     },
     {
       "chain": "Robinhood",
-      "net_inflow": 72011.64361340064,
+      "net_inflow": 48985.6076707039,
       "metrics": {
-        "volume": 1122167.24347143,
-        "buy_volume": 597089.4435424153,
-        "sell_volume": 525077.7999290146,
-        "wallet_count": 2423.0,
-        "token_count": 390.0,
-        "token_created_count": 40.0,
+        "volume": 1133433.5080017438,
+        "buy_volume": 591209.5578362239,
+        "sell_volume": 542223.95016552,
+        "wallet_count": 2388.0,
+        "token_count": 398.0,
+        "token_created_count": 38.0,
         "token_migrated_count": 0.0,
-        "tx_count": 9035.0,
-        "volume_change_pct": 34.67,
-        "avg_buy_per_wallet": 246.43
+        "tx_count": 9041.0,
+        "volume_change_pct": 33.41,
+        "avg_buy_per_wallet": 247.58
       },
       "top_tokens": []
     },
     {
       "chain": "OKX",
-      "net_inflow": -712.5018566384192,
+      "net_inflow": -914.4490238377336,
       "metrics": {
-        "volume": 4339.599242863609,
-        "buy_volume": 1813.5486931125947,
-        "sell_volume": 2526.050549751014,
-        "wallet_count": 56.0,
+        "volume": 4257.220567554857,
+        "buy_volume": 1671.3857718585616,
+        "sell_volume": 2585.8347956962953,
+        "wallet_count": 55.0,
         "token_count": 11.0,
-        "token_created_count": 3.0,
+        "token_created_count": 0.0,
         "token_migrated_count": 0.0,
         "tx_count": 107.0,
-        "volume_change_pct": -28.78,
-        "avg_buy_per_wallet": 32.38
+        "volume_change_pct": -26.45,
+        "avg_buy_per_wallet": 30.39
       },
       "top_tokens": []
     },
     {
       "chain": "Base",
-      "net_inflow": 2212.857964464063,
+      "net_inflow": 14140.557621917229,
       "metrics": {
-        "volume": 121225.42426596623,
-        "buy_volume": 61719.14111521515,
-        "sell_volume": 59506.283150751085,
-        "wallet_count": 434.0,
-        "token_count": 213.0,
+        "volume": 105383.73149129801,
+        "buy_volume": 59762.144556607615,
+        "sell_volume": 45621.586934690386,
+        "wallet_count": 406.0,
+        "token_count": 196.0,
         "token_created_count": 82.0,
         "token_migrated_count": 0.0,
-        "tx_count": 2216.0,
-        "volume_change_pct": 121.45,
-        "avg_buy_per_wallet": 142.21
+        "tx_count": 2155.0,
+        "volume_change_pct": 54.33,
+        "avg_buy_per_wallet": 147.2
       },
       "top_tokens": []
     },
     {
       "chain": "Arc",
-      "net_inflow": -1687.8355592292733,
+      "net_inflow": -8808.676964100094,
       "metrics": {
-        "volume": 5730.757011542373,
-        "buy_volume": 2021.4607261565502,
-        "sell_volume": 3709.2962853858235,
-        "wallet_count": 60.0,
-        "token_count": 16.0,
-        "token_created_count": 2.0,
+        "volume": 12923.818417191833,
+        "buy_volume": 2057.5707265458686,
+        "sell_volume": 10866.247690645963,
+        "wallet_count": 64.0,
+        "token_count": 35.0,
+        "token_created_count": 3.0,
         "token_migrated_count": 0.0,
-        "tx_count": 208.0,
-        "volume_change_pct": 46.08,
-        "avg_buy_per_wallet": 33.69
+        "tx_count": 242.0,
+        "volume_change_pct": 218.46,
+        "avg_buy_per_wallet": 32.15
       },
       "top_tokens": []
     },
     {
       "chain": "Ethereum",
-      "net_inflow": 6.0789790117680695,
+      "net_inflow": -951.2898178193584,
       "metrics": {
-        "volume": 2450.212660354231,
-        "buy_volume": 1228.1458196829994,
-        "sell_volume": 1222.0668406712314,
-        "wallet_count": 23.0,
-        "token_count": 17.0,
+        "volume": 3134.734421895708,
+        "buy_volume": 1091.7223020381748,
+        "sell_volume": 2043.0121198575332,
+        "wallet_count": 27.0,
+        "token_count": 20.0,
         "token_created_count": 0.0,
         "token_migrated_count": 0.0,
-        "tx_count": 25.0,
-        "volume_change_pct": -24.25,
-        "avg_buy_per_wallet": 53.4
+        "tx_count": 29.0,
+        "volume_change_pct": -6.78,
+        "avg_buy_per_wallet": 40.43
       },
       "top_tokens": []
     }
