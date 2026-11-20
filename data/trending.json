@@ -1,44 +1,64 @@
 {
- "updated_at": "2026-11-20T06:40:51.734+08:00",
+ "updated_at": "2026-11-20T10:00:56.208+08:00",
  "chains": {
   "BSC": [
+   {
+    "symbol": "AKE",
+    "name": "AKE / WBNB 0.01%",
+    "ca": "0x2c3a8ee94ddd97244a93bc48298f97d2c412f7db",
+    "price": 0.0105874054112491,
+    "chg24": 2.233,
+    "vol24": 18428678.0391619,
+    "mcap": 1058104730.52098,
+    "url": ""
+   },
+   {
+    "symbol": "IRYS",
+    "name": "IRYS / USDT 0.01%",
+    "ca": "0x91152b4ef635403efbae860edd0f8c321d7c035d",
+    "price": 0.0243058437940601,
+    "chg24": 1.494,
+    "vol24": 8927180.52883417,
+    "mcap": 1867529.45036816,
+    "url": ""
+   },
+   {
+    "symbol": "EVAA",
+    "name": "EVAA / USDT 0.01%",
+    "ca": "0xaa036928c9c0df07d525b55ea8ee690bb5a628c1",
+    "price": 5.27048308805142,
+    "chg24": 33.258,
+    "vol24": 3857038.22646733,
+    "mcap": 158114492.573471,
+    "url": ""
+   },
    {
     "symbol": "priceless",
     "name": "priceless",
     "ca": "0x7d03759E5B41E36899833cb2E008455d69A24444",
-    "price": 0.0001785,
-    "chg24": 33.01,
-    "vol24": 74130.86,
-    "mcap": 178554,
+    "price": 0.0001755,
+    "chg24": 35.6,
+    "vol24": 75566.22,
+    "mcap": 175559,
     "url": "https://dexscreener.com/bsc/0x3dc2878f9f60476dbbb18af7531fbe1a603c8dc0"
    },
    {
-    "symbol": "米好",
-    "name": "Nǐ hǎo māo",
-    "ca": "0x1889c4Ba7F275a6344dc28e1d37c3f0D06A57777",
-    "price": 0.000005518,
-    "chg24": 56.48,
-    "vol24": 12540.57,
-    "mcap": 5443,
-    "url": "https://dexscreener.com/bsc/0x2cb9d9c9b64929b4e31c51a528d6948089870198"
-   },
-   {
-    "symbol": "prUSD",
-    "name": "polymark Ecosystem",
-    "ca": "0xaC3Ef1E6780395f6a35081dcB88957BfBE1b2606",
-    "price": 0.9862,
-    "chg24": 0.95,
-    "vol24": 73.37,
-    "mcap": 98623194,
-    "url": "https://dexscreener.com/bsc/0x4a89fd7a8db289445edcde438cde006f76b58d18"
+    "symbol": "SI",
+    "name": "SI / WBNB",
+    "ca": "0x725ccc7b5ceacb0324b64ccb7da3eca2cd3a6666",
+    "price": 1.20909799904382e-9,
+    "chg24": -13.791,
+    "vol24": 17385.500732652,
+    "mcap": 511467.28666962,
+    "url": ""
    },
    {
     "symbol": "TUT",
     "name": "Tutorial",
     "ca": "0xCAAE2A2F939F51d97CdFa9A86e79e3F085b799f3",
     "price": 0.0135,
-    "chg24": -0.04,
-    "vol24": 9.63,
+    "chg24": -2.78,
+    "vol24": 9.11,
     "mcap": 11221578,
     "url": "https://dexscreener.com/bsc/0x17e0e9e6486df6ce3b10a4033ceb4b1242c146cb"
    }
@@ -48,123 +68,133 @@
     "symbol": "ANTS",
     "name": "Anthropic",
     "ca": "ejrz94zR4A2ScS8LdvRaQih2xUxaE2ydreqUNKmpump",
-    "price": 0.007458,
-    "chg24": -21.78,
-    "vol24": 8197275.84,
-    "mcap": 7359526,
+    "price": 0.006995,
+    "chg24": -33.76,
+    "vol24": 8120011.94,
+    "mcap": 6902192,
     "url": "https://dexscreener.com/solana/af5cn9mu1y8coh68xkbypsjxxdk1lbnxgo76dpprrolb"
    },
    {
-    "symbol": "GTASZN",
-    "name": "GTA Season",
-    "ca": "A4jXnWk1rDRDth6HmDASi45c89n1AguTHivAQPTVpump",
-    "price": 0.000003084,
-    "chg24": -96.97,
-    "vol24": 5827649.5,
-    "mcap": 3073,
-    "url": "https://dexscreener.com/solana/c3ai5bk7q9jttvcbwqeexsta99bmmlcnvyasdd7mnqbt"
-   },
-   {
-    "symbol": "BUNCOIN",
-    "name": "BUNCOIN",
-    "ca": "mXcP1bqxM8Tx6BQuFwTHqzE3m7JVMZspmxZ7pjQpump",
-    "price": 0.0006477,
-    "chg24": 599,
-    "vol24": 1806317.49,
-    "mcap": 645336,
-    "url": "https://dexscreener.com/solana/elycecdxqehy93nfur1iuvecppobyflkmvvjlx9xvarp"
+    "symbol": "iAgent",
+    "name": "Apple AI Agent",
+    "ca": "44DZsPNJUtUyTkELAFYdwCpe82sEt12HZKrMgK1Spump",
+    "price": 0.001901,
+    "chg24": 1604,
+    "vol24": 2850083.14,
+    "mcap": 1895930,
+    "url": "https://dexscreener.com/solana/bb8pp1b4ryr9bgm59ju1wmqpwqa42kuyno5smhljfakp"
    },
    {
     "symbol": "OGTA",
     "name": "OFFICIALGTA",
     "ca": "7bCiddGLe5aM8HE2pigT9jsqkmC1HSPxyXN6GkHEpump",
-    "price": 0.0009448,
-    "chg24": 938,
-    "vol24": 1686684.36,
-    "mcap": 940420,
+    "price": 0.0008543,
+    "chg24": 839,
+    "vol24": 2320813.71,
+    "mcap": 850346,
     "url": "https://dexscreener.com/solana/2rdx58tndmemzcqy9qgafwhq9icrrmbduatruofrjyzu"
    },
    {
-    "symbol": "Mandy",
-    "name": "Mandy",
-    "ca": "2xCd5qHX5tW6pGUo7zfgHSSAnRjJwPA7Sz1Fu4fWcJjX",
-    "price": 0.0001477,
-    "chg24": 1.74,
-    "vol24": 1231413.52,
-    "mcap": 137408,
-    "url": "https://dexscreener.com/solana/cduuhndbkyxckshmjyruxpvvrcjo6gikb6hp9z9zyqwk"
+    "symbol": "COOKIE",
+    "name": "Cookie",
+    "ca": "7q3j8jkgGzVuk7pcQ2uQqWaFwyYzJiCanoRdBtHHpump",
+    "price": 0.00004876,
+    "chg24": 7.44,
+    "vol24": 1643117.68,
+    "mcap": 47484,
+    "url": "https://dexscreener.com/solana/bce3uxccndr754iijaxyqkbr5ivjm1wictlitk1waewh"
    },
    {
-    "symbol": "GATO",
-    "name": "GTA6CAT",
-    "ca": "HsprHxBRgiVaQdRf3TnKNuZZtaX9JUSPgMFdAkk6pump",
-    "price": 0.001647,
-    "chg24": -59.85,
-    "vol24": 1081362.83,
-    "mcap": 1624585,
-    "url": "https://dexscreener.com/solana/5e3dxlxgwmtdcoka51wyyakttjfzbwqcoyuhbui5gt2m"
-   },
-   {
-    "symbol": "MANDY",
-    "name": "Mandy",
-    "ca": "EkTfN4Pb7K3NXzxsbzkn3AA4MGbsdTniFJ3G2RsVpump",
-    "price": 0.000001926,
-    "chg24": -95.31,
-    "vol24": 1003735.65,
-    "mcap": 1920,
-    "url": "https://dexscreener.com/solana/7wguexujbizrd3aw5jttbsjrmdezwrzdfpzegimrpqfi"
+    "symbol": "RUGGED",
+    "name": "RUGGED",
+    "ca": "GT8WxWKEgxzZiKL89Uu288vb8jnescwpNSrvyHzcpump",
+    "price": 0.0002733,
+    "chg24": 824,
+    "vol24": 1031627.03,
+    "mcap": 265368,
+    "url": "https://dexscreener.com/solana/dt4elfhqzwhwasv6zqqwoeztayii14a4ftjeavuprpx2"
    },
    {
     "symbol": "DIGS",
     "name": "AiDiglet",
     "ca": "9QT8K685Hrae4k11dhGXirdtpfAaimExtyfwt8cPpump",
-    "price": 0.0003507,
-    "chg24": -8.81,
-    "vol24": 962273.99,
-    "mcap": 334373,
+    "price": 0.0003146,
+    "chg24": -12.98,
+    "vol24": 1029962.39,
+    "mcap": 300004,
     "url": "https://dexscreener.com/solana/3mxdjdz1gae5hzic4dj4unldxj5dbcc9jssyq55mfykg"
+   },
+   {
+    "symbol": "MANDY",
+    "name": "Mandy",
+    "ca": "EkTfN4Pb7K3NXzxsbzkn3AA4MGbsdTniFJ3G2RsVpump",
+    "price": 0.000001976,
+    "chg24": -95.19,
+    "vol24": 1003776.84,
+    "mcap": 1970,
+    "url": "https://dexscreener.com/solana/7wguexujbizrd3aw5jttbsjrmdezwrzdfpzegimrpqfi"
+   },
+   {
+    "symbol": "GATO",
+    "name": "GTA6CAT",
+    "ca": "HsprHxBRgiVaQdRf3TnKNuZZtaX9JUSPgMFdAkk6pump",
+    "price": 0.001642,
+    "chg24": -58.68,
+    "vol24": 981343.53,
+    "mcap": 1619181,
+    "url": "https://dexscreener.com/solana/5e3dxlxgwmtdcoka51wyyakttjfzbwqcoyuhbui5gt2m"
    }
   ],
   "Ethereum": [
    {
-    "symbol": "DCTY",
-    "name": "DCTY / WETH",
-    "ca": "0x5659250b7aac8f66701c7655da16070ecad6355e",
-    "price": 0.00203082482405096,
-    "chg24": 720.51,
-    "vol24": 4310632.81659657,
-    "mcap": 2030824.824,
-    "url": ""
-   },
-   {
     "symbol": "LUCIA",
     "name": "LUCIA / ETH",
     "ca": "0xede6a93741f2466decfd709158e235fbfaf001a1",
-    "price": 0.0157990592736214,
-    "chg24": 17.439,
-    "vol24": 2427300.13256304,
-    "mcap": 15799059.27,
+    "price": 0.0138365567345913,
+    "chg24": 32.881,
+    "vol24": 2128466.80300579,
+    "mcap": 14166574.78,
     "url": ""
    },
    {
     "symbol": "PEPE",
     "name": "PEPE / WETH",
     "ca": "0x6982508145454ce325ddbe47a25d4ec3d2311933",
-    "price": 0.00000373108623924882,
-    "chg24": 0.435,
-    "vol24": 1926039.13906354,
-    "mcap": 1543820321.5205,
+    "price": 0.00000360350664017424,
+    "chg24": -4.043,
+    "vol24": 1968180.98773842,
+    "mcap": 1489450570.99699,
     "url": ""
    },
    {
     "symbol": "WASTED",
     "name": "WASTED / ETH",
     "ca": "0x43b31245dc64e26951d2712f623eda973d71e865",
-    "price": 0.0181660281661422,
-    "chg24": 15.577,
-    "vol24": 1653765.77589775,
-    "mcap": 18166028.17,
+    "price": 0.0155642492406746,
+    "chg24": 6.877,
+    "vol24": 1643971.8189255,
+    "mcap": 15925583.35,
     "url": ""
+   },
+   {
+    "symbol": "AAVE",
+    "name": "AAVE / WETH 0.3%",
+    "ca": "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
+    "price": 104.820147452271,
+    "chg24": -3.169,
+    "vol24": 1201785.17013814,
+    "mcap": 1677122326.38596,
+    "url": ""
+   },
+   {
+    "symbol": "DCTY",
+    "name": "DacityCoin",
+    "ca": "0x2Ab88Bee42286C1cD2eA5CAE5D14D376fB1F94b9",
+    "price": 0.00001172,
+    "chg24": 327,
+    "vol24": 21171.57,
+    "mcap": 11723,
+    "url": "https://dexscreener.com/ethereum/0xeb97505545c3859168f509b645265e0c7d5be4ecd1a93a49a15035f7275df32f"
    },
    {
     "symbol": "PIPI",
@@ -175,16 +205,6 @@
     "vol24": 7837.45,
     "mcap": 17663,
     "url": "https://dexscreener.com/ethereum/0xc7c4122162dcdee94dea973ae0a28469f22ff6575b406597fa3b095f92b549f9"
-   },
-   {
-    "symbol": "ROCCO",
-    "name": "Rocco",
-    "ca": "0xCE03FFC22D67Dec28379812E8DF5f93a6A2E38C2",
-    "price": 0.00001241,
-    "chg24": 139,
-    "vol24": 6028.25,
-    "mcap": 12417,
-    "url": "https://dexscreener.com/ethereum/0x637de2b47694423b8e4515070b099053f1b9364cead8467bfe039d372862a39d"
    }
   ]
  }
