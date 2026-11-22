@@ -1,7 +1,47 @@
 {
-  "updated_at": "2026-11-22T18:53:50.219428+08:00",
+  "updated_at": "2026-11-22T19:03:31.834731+08:00",
   "days": 7,
   "tweets": [
+    {
+      "id": "TechMelonElonMusk_12635",
+      "person": "elon",
+      "name": "马斯克",
+      "handle": "@elonmusk",
+      "time": "2026-11-22T19:02:45+08:00",
+      "text": "如果有人好奇：\n自去年以来，我们已经有了一个像素完美的世界模型，这对于合成数据的生成至关重要。\n汽车中的（小得多）版本是条件平均流模型，基于 Tesla 通用视觉编码器功能的最新序列，这些功能与插入到产生驾驶动作的 3B 编码器模型中的功能相同。\n我们从这些 UVE 功能中分叉出来，然后运行一个单独的 ~1B 扩散模型。这会吸收先前生成的添加了噪声的现实视图，然后将其降噪到当前的可视化中。\n然后它会生成一个小视频块（8 个图像，36 fps，UI 屏幕的分辨率）。这项工作由每个 UVE 帧的 1/2 TRIP 引擎以 18 Hz 完成，并分布在 4 个周期内。\n目前，由于计算限制，延迟有点高，但我们有办法沿着扩散转换器层交错更新的 UVE 功能，以减少大约 35% 的延迟。",
+      "kind": "reply",
+      "media": [
+        {
+          "url": "https://cdn4.telesco.pe/file/fWZJAv6JZSh0_3OYw-AyRd2wQ-C7vt1kmdtHdvOLtdlkI7xnHyIo8y0xg3bvE28qdy6jwTcoT3YWOYMON1lipAPPQJvDfGDw1V7XM7m6Iz_t07dS57a9mWYj4-xOlJjvVkghQq1wu3uLVBxGwomSN0U2Pvx3dkSz4pt4TM5VUxJnwuDvp079RpxFht39lcWI65-BZCmu9s1TwtUT30na_9f0QJGy4X_GLP3VpTVn0JiRH7kfyzrzrXtU-dbgrJyfYTiLXo_90IX_bWo7yauIqAv9-hu5D0ToclLjwCRsZq2WajnzTA93eImCY8xoeC1KR_-hoqXI6kx901Trbx8gRA.jpg",
+          "type": "img"
+        }
+      ],
+      "url": "https://x.com/elonmusk/status/2124458557525397780",
+      "parent_text": "这是我在整个下午和晚上驾驶后对 FSD v15 的初步评论：\n首先，埃隆是对的。这次更新是一个BANGER！ Tesla Reality View 太棒了，太酷了，我仍在尝试处理这一切。\n除了非常酷的 UI 之外，FSD V15.0.1 还带来了许多幕后改进。\n特斯拉现实视图太棒了！图片和视频并不能说明一切，必须亲身经历才能真正理解。今晚我要带几个朋友开车去给他们看，每个人都被它震撼了。它显示和生成的细节数量非常丰富，令人印象深刻。它可以显示汽车、建筑物、树木、显示屏上的转向箭头等的反射。\nFSD v15 现在具有坑洼避免功能！今晚我让它转向并避开/跨过一些坑洼，这些坑洼对我来说在黑暗中很难看到。\nFSD v15 的另一个重要新功能是测速摄像头减速。当您接近测速摄像头时，如果您处于较快的速度范围内，它会自动平稳地减速至速度限制。这是生活质量的巨大改善，尤其是随着越来越多的城市配备了测速摄像头。\n停车位与上一个版本相比几乎没有变化，我觉得它选车位的速度更快，尤其是在我今晚去的增压器处。似乎更喜欢停在它看到的第一个或第二个空位，这很好，但它尝试停在一个障碍位 - 其他方...\n[\n⬇️\n译文过长已截断]",
+      "parent_author": "Zack",
+      "parent_handle": "BLKMDL3",
+      "text_zh": ""
+    },
+    {
+      "id": "TechMelonElonMusk_12634",
+      "person": "elon",
+      "name": "马斯克",
+      "handle": "@elonmusk",
+      "time": "2026-11-22T18:55:12+08:00",
+      "text": "这是我在整个下午和晚上驾驶后对 FSD v15 的初步评论：\n首先，埃隆是对的。这次更新是一个BANGER！ Tesla Reality View 太棒了，太酷了，我仍在尝试处理这一切。\n除了非常酷的 UI 之外，FSD V15.0.1 还带来了许多幕后改进。\n特斯拉现实视图太棒了！图片和视频并不能说明一切，必须亲身经历才能真正理解。今晚我要带几个朋友开车去给他们看，每个人都被它震撼了。它显示和生成的细节数量非常丰富，令人印象深刻。它可以显示汽车、建筑物、树木、显示屏上的转向箭头等的反射。\nFSD v15 现在具有坑洼避免功能！今晚我让它转向并避开/跨过一些坑洼，这些坑洼对我来说在黑暗中很难看到。\nFSD v15 的另一个重要新功能是测速摄像头减速。当您接近测速摄像头时，如果您处于较快的速度范围内，它会自动平稳地减速至速度限制。这是生活质量的巨大改善，尤其是随着越来越多的城市配备了测速摄像头。\n停车位与上一个版本相比几乎没有变化，我觉得它选车位的速度更快，尤其是在我今晚去的增压器处。似乎更喜欢停在它看到的第一个或第二个空位，这很好，但它尝试停在一个障碍位 - 其他方...\n[\n⬇️\n译文过长已截断]",
+      "kind": "retweet",
+      "media": [
+        {
+          "url": "https://cdn4.telesco.pe/file/sVqmgQnSCc2YKaKTsY_aPioORyWTpPBwIWZvuy6OU9ON3HDATEG3WTiZPpJtM65IPYGjUglcBUHCUyOpcHgOISiSLCFEyzzUr7dJlnClsHIXmglw5t4-Txxs6h6OXJoR7-8fnc1CDXFGD1gilcZsgy1A8OZgYTEZxmihSGwDuOhCchN6fVEeHfGbdAYuPkmAHqe8W2eUR03mHMhDATF6uYobrh6j6AmvJCUuL23M2Rrn9ft1JPZkbbn3aXKjoIwWQnyLtyg-UW9fDBIu2kKO97ytpkxXnQDjRgI66M-BPKN7q25WmMCrdwW8LPFpTtJUddhxivVw-COxatuEPDSdLg.jpg",
+          "type": "img"
+        }
+      ],
+      "url": "https://x.com/BLKMDL3/status/2124413163454255246",
+      "parent_text": "这是我在整个下午和晚上驾驶后对 FSD v15 的初步评论：\n首先，埃隆是对的。这次更新是一个BANGER！ Tesla Reality View 太棒了，太酷了，我仍在尝试处理这一切。\n除了非常酷的 UI 之外，FSD V15.0.1 还带来了许多幕后改进。\n特斯拉现实视图太棒了！图片和视频并不能说明一切，必须亲身经历才能真正理解。今晚我要带几个朋友开车去给他们看，每个人都被它震撼了。它显示和生成的细节数量非常丰富，令人印象深刻。它可以显示汽车、建筑物、树木、显示屏上的转向箭头等的反射。\nFSD v15 现在具有坑洼避免功能！今晚我让它转向并避开/跨过一些坑洼，这些坑洼对我来说在黑暗中很难看到。\nFSD v15 的另一个重要新功能是测速摄像头减速。当您接近测速摄像头时，如果您处于较快的速度范围内，它会自动平稳地减速至速度限制。这是生活质量的巨大改善，尤其是随着越来越多的城市配备了测速摄像头。\n停车位与上一个版本相比几乎没有变化，我觉得它选车位的速度更快，尤其是在我今晚去的增压器处。似乎更喜欢停在它看到的第一个或第二个空位，这很好，但它尝试停在一个障碍位 - 其他方...\n[\n⬇️\n译文过长已截断]",
+      "parent_author": "Zack",
+      "parent_handle": "BLKMDL3",
+      "text_zh": ""
+    },
     {
       "id": "TechMelonElonMusk_12633",
       "person": "elon",
