@@ -2280,7 +2280,7 @@ var AuthUI=(function(){
     if(s&&s.user){ b.classList.add('on'); b.title='已登录：'+s.user+'（点击退出）'; }
     else { b.classList.remove('on'); b.title='登录 / 注册'; }
     var gate=document.getElementById('auth-gate');
-    gate.classList.toggle('on', REQUIRE_LOGIN && !(s&&s.user));
+    gate.classList.toggle('on', REQUIRE_LOGIN && configured() && !(s&&s.user));
   }
 
   function open(){
