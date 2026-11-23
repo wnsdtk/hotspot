@@ -134,3 +134,10 @@ create trigger trg_lower_username
 -- ---------- 7. 把自己设为管理员（建成账号后执行一次） ----------
 -- 把下面的 'dajibaya' 换成你自己的账号名：
 -- update public.profiles set is_admin = true where username = 'dajibaya';
+
+-- ---------- 8. 显式授权（即使没开"自动授予"也能用） ----------
+grant usage on schema public to anon, authenticated;
+grant select on public.profiles to authenticated;
+grant select on public.payments to authenticated;
+grant execute on function public.admin_users() to authenticated;
+grant execute on function public.admin_grant(text,int) to authenticated;
