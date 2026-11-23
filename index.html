@@ -2222,7 +2222,7 @@ if(typeof globalThis.__TEST__==='undefined'){
 })();
 </script>
 <!-- ===== /v54 ===== -->
-<!-- ===== 注册/登录（Supabase Auth，无后端）===== -->
+<!-- ===== 注册/登录（账号+密码，Supabase Auth，无后端）===== -->
 <style>
 #auth-mask{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:200;display:none;align-items:center;justify-content:center;padding:18px;}
 #auth-mask.on{display:flex;}
@@ -2238,6 +2238,7 @@ if(typeof globalThis.__TEST__==='undefined'){
 #auth-cancel{background:#21262d;color:#c9d1d9;}
 #auth-msg{font-size:12px;margin-top:10px;min-height:16px;color:#f0883e;line-height:1.5;white-space:pre-line;}
 #auth-box .switch{font-size:12px;color:#58a6ff;cursor:pointer;text-align:center;margin-top:10px;}
+#auth-box .hint{font-size:11px;color:#66727f;margin-top:8px;line-height:1.5;}
 #auth-btn.on{color:#00C805;}
 #auth-gate{position:fixed;inset:0;background:#0d1117;z-index:190;display:none;flex-direction:column;
   align-items:center;justify-content:center;gap:14px;color:#8b949e;font-size:14px;}
@@ -2247,8 +2248,8 @@ if(typeof globalThis.__TEST__==='undefined'){
   <button onclick="AuthUI.open()" style="padding:9px 20px;border-radius:9px;border:0;background:#1f6feb;color:#fff;font-weight:700;cursor:pointer">登录 / 注册</button></div>
 <div id="auth-mask"><div id="auth-box">
   <h3 id="auth-title">登录</h3>
-  <div class="sub" id="auth-sub">用邮箱注册或登录</div>
-  <input id="auth-email" type="email" placeholder="邮箱" autocomplete="email">
+  <div class="sub" id="auth-sub">账号 + 密码，不需要邮箱</div>
+  <input id="auth-user" type="text" placeholder="账号（3–20 位字母/数字）" autocomplete="username" autocapitalize="off" autocorrect="off">
   <input id="auth-pass" type="password" placeholder="密码（至少 6 位）" autocomplete="current-password">
   <div class="row">
     <button id="auth-cancel" type="button">关闭</button>
@@ -2256,13 +2257,15 @@ if(typeof globalThis.__TEST__==='undefined'){
   </div>
   <div id="auth-msg"></div>
   <div class="switch" id="auth-switch">没有账号？去注册</div>
+  <div class="hint">注册即表示同意本站免费使用；账号密码仅用于本站登录。</div>
 </div></div>
 <script>
 var AuthUI=(function(){
   // ====== 配置区：填这 2 个值即可启用真实注册登录 ======
   var SUPA_URL='';   // 例: https://abcd1234.supabase.co
   var SUPA_KEY='';   // Supabase 项目的 anon/public key
-  var REQUIRE_LOGIN=false; // true → 未登录时整站被遮罩
+  var REQUIRE_LOGIN=true;  // true → 未登录时整站被遮罩
+  var MAIL_SUFFIX='@hs-auth.com'; // 内部把账号拼成虚拟邮箱（用户无感）
   var KEY='hs:auth';
   var mode='login';
 
@@ -2270,51 +2273,63 @@ var AuthUI=(function(){
   function set(v){ try{ v?localStorage.setItem(KEY,JSON.stringify(v)):localStorage.removeItem(KEY); }catch(e){} }
   function msg(t,c){ var el=document.getElementById('auth-msg'); el.textContent=t||''; el.style.color=c||'#f0883e'; }
   function configured(){ return SUPA_URL.indexOf('http')===0 && SUPA_KEY.length>20; }
+  function toEmail(u){ return u.toLowerCase()+MAIL_SUFFIX; }
 
   function render(){
     var s=get(), b=document.getElementById('auth-btn');
-    if(s&&s.email){ b.classList.add('on'); b.title='已登录：'+s.email+'（点击退出）'; }
+    if(s&&s.user){ b.classList.add('on'); b.title='已登录：'+s.user+'（点击退出）'; }
     else { b.classList.remove('on'); b.title='登录 / 注册'; }
-    document.getElementById('auth-gate').classList.toggle('on', REQUIRE_LOGIN && !s);
+    var gate=document.getElementById('auth-gate');
+    gate.classList.toggle('on', REQUIRE_LOGIN && !(s&&s.user));
   }
 
   function open(){
     var s=get();
-    if(s&&s.email){
-      if(confirm('已登录：'+s.email+'\n\n要退出登录吗？')){ set(null); render(); }
+    if(s&&s.user){
+      if(confirm('已登录：'+s.user+'\n\n要退出登录吗？')){ set(null); render(); }
       return;
     }
     document.getElementById('auth-mask').classList.add('on');
-    msg('');
-    document.getElementById('auth-email').focus();
+    msg(configured()?'':'尚未配置 Supabase，注册功能暂时不可用。');
+    document.getElementById('auth-user').focus();
   }
   function close(){ document.getElementById('auth-mask').classList.remove('on'); }
   function switchMode(){
     mode = mode==='login'?'signup':'login';
     document.getElementById('auth-title').textContent = mode==='login'?'登录':'注册';
-    document.getElementById('auth-sub').textContent = mode==='login'?'用邮箱注册或登录':'创建一个新账号';
+    document.getElementById('auth-sub').textContent = mode==='login'?'账号 + 密码，不需要邮箱':'设置一个账号和密码即可使用';
     document.getElementById('auth-go').textContent = mode==='login'?'登录':'注册';
     document.getElementById('auth-switch').textContent = mode==='login'?'没有账号？去注册':'已有账号？去登录';
     msg('');
   }
 
   function submit(){
-    if(!configured()){ msg('尚未配置 Supabase，需要 SUPA_URL 与 SUPA_KEY。'); return; }
-    var email=document.getElementById('auth-email').value.trim();
-    var pass=document.getElementById('auth-pass').value;
-    if(!email||!pass){ msg('请填写邮箱和密码'); return; }
-    if(mode==='signup'&&pass.length<6){ msg('密码至少 6 位'); return; }
+    if(!configured()){ msg('尚未配置 Supabase（需要 SUPA_URL 与 SUPA_KEY）。'); return; }
+    var u=document.getElementById('auth-user').value.trim();
+    var p=document.getElementById('auth-pass').value;
+    if(!/^[A-Za-z0-9_]{3,20}$/.test(u)){ msg('账号需 3–20 位，只能字母、数字、下划线'); return; }
+    if(p.length<6){ msg('密码至少 6 位'); return; }
     msg('处理中…','#58a6ff');
     var url, body;
-    if(mode==='login'){ url=SUPA_URL+'/auth/v1/token?grant_type=password'; body={email:email,password:pass}; }
-    else { url=SUPA_URL+'/auth/v1/signup'; body={email:email,password:pass}; }
+    if(mode==='login'){ url=SUPA_URL+'/auth/v1/token?grant_type=password'; body={email:toEmail(u),password:p}; }
+    else { url=SUPA_URL+'/auth/v1/signup'; body={email:toEmail(u),password:p,data:{username:u}}; }
     fetch(url,{method:'POST',headers:{'apikey':SUPA_KEY,'content-type':'application/json'},body:JSON.stringify(body)})
       .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
       .then(function(x){
-        if(!x.ok){ msg((x.d&&(x.d.msg||x.d.error_description||x.d.message))||'请求失败'); return; }
+        if(!x.ok){
+          var m=(x.d&&(x.d.msg||x.d.error_description||x.d.message))||'请求失败';
+          if(/already|exists/i.test(m)) m='该账号已存在，请直接登录';
+          if(/Invalid login/i.test(m)) m='账号或密码错误';
+          msg(m); return;
+        }
         var tk=x.d.access_token;
-        if(!tk){ msg('注册成功，请查收邮箱激活后再登录','#00C805'); return; }
-        set({email:(x.d.user&&x.d.user.email)||email, token:tk, at:Date.now()});
+        if(!tk){
+          // 需要邮箱确认的分支：直接把账号记下来，提示去登录
+          msg('注册成功，请直接登录','#00C805');
+          mode='login'; switchMode(); switchMode();
+          return;
+        }
+        set({user:u, token:tk, at:Date.now()});
         render(); close(); msg('');
       })
       .catch(function(e){ msg('网络错误：'+e.message); });
@@ -2327,9 +2342,10 @@ var AuthUI=(function(){
   document.getElementById('auth-mask').addEventListener('click', function(e){ if(e.target.id==='auth-mask') close(); });
   document.getElementById('auth-pass').addEventListener('keydown', function(e){ if(e.key==='Enter') submit(); });
   setTimeout(render,0);
-  return {open:open, close:close, render:render};
+  return {open:open, close:close, render:render, logout:function(){set(null);render();}};
 })();
 </script>
 <!-- ===== /注册登录 ===== -->
+
 </body>
 </html>
