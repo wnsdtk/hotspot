@@ -2222,30 +2222,42 @@ if(typeof globalThis.__TEST__==='undefined'){
 })();
 </script>
 <!-- ===== /v54 ===== -->
-<!-- ===== 注册/登录（账号+密码，Supabase Auth，无后端）===== -->
+<!-- ===== 会员系统：注册登录 / 3天试用 / BNB 付费 / 后台入口 ===== -->
 <style>
 #auth-mask{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:200;display:none;align-items:center;justify-content:center;padding:18px;}
 #auth-mask.on{display:flex;}
-#auth-box{width:100%;max-width:360px;background:#161b22;border:1px solid #262d36;border-radius:14px;padding:18px;}
-#auth-box h3{margin:0 0 4px;font-size:16px;color:#e6edf3;}
-#auth-box .sub{font-size:12px;color:#8b949e;margin-bottom:14px;}
+#auth-box{width:100%;max-width:380px;background:#161b22;border:1px solid #262d36;border-radius:14px;padding:18px;}
+#auth-box h3{margin:0 0 4px;font-size:16px;}
+#auth-box .sub{font-size:12px;color:#8b949e;margin-bottom:12px;}
 #auth-box input{width:100%;margin:6px 0;padding:10px 12px;border-radius:9px;border:1px solid #262d36;
   background:#0d1117;color:#e6edf3;font-size:14px;outline:none;box-sizing:border-box;}
 #auth-box input:focus{border-color:#1f6feb;}
 #auth-box .row{display:flex;gap:8px;margin-top:12px;}
 #auth-box button{flex:1;padding:10px;border-radius:9px;border:0;font-size:14px;font-weight:700;cursor:pointer;}
 #auth-go{background:#1f6feb;color:#fff;}
-#auth-cancel{background:#21262d;color:#c9d1d9;}
+#auth-cancel,.btn-ghost{background:#21262d;color:#c9d1d9;}
 #auth-msg{font-size:12px;margin-top:10px;min-height:16px;color:#f0883e;line-height:1.5;white-space:pre-line;}
 #auth-box .switch{font-size:12px;color:#58a6ff;cursor:pointer;text-align:center;margin-top:10px;}
 #auth-box .hint{font-size:11px;color:#66727f;margin-top:8px;line-height:1.5;}
 #auth-btn.on{color:#00C805;}
+#member-tip{font-size:11px;color:#8b949e;margin-left:2px;}
+#member-tip.warn{color:#e5484d;}
 #auth-gate{position:fixed;inset:0;background:#0d1117;z-index:190;display:none;flex-direction:column;
-  align-items:center;justify-content:center;gap:14px;color:#8b949e;font-size:14px;}
+  align-items:center;justify-content:center;gap:14px;color:#8b949e;font-size:14px;text-align:center;padding:24px;}
 #auth-gate.on{display:flex;}
+#auth-gate .big{font-size:40px;}
+#auth-gate button{padding:9px 22px;border-radius:9px;border:0;background:#1f6feb;color:#fff;font-weight:700;cursor:pointer;}
+.pay-row{background:#0d1117;border:1px solid #262d36;border-radius:9px;padding:9px 11px;margin:8px 0;
+  font-size:12px;color:#c9d1d9;word-break:break-all;line-height:1.6;}
+.pay-row b{color:#F0B90B;}
 </style>
-<div id="auth-gate"><div style="font-size:34px">🔒</div><div>请先登录后查看</div>
-  <button onclick="AuthUI.open()" style="padding:9px 20px;border-radius:9px;border:0;background:#1f6feb;color:#fff;font-weight:700;cursor:pointer">登录 / 注册</button></div>
+
+<div id="auth-gate">
+  <div class="big">🔒</div>
+  <div id="gate-text">请先登录后查看</div>
+  <button id="gate-btn" onclick="AuthUI.open()">登录 / 注册</button>
+</div>
+
 <div id="auth-mask"><div id="auth-box">
   <h3 id="auth-title">登录</h3>
   <div class="sub" id="auth-sub">账号 + 密码，不需要邮箱</div>
@@ -2256,96 +2268,198 @@ if(typeof globalThis.__TEST__==='undefined'){
     <button id="auth-go" type="button">登录</button>
   </div>
   <div id="auth-msg"></div>
-  <div class="switch" id="auth-switch">没有账号？去注册</div>
-  <div class="hint">注册即表示同意本站免费使用；账号密码仅用于本站登录。</div>
+  <div class="switch" id="auth-switch">没有账号？去注册（免费 3 天）</div>
+  <div class="hint">注册即享 3 天免费试用，到期后 0.05 BNB / 月。</div>
 </div></div>
+
 <script>
 var AuthUI=(function(){
-  // ====== 配置区：填这 2 个值即可启用真实注册登录 ======
-  var SUPA_URL='';   // 例: https://abcd1234.supabase.co
-  var SUPA_KEY='';   // Supabase 项目的 anon/public key
-  var REQUIRE_LOGIN=true;  // true → 未登录时整站被遮罩
-  var MAIL_SUFFIX='@hs-auth.com'; // 内部把账号拼成虚拟邮箱（用户无感）
+  // ================= 配置区 =================
+  var CFG={
+    URL:'',                       // Supabase Project URL
+    KEY:'',                       // Supabase anon public key
+    MAIL:'@hs-auth.com',          // 账号 → 虚拟邮箱后缀
+    PAY_TO:'',                    // BSC 收款地址（0x...）
+    PRICE:0.05,                   // 每月价格（BNB）
+    TRIAL_DAYS:3,
+    ENFORCE:true                  // 未登录/过期时锁站
+  };
   var KEY='hs:auth';
+  var S={token:null,user:null,uid:null,exp:null,admin:false};
   var mode='login';
 
-  function get(){ try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;} }
-  function set(v){ try{ v?localStorage.setItem(KEY,JSON.stringify(v)):localStorage.removeItem(KEY); }catch(e){} }
-  function msg(t,c){ var el=document.getElementById('auth-msg'); el.textContent=t||''; el.style.color=c||'#f0883e'; }
-  function configured(){ return SUPA_URL.indexOf('http')===0 && SUPA_KEY.length>20; }
-  function toEmail(u){ return u.toLowerCase()+MAIL_SUFFIX; }
+  var $=function(id){return document.getElementById(id);};
+  function cfg(){ return CFG.URL.indexOf('http')===0 && CFG.KEY.length>20; }
+  function toEmail(u){ return u.toLowerCase()+CFG.MAIL; }
+  function msg(t,c){ var el=$('auth-msg'); el.textContent=t||''; el.style.color=c||'#f0883e'; }
+  function fmt(d){ if(!d||isNaN(d))return '—'; function p(n){return ('0'+n).slice(-2);}
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+
+  function store(){ try{localStorage.setItem(KEY,JSON.stringify({token:S.token,user:S.user,uid:S.uid}));}catch(e){} }
+  function restore(){
+    var v=null; try{v=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){}
+    if(v&&v.token){ S.token=v.token; S.user=v.user; S.uid=v.uid; }
+  }
+
+  function loadProfile(){
+    if(!S.uid||!cfg()) return Promise.resolve();
+    return fetch(CFG.URL+'/rest/v1/profiles?select=expires_at,is_admin&id=eq.'+S.uid,
+      {headers:{apikey:CFG.KEY,Authorization:'Bearer '+S.token}})
+      .then(function(r){return r.json();})
+      .then(function(a){
+        var p=Array.isArray(a)?a[0]:null;
+        if(p){ S.exp=p.expires_at?new Date(p.expires_at):null; S.admin=!!p.is_admin; }
+      }).catch(function(){});
+  }
+
+  function valid(){ return !!(S.exp && S.exp>new Date()); }
+  function daysLeft(){ return S.exp?Math.max(0,Math.ceil((S.exp-new Date())/86400000)):0; }
 
   function render(){
-    var s=get(), b=document.getElementById('auth-btn');
-    if(s&&s.user){ b.classList.add('on'); b.title='已登录：'+s.user+'（点击退出）'; }
-    else { b.classList.remove('on'); b.title='登录 / 注册'; }
-    var gate=document.getElementById('auth-gate');
-    gate.classList.toggle('on', REQUIRE_LOGIN && configured() && !(s&&s.user));
+    var b=$('auth-btn');
+    b.classList.toggle('on', !!S.token);
+    b.title = S.token ? ('已登录：'+S.user+'（点击查看会员状态）') : '登录 / 注册';
+
+    var g=$('auth-gate');
+    var locked = CFG.ENFORCE && cfg() && (!S.token || !valid());
+    g.classList.toggle('on', locked);
+    if(locked){
+      $('gate-text').textContent = !S.token ? '请先登录后查看' : '试用已到期，请续费后使用';
+      $('gate-btn').textContent = !S.token ? '登录 / 注册' : '续费 / 查看会员';
+    }
+    var tip=$('member-tip');
+    if(tip){
+      if(!S.token){ tip.textContent=''; tip.className=''; }
+      else if(valid()){ tip.textContent='剩 '+daysLeft()+' 天'; tip.className=''; }
+      else { tip.textContent='已到期'; tip.className='warn'; }
+    }
   }
 
-  function open(){
-    var s=get();
-    if(s&&s.user){
-      if(confirm('已登录：'+s.user+'\n\n要退出登录吗？')){ set(null); render(); }
-      return;
+  function openMember(){
+    if(!S.token){ open(); return; }
+    var d=daysLeft();
+    var lines=['账号：'+S.user,
+               '状态：'+(valid()?('有效，剩余 '+d+' 天（到 '+fmt(S.exp)+'）'):'已到期'),
+               '',
+               '续费方式：向下面的 BSC 地址转入 BNB（'+CFG.PRICE+' BNB = 1 个月）',
+               CFG.PAY_TO||'（收款地址未配置）',
+               '',
+               '转好后把交易哈希贴到下一步提交。'];
+    var pop=document.getElementById('member-pop');
+    if(!pop){
+      pop=document.createElement('div');
+      pop.id='member-pop';
+      pop.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:210;display:flex;align-items:center;justify-content:center;padding:18px;';
+      pop.innerHTML='<div style="width:100%;max-width:400px;background:#161b22;border:1px solid #262d36;border-radius:14px;padding:18px">'
+        +'<h3 style="margin:0 0 8px;font-size:16px">会员状态</h3>'
+        +'<div id="mp-body" style="font-size:12.5px;color:#c9d1d9;line-height:1.7;white-space:pre-line"></div>'
+        +'<div class="pay-row" style="display:flex;gap:8px;align-items:center"><span style="flex:1" id="mp-addr"></span>'
+        +'<button id="mp-copy" style="flex:0 0 auto;padding:6px 10px;font-size:12px;background:#21262d;color:#c9d1d9;border:0;border-radius:7px;cursor:pointer">复制</button></div>'
+        +'<input id="mp-tx" placeholder="粘贴交易哈希 0x..." style="width:100%;padding:10px;border-radius:9px;border:1px solid #262d36;background:#0d1117;color:#e6edf3;font-size:13px;box-sizing:border-box">'
+        +'<div style="display:flex;gap:8px;margin-top:10px">'
+        +'<select id="mp-months" style="flex:0 0 96px;padding:10px;border-radius:9px;border:1px solid #262d36;background:#0d1117;color:#e6edf3">'
+        +'<option value="1">1 个月</option><option value="3">3 个月</option><option value="6">6 个月</option><option value="12">12 个月</option></select>'
+        +'<button id="mp-pay" style="flex:1;padding:10px;border-radius:9px;border:0;background:#1f6feb;color:#fff;font-weight:700;cursor:pointer">提交验证</button>'
+        +'</div>'
+        +'<div id="mp-msg" style="font-size:12px;margin-top:8px;min-height:16px;color:#f0883e;white-space:pre-line"></div>'
+        +'<div style="display:flex;gap:8px;margin-top:12px">'
+        +'<button id="mp-admin" style="flex:1;padding:9px;border-radius:9px;border:0;background:#21262d;color:#c9d1d9;font-weight:700;cursor:pointer;display:none">后台管理</button>'
+        +'<button id="mp-out" style="flex:1;padding:9px;border-radius:9px;border:0;background:#21262d;color:#e5484d;font-weight:700;cursor:pointer">退出登录</button>'
+        +'<button id="mp-close" style="flex:1;padding:9px;border-radius:9px;border:0;background:#21262d;color:#c9d1d9;font-weight:700;cursor:pointer">关闭</button>'
+        +'</div></div>';
+      document.body.appendChild(pop);
+      pop.addEventListener('click',function(e){ if(e.target.id==='member-pop') pop.style.display='none'; });
+      $('mp-close').onclick=function(){ pop.style.display='none'; };
+      $('mp-out').onclick=function(){ logout(); pop.style.display='none'; };
+      $('mp-copy').onclick=function(){
+        var a=$('mp-addr').textContent;
+        if(navigator.clipboard) navigator.clipboard.writeText(a);
+        $('mp-copy').textContent='已复制'; setTimeout(function(){ $('mp-copy').textContent='复制'; },1200);
+      };
+      $('mp-pay').onclick=pay;
+      $('mp-admin').onclick=function(){ location.href='admin.html'; };
     }
-    document.getElementById('auth-mask').classList.add('on');
-    msg(configured()?'':'尚未配置 Supabase，注册功能暂时不可用。');
-    document.getElementById('auth-user').focus();
+    pop.style.display='flex';
+    $('mp-body').textContent=lines.join('\n');
+    $('mp-addr').textContent=CFG.PAY_TO||'（未配置收款地址）';
+    $('mp-admin').style.display = S.admin ? 'block':'none';
+    $('mp-msg').textContent='';
   }
-  function close(){ document.getElementById('auth-mask').classList.remove('on'); }
+
+  function pay(){
+    var tx=$('mp-tx').value.trim();
+    var months=Number($('mp-months').value);
+    var m=$('mp-msg');
+    if(!/^0x[0-9a-fA-F]{64}$/.test(tx)){ m.textContent='交易哈希格式不对（应为 0x + 64 位十六进制）'; return; }
+    m.style.color='#58a6ff'; m.textContent='正在验证链上交易…';
+    fetch(CFG.URL+'/functions/v1/verify-payment',{
+      method:'POST',
+      headers:{'content-type':'application/json','apikey':CFG.KEY,'Authorization':'Bearer '+S.token},
+      body:JSON.stringify({txHash:tx, months:months})
+    }).then(function(r){return r.json();}).then(function(d){
+      if(!d||!d.ok){ m.style.color='#f0883e'; m.textContent='失败：'+((d&&d.error)||'未知错误'); return; }
+      m.style.color='#00C805'; m.textContent='✅ 已续费 '+d.months+' 个月，到期时间 '+fmt(new Date(d.expiresAt));
+      S.exp=new Date(d.expiresAt); render();
+      setTimeout(function(){ openMember(); },1200);
+    }).catch(function(e){ m.style.color='#f0883e'; m.textContent='网络错误：'+e.message; });
+  }
+
+  function logout(){ S={token:null,user:null,uid:null,exp:null,admin:false}; try{localStorage.removeItem(KEY);}catch(e){} render(); }
+
+  function open(){ $('auth-mask').classList.add('on'); msg(cfg()?'':'尚未配置 Supabase，注册功能暂不可用。'); $('auth-user').focus(); }
+  function close(){ $('auth-mask').classList.remove('on'); }
   function switchMode(){
     mode = mode==='login'?'signup':'login';
-    document.getElementById('auth-title').textContent = mode==='login'?'登录':'注册';
-    document.getElementById('auth-sub').textContent = mode==='login'?'账号 + 密码，不需要邮箱':'设置一个账号和密码即可使用';
-    document.getElementById('auth-go').textContent = mode==='login'?'登录':'注册';
-    document.getElementById('auth-switch').textContent = mode==='login'?'没有账号？去注册':'已有账号？去登录';
+    $('auth-title').textContent = mode==='login'?'登录':'注册';
+    $('auth-sub').textContent = mode==='login'?'账号 + 密码，不需要邮箱':('注册即送 '+CFG.TRIAL_DAYS+' 天免费试用');
+    $('auth-go').textContent = mode==='login'?'登录':'注册';
+    $('auth-switch').textContent = mode==='login'?'没有账号？去注册（免费 3 天）':'已有账号？去登录';
     msg('');
   }
 
   function submit(){
-    if(!configured()){ msg('尚未配置 Supabase（需要 SUPA_URL 与 SUPA_KEY）。'); return; }
-    var u=document.getElementById('auth-user').value.trim();
-    var p=document.getElementById('auth-pass').value;
+    if(!cfg()){ msg('尚未配置 Supabase（需要 URL 与 KEY）。'); return; }
+    var u=$('auth-user').value.trim(), p=$('auth-pass').value;
     if(!/^[A-Za-z0-9_]{3,20}$/.test(u)){ msg('账号需 3–20 位，只能字母、数字、下划线'); return; }
     if(p.length<6){ msg('密码至少 6 位'); return; }
     msg('处理中…','#58a6ff');
     var url, body;
-    if(mode==='login'){ url=SUPA_URL+'/auth/v1/token?grant_type=password'; body={email:toEmail(u),password:p}; }
-    else { url=SUPA_URL+'/auth/v1/signup'; body={email:toEmail(u),password:p,data:{username:u}}; }
-    fetch(url,{method:'POST',headers:{'apikey':SUPA_KEY,'content-type':'application/json'},body:JSON.stringify(body)})
-      .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
+    if(mode==='login'){ url=CFG.URL+'/auth/v1/token?grant_type=password'; body={email:toEmail(u),password:p}; }
+    else { url=CFG.URL+'/auth/v1/signup'; body={email:toEmail(u),password:p,data:{username:u}}; }
+    fetch(url,{method:'POST',headers:{apikey:CFG.KEY,'content-type':'application/json'},body:JSON.stringify(body)})
+      .then(function(r){return r.json().then(function(d){return {ok:r.ok,d:d};});})
       .then(function(x){
         if(!x.ok){
-          var m=(x.d&&(x.d.msg||x.d.error_description||x.d.message))||'请求失败';
-          if(/already|exists/i.test(m)) m='该账号已存在，请直接登录';
-          if(/Invalid login/i.test(m)) m='账号或密码错误';
-          msg(m); return;
+          var t=(x.d&&(x.d.msg||x.d.error_description||x.d.message))||'请求失败';
+          if(/already|exists/i.test(t)) t='该账号已存在，请直接登录';
+          if(/Invalid login/i.test(t)) t='账号或密码错误';
+          msg(t); return;
         }
-        var tk=x.d.access_token;
-        if(!tk){
-          // 需要邮箱确认的分支：直接把账号记下来，提示去登录
-          msg('注册成功，请直接登录','#00C805');
-          mode='login'; switchMode(); switchMode();
-          return;
-        }
-        set({user:u, token:tk, at:Date.now()});
-        render(); close(); msg('');
+        if(!x.d.access_token){ msg('注册成功，请直接登录','#00C805'); mode='signup'; switchMode(); return; }
+        S.token=x.d.access_token; S.user=u; S.uid=x.d.user&&x.d.user.id;
+        store();
+        loadProfile().then(function(){ render(); close(); msg('');
+          if(!valid()&&S.token) openMember();
+        });
       })
       .catch(function(e){ msg('网络错误：'+e.message); });
   }
 
-  document.getElementById('auth-btn').addEventListener('click', open);
-  document.getElementById('auth-cancel').addEventListener('click', close);
-  document.getElementById('auth-go').addEventListener('click', submit);
-  document.getElementById('auth-switch').addEventListener('click', switchMode);
-  document.getElementById('auth-mask').addEventListener('click', function(e){ if(e.target.id==='auth-mask') close(); });
-  document.getElementById('auth-pass').addEventListener('keydown', function(e){ if(e.key==='Enter') submit(); });
-  setTimeout(render,0);
-  return {open:open, close:close, render:render, logout:function(){set(null);render();}};
+  var b=$('auth-btn');
+  if(b) b.addEventListener('click', function(){ S.token?openMember():open(); });
+  $('auth-cancel').addEventListener('click',close);
+  $('auth-go').addEventListener('click',submit);
+  $('auth-switch').addEventListener('click',switchMode);
+  $('auth-mask').addEventListener('click',function(e){ if(e.target.id==='auth-mask') close(); });
+  $('auth-pass').addEventListener('keydown',function(e){ if(e.key==='Enter') submit(); });
+
+  restore();
+  if(S.token) loadProfile().then(render); else render();
+  return {open:open, openMember:openMember, logout:logout, render:render};
 })();
 </script>
-<!-- ===== /注册登录 ===== -->
+<!-- ===== /会员系统 ===== -->
+
 
 </body>
 </html>
