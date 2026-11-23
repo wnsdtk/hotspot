@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>后台管理 · 热点监控</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--card2:#1c2330;--border:#262d36;--text:#e6edf3;
+  --muted:#8b949e;--green:#00C805;--red:#e5484d;--yellow:#F0B90B;--blue:#58a6ff;--accent:#1f6feb;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  max-width:760px;margin:0 auto;padding:16px 12px 60px;}
+h1{font-size:18px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:12px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+input,select{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg);color:var(--text);font-size:14px;outline:none}
+input:focus,select:focus{border-color:var(--accent)}
+button{padding:9px 14px;border-radius:8px;border:0;background:var(--accent);color:#fff;
+  font-size:14px;font-weight:700;cursor:pointer}
+button.ghost{background:#21262d;color:#c9d1d9}
+button:disabled{opacity:.5;cursor:not-allowed}
+.msg{margin-top:10px;font-size:12px;min-height:16px;white-space:pre-line}
+.ok{color:var(--green)} .err{color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-weight:500;font-size:12px}
+.tag{display:inline-block;padding:1px 7px;border-radius:999px;font-size:11px;
+  background:rgba(255,255,255,.08);color:var(--muted)}
+.tag.ok{background:rgba(0,200,5,.15);color:var(--green)}
+.tag.bad{background:rgba(229,72,77,.15);color:var(--red)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<h1>🛠 后台管理</h1>
+<div class="sub">给指定注册用户赠送使用时长</div>
+
+<div id="login-box" class="card">
+  <div style="font-weight:700;margin-bottom:6px">管理员登录</div>
+  <label>账号</label><input id="u" autocomplete="username" autocapitalize="off">
+  <label>密码</label><input id="p" type="password" autocomplete="current-password">
+  <div style="margin-top:12px"><button id="login-btn">登录</button></div>
+  <div id="login-msg" class="msg"></div>
+</div>
+
+<div id="panel" class="hidden">
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:8px">
+      <b id="who"></b><span class="tag" id="role"></span>
+      <span style="flex:1"></span>
+      <button class="ghost" id="logout-btn">退出</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-weight:700;margin-bottom:6px">赠送时长</div>
+    <label>用户账号</label><input id="g-user" placeholder="要赠送的账号名">
+    <label>赠送时长</label>
+    <select id="g-days">
+      <option value="365" selected>1 年（365 天）</option>
+      <option value="180">半年（180 天）</option>
+      <option value="90">3 个月（90 天）</option>
+      <option value="30">1 个月（30 天）</option>
+      <option value="7">7 天</option>
+      <option value="3">3 天</option>
+    </select>
+    <div style="margin-top:12px"><button id="grant-btn">赠送</button></div>
+    <div id="grant-msg" class="msg"></div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:center">
+      <div style="font-weight:700">用户列表</div>
+      <span style="flex:1"></span>
+      <button class="ghost" id="reload-btn">刷新</button>
+    </div>
+    <table>
+      <thead><tr><th>账号</th><th>到期时间</th><th>状态</th></tr></thead>
+      <tbody id="rows"><tr><td colspan="3" style="color:var(--muted)">加载中…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+var CFG={ URL:'', KEY:'', MAIL:'@hs-auth.com', KEY_STORE:'hs:auth' };
+
+function el(id){ return document.getElementById(id); }
+function msg(id,t,ok){ var m=el(id); m.textContent=t||''; m.className='msg '+(ok?'ok':'err'); }
+function auth(){ try{return JSON.parse(localStorage.getItem(CFG.KEY_STORE)||'null');}catch(e){return null;} }
+function saveAuth(v){ v?localStorage.setItem(CFG.KEY_STORE,JSON.stringify(v)):localStorage.removeItem(CFG.KEY_STORE); }
+
+function toEmail(u){ return u.toLowerCase()+CFG.MAIL; }
+function hdr(){ var a=auth(); return {'apikey':CFG.KEY,'content-type':'application/json',
+  'Authorization':'Bearer '+(a?a.token:'')}; }
+
+function login(){
+  if(!CFG.URL){ msg('login-msg','尚未配置 Supabase（URL / KEY）'); return; }
+  var u=el('u').value.trim(), p=el('p').value;
+  if(!u||!p){ msg('login-msg','请填写账号和密码'); return; }
+  msg('login-msg','登录中…',true);
+  fetch(CFG.URL+'/auth/v1/token?grant_type=password',{method:'POST',
+    headers:{'apikey':CFG.KEY,'content-type':'application/json'},
+    body:JSON.stringify({email:toEmail(u),password:p})})
+  .then(function(r){return r.json().then(function(d){return {ok:r.ok,d:d};});})
+  .then(function(x){
+    if(!x.ok||!x.d.access_token){ msg('login-msg','账号或密码错误'); return; }
+    saveAuth({user:u,token:x.d.access_token,uid:x.d.user&&x.d.user.id});
+    start();
+  })
+  .catch(function(e){ msg('login-msg','网络错误：'+e.message); });
+}
+
+function start(){
+  var a=auth();
+  if(!a||!a.token){ el('login-box').classList.remove('hidden'); el('panel').classList.add('hidden'); return; }
+  el('login-box').classList.add('hidden'); el('panel').classList.remove('hidden');
+  el('who').textContent=a.user||'';
+  loadUsers();
+}
+
+function loadUsers(){
+  el('rows').innerHTML='<tr><td colspan="3" style="color:var(--muted)">加载中…</td></tr>';
+  fetch(CFG.URL+'/rest/v1/rpc/admin_users',{method:'POST',headers:hdr(),body:'{}'})
+    .then(function(r){return r.json().then(function(d){return {ok:r.ok,d:d};});})
+    .then(function(x){
+      if(!x.ok||!Array.isArray(x.d)){
+        var m=(x.d&&(x.d.message||x.d.hint))||'无权限（需要管理员账号）';
+        el('rows').innerHTML='<tr><td colspan="3" class="err">'+m+'</td></tr>'; return;
+      }
+      if(!x.d.length){ el('rows').innerHTML='<tr><td colspan="3" style="color:var(--muted)">暂无用户</td></tr>'; return; }
+      el('rows').innerHTML=x.d.map(function(u){
+        var exp=u.expires_at?new Date(u.expires_at):null;
+        var live=exp&&exp>new Date();
+        var left=exp?Math.ceil((exp-new Date())/86400000):0;
+        return '<tr><td>'+(u.is_admin?'👑 ':'')+u.username+'</td>'
+          +'<td>'+fmt(exp)+'</td>'
+          +'<td><span class="tag '+(live?'ok':'bad')+'">'+(live?('剩 '+left+' 天'):'已到期')+'</span>'
+          +(u.is_admin?' <span class="tag">管理员</span>':'')+'</td></tr>';
+      }).join('');
+    })
+    .catch(function(e){ el('rows').innerHTML='<tr><td colspan="3" class="err">'+e.message+'</td></tr>'; });
+}
+
+function fmt(d){
+  if(!d||isNaN(d))return '—';
+  function p(n){return ('0'+n).slice(-2);}
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+}
+
+function grant(){
+  var u=el('g-user').value.trim(), days=Number(el('g-days').value);
+  if(!u){ msg('grant-msg','请输入账号'); return; }
+  msg('grant-msg','处理中…',true);
+  fetch(CFG.URL+'/rest/v1/rpc/admin_grant',{method:'POST',headers:hdr(),
+    body:JSON.stringify({p_username:u,p_days:days})})
+  .then(function(r){return r.json().then(function(d){return {ok:r.ok,d:d};});})
+  .then(function(x){
+    if(!x.ok){ msg('grant-msg','失败：'+((x.d&&(x.d.message||x.d.hint))||'')); return; }
+    msg('grant-msg','已赠送 '+days+' 天，新到期时间：'+fmt(new Date(x.d)),true);
+    loadUsers();
+  })
+  .catch(function(e){ msg('grant-msg','网络错误：'+e.message); });
+}
+
+el('login-btn').addEventListener('click',login);
+el('p').addEventListener('keydown',function(e){ if(e.key==='Enter') login(); });
+el('logout-btn').addEventListener('click',function(){ saveAuth(null); start(); });
+el('grant-btn').addEventListener('click',grant);
+el('reload-btn').addEventListener('click',loadUsers);
+start();
+</script>
+</body>
+</html>
