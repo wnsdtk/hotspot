@@ -1662,7 +1662,7 @@ var SECTIONS=[
 ];
 var SEEN_SIG={};
 function setHtml(id,html){var n=document.getElementById(id);if(n)n.innerHTML=html;}
-var NT={chain:'all',days:3};
+var NT={chain:'all',days:3,map:{}};
 function ntChainSet(c){ NT.chain=c; SEEN_SIG['sec-newtok']=null; try{updateSections();}catch(e){} }
 function ntNum(n){
   n=Number(n)||0;
