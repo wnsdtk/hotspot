@@ -1,6 +1,6 @@
 {
   "date": "2026-11-25",
-  "generated_at": "2026-11-25T12:02:36.714274+08:00",
+  "generated_at": "2026-11-25T22:05:08.906170+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -38,36 +38,84 @@
           "hits": 1
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 8
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 1
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$BASKET",
+          "chain": "sol",
+          "ca": "3Tg6YnNrfPdFfsY14MaNsDMWLseAyrUDS3myJtbaJN6f",
+          "hits": 2
+        },
+        {
+          "symbol": "$小人物",
+          "chain": "bsc",
+          "ca": "0x491fc2b4873997bde15a934041c42abc15517777",
+          "hits": 2
+        },
+        {
+          "symbol": "$HELIORA",
+          "chain": "sol",
+          "ca": "96qfge1RkUWhSsv8i9V4QZFANGypKEe1u7pzCDGGpump",
+          "hits": 2
+        }
+      ]
     }
   },
   "tags": [
     {
+      "text": "#动物Meme持续发酵",
+      "coin_symbol": "$KuroCat",
+      "coin_ca": "0xf36bed74c02baacb6be2ea769b5eb4f6d9387777",
+      "coin_chain": "bsc"
+    },
+    {
       "text": "#BSC链新币最密集",
-      "coin_symbol": "$莫达",
-      "coin_ca": "0x2133b903cd4cb46aeece2ab4457e25cff1a87777",
+      "coin_symbol": "$BOOSTER",
+      "coin_ca": "0xf201271e63b4e7831947b64a159ea46d8dc4ffff",
       "coin_chain": "bsc"
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$SLITHEEN",
-      "coin_ca": "Bf1GiBiewWCJYgUCc8hLVdXmfPpFstEu5GAmER18pump",
-      "coin_chain": "sol"
+      "coin_symbol": "$BOOSTER",
+      "coin_ca": "0xf201271e63b4e7831947b64a159ea46d8dc4ffff",
+      "coin_chain": "bsc"
     }
   ],
   "history": {
     "2026-11-25": {
       "tags": [
         {
+          "text": "#动物Meme持续发酵",
+          "coin_symbol": "$KuroCat",
+          "coin_ca": "0xf36bed74c02baacb6be2ea769b5eb4f6d9387777",
+          "coin_chain": "bsc"
+        },
+        {
           "text": "#BSC链新币最密集",
-          "coin_symbol": "$莫达",
-          "coin_ca": "0x2133b903cd4cb46aeece2ab4457e25cff1a87777",
+          "coin_symbol": "$BOOSTER",
+          "coin_ca": "0xf201271e63b4e7831947b64a159ea46d8dc4ffff",
           "coin_chain": "bsc"
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$SLITHEEN",
-          "coin_ca": "Bf1GiBiewWCJYgUCc8hLVdXmfPpFstEu5GAmER18pump",
-          "coin_chain": "sol"
+          "coin_symbol": "$BOOSTER",
+          "coin_ca": "0xf201271e63b4e7831947b64a159ea46d8dc4ffff",
+          "coin_chain": "bsc"
         }
       ],
       "morning": [
@@ -84,7 +132,20 @@
           "hits": 1
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 8
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 1
+        }
+      ]
     }
   }
 }
