@@ -376,6 +376,26 @@ a{color:var(--blue); text-decoration:none;}
 .cnc{font-size:12px; color:#e6edf3; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08);
   border-radius:999px; padding:2px 9px; text-decoration:none; white-space:nowrap;}
 .cnc i{font-style:normal; color:var(--yellow,#F0B90B); font-size:10.5px; margin-left:3px;}
+/* ===== 新币投研面板（全部标签页顶部） ===== */
+.ntabs{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}
+.ntab{padding:5px 12px;border-radius:999px;border:1px solid #262d36;background:transparent;
+  color:#8b949e;font-size:12px;cursor:pointer;font-weight:600}
+.ntab.on{background:rgba(255,255,255,.05)}
+.ncard{background:rgba(240,185,11,.05);border:1px solid #262d36;border-left:3px solid #F0B90B;
+  border-radius:10px;padding:10px 11px;margin-bottom:8px}
+.nh{display:flex;align-items:center;gap:9px}
+.nicon{width:26px;height:26px;border-radius:50%;background:#21262d;object-fit:cover;flex:0 0 auto}
+.nt{flex:1;min-width:0}
+.nn{font-size:14px;font-weight:700;color:#e6edf3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm{font-size:11.5px;color:#8b949e;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ntag{font-size:10.5px;padding:1px 7px;border-radius:999px;background:rgba(240,185,11,.18);
+  color:#F0B90B;margin-left:4px;font-weight:600;vertical-align:1px}
+.nkol{font-size:11px;color:#A371FF;border:1px solid rgba(163,113,255,.4);border-radius:999px;
+  padding:2px 8px;white-space:nowrap;flex:0 0 auto}
+.nb{display:flex;gap:6px;align-items:center;margin-top:9px;flex-wrap:wrap}
+.nb button,.nb a{font-size:11.5px;padding:5px 10px;border-radius:7px;border:1px solid #262d36;
+  background:#1c2330;color:#c9d1d9;cursor:pointer;text-decoration:none}
+.nage{margin-left:auto;font-size:11px;color:#66727f}
 </style>
 </head>
 <body>
@@ -1611,6 +1631,7 @@ function sigData(d){
   return JSON.stringify(c);
 }
 var SECTIONS=[
+  {id:'sec-newtok', sig:function(){return sigData(S.data.bsc)+sigData(S.data.sol)+sigData(S.data.rb)+NT.chain;}, html:htmlNewTok},
   {id:'sec-moves',   sig:function(){return sigData(S.data.bsc)+sigData(S.data.sol)+sigData(S.data.rb);}, html:htmlSmartMoves},
   {id:'sec-dy-trend',sig:function(){var d=S.data.douyin||{};return JSON.stringify(d.trending||[]).length+JSON.stringify(d.rising||[]).length+JSON.stringify((S.wb&&S.wb.data||[]).length);}, html:htmlDyTrend},
   {id:'sec-dy-list', sig:function(){return JSON.stringify(S.dy)+'|'+UI.dyN;}, html:htmlDyList},
@@ -1625,8 +1646,68 @@ var SECTIONS=[
 ];
 var SEEN_SIG={};
 function setHtml(id,html){var n=document.getElementById(id);if(n)n.innerHTML=html;}
+var NT={chain:'all'};
+function ntChainSet(c){ NT.chain=c; SEEN_SIG['sec-newtok']=null; try{updateSections();}catch(e){} }
+function ntNum(n){
+  n=Number(n)||0;
+  if(n>=1e9)return (n/1e9).toFixed(2)+'B';
+  if(n>=1e6)return (n/1e6).toFixed(2)+'M';
+  if(n>=1e3)return (n/1e3).toFixed(1)+'K';
+  return n.toFixed(0);
+}
+function htmlNewTok(){
+  var SRC=[['sol','Solana','#A371FF'],['bsc','BSC','#F0B90B'],['rb','Robinhood','#00C805']];
+  var all=[];
+  SRC.forEach(function(s){
+    var d=S.data[s[0]];
+    if(d&&Array.isArray(d.tokens)){
+      d.tokens.forEach(function(t){
+        if(!t||!t.ca)return;
+        all.push({t:t,chain:s[0],cname:s[1],color:s[2]});
+      });
+    }
+  });
+  var tabs=[['all','全部链','#8b949e']].concat(SRC);
+  var chips=tabs.map(function(c){
+    var on=(NT.chain===c[0]);
+    return '<button class="ntab'+(on?' on':'')+'" style="'+(on?('border-color:'+c[2]+';color:'+c[2]):'')+'" onclick="ntChainSet(\''+c[0]+'\')">'+c[1]+'</button>';
+  }).join('');
+
+  var rows=all.filter(function(x){ return NT.chain==='all'||x.chain===NT.chain; });
+  rows.sort(function(a,b){
+    return (Number(b.t.smart_count)||0)-(Number(a.t.smart_count)||0)
+        || (Number(b.t.market_cap)||0)-(Number(a.t.market_cap)||0);
+  });
+
+  var h='<div class="card"><div class="sect">🎯 新币投研 · 聪明钱在买什么'+updInfo('trench','每30秒更新')+'</div>'
+      + '<div class="ntabs">'+chips+'</div>';
+  if(!rows.length){ return h+'<div class="empty">暂无数据</div></div>'; }
+
+  h+=rows.slice(0,20).map(function(x){
+    var t=x.t;
+    var tags='';
+    if(t.narrative) tags+='<span class="ntag">'+esc(t.narrative)+'</span>';
+    if(t.smart_label) tags+='<span class="ntag">'+esc(t.smart_label)+'</span>';
+    var icon=t.icon?('<img class="nicon" src="'+esc(t.icon)+'" onerror="this.style.visibility=\'hidden\'" loading="lazy">'):'<div class="nicon"></div>';
+    return '<div class="ncard" style="border-left-color:'+x.color+'">'
+      + '<div class="nh">'+icon
+      +   '<div class="nt"><div class="nn">'+esc(t.symbol||t.name||'')+tags+'</div>'
+      +   '<div class="nm">市值 '+ntNum(t.market_cap)+' · 流动性 '+ntNum(t.liquidity)+' · 1h量 '+ntNum(t.vol_1h)+'</div></div>'
+      +   '<span class="nkol">'+(Number(t.smart_count)||0)+' 聪明钱</span>'
+      + '</div>'
+      + '<div class="nb">'
+      +   '<button onclick="ntCopy(\''+esc(t.ca)+'\',this)">复制合约</button>'
+      +   '<a href="'+esc(debotUrl(x.chain,t.ca))+'" target="_blank" rel="noopener">搜链上</a>'
+      +   (t.x_url?('<a href="'+esc(t.x_url)+'" target="_blank" rel="noopener">X</a>'):'')
+      +   '<span class="nage">'+esc(t.age_text||'')+'</span>'
+      + '</div></div>';
+  }).join('');
+  return h+'</div>';
+}
+function ntCopy(v,el){ try{copyText(v,el);}catch(e){} }
+
 function buildShell(){
-  setHtml('tab-all','<div id="sec-moves"></div>');
+  setHtml('tab-all','<div id="sec-newtok"></div><div id="sec-moves"></div>');
   setHtml('tab-hot','<div id="sec-dy-trend"></div><div id="sec-dy-rise"></div><div id="sec-dy-list"></div><div id="sec-wb-list"></div>');
   setHtml('tab-trench','<div id="sec-liq"></div><div id="sec-tags"></div><div id="sec-bsc"></div><div id="sec-sol"></div><div id="sec-rb"></div>');
   setHtml('tab-summary','<div id="sec-counts"></div><div id="sec-daily"></div><div id="sec-tws"></div>');
