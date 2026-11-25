@@ -74,14 +74,6 @@ jobs:
           HELIUS_KEY: ${{ secrets.HELIUS_KEY }}
         run: python /tmp/work/fetch_loop.py --out-dir ./data --state-dir .
 
-      - name: Generate token narratives (DeepSeek)
-        continue-on-error: true
-        env:
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-          NARR_MAX: '6'
-        run: |
-          git show origin/main:scripts/gen-narr.py > /tmp/work/gen-narr.py 2>/dev/null || true
-          if [ -s /tmp/work/gen-narr.py ]; then python /tmp/work/gen-narr.py || true; fi
 
       - name: Fetch weibo + trending (inline)
         continue-on-error: true
