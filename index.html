@@ -407,6 +407,11 @@ a{color:var(--blue); text-decoration:none;}
 .nsec h4{margin:0 0 5px;font-size:13px;color:#e6edf3}
 .nsec p{margin:0;font-size:12.5px;line-height:1.75;color:#b6c2d2}
 .nsum{font-size:12.5px;line-height:1.75;color:#F0B90B;border-left:2px solid #F0B90B;padding-left:9px;background:rgba(240,185,11,.06);border-radius:6px;padding:9px}
+.ngrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.nkv{background:#0d1117;border:1px solid #262d36;border-radius:9px;padding:8px 10px}
+.nkv span{display:block;font-size:11px;color:#8b949e}
+.nkv b{display:block;font-size:13.5px;color:#e6edf3;margin-top:2px}
+.nhint{font-size:11px;color:#66727f;margin-top:12px;line-height:1.6;border-top:1px solid #262d36;padding-top:9px}
 </style>
 </head>
 <body>
@@ -1686,6 +1691,7 @@ function htmlNewTok(){
     if(d&&Array.isArray(d.tokens)){
       d.tokens.forEach(function(t){
         if(!t||!t.ca)return;
+        NT.map[String(t.ca).toLowerCase()]={t:t,chain:s[0],cname:s[1],color:s[2]};
         all.push({t:t,chain:s[0],cname:s[1],color:s[2],age:ntAgeMin(t.age_text)});
       });
     }
@@ -1741,31 +1747,41 @@ function htmlNewTok(){
 
 function ntOpen(ev,el){
   if(ev&&ev.target&&ev.target.closest&&ev.target.closest('button,a'))return;
-  var ca=el.getAttribute('data-ca')||'', ch=el.getAttribute('data-ch')||'';
-  var sym=(el.querySelector('.nn')||{}).textContent||'代币';
-  var store=(S.data.narr&&S.data.narr.items)||{};
-  var it=store[String(ca).toLowerCase()];
-  var body;
-  if(it){
-    body=(it.background?'<div class="nsec"><h4>📖 背景来历</h4><p>'+esc(it.background)+'</p></div>':'')
-       +(it.team?'<div class="nsec"><h4>👥 来源与团队</h4><p>'+esc(it.team)+'</p></div>':'')
-       +(it.risk?'<div class="nsec"><h4>⚠️ 风险提示</h4><p>'+esc(it.risk)+'</p></div>':'')
-       +(it.summary?'<div class="nsum">'+esc(it.summary)+'</div>':'');
-  } else {
-    body='<div class="empty" style="padding:18px 4px;line-height:1.7">该币的叙事分析还没生成。<br>系统每 5 分钟自动为新币生成 6 条，稍后再点开看看。</div>';
-  }
+  var ca=el.getAttribute('data-ca')||'';
+  var rec=(NT.map||{})[String(ca).toLowerCase()];
+  if(!rec){ return; }
+  var t=rec.t;
+  var rows=[
+    ['市值','$'+ntNum(t.market_cap)],
+    ['流动性','$'+ntNum(t.liquidity)],
+    ['1h 成交额','$'+ntNum(t.vol_1h)],
+    ['聪明钱',(Number(t.smart_count)||0)+' 个'],
+    ['上线时间',t.age_text||'—'],
+    ['叙事标签',t.narrative||'—'],
+    ['链',rec.cname]
+  ];
+  var grid=rows.map(function(r){
+    return '<div class="nkv"><span>'+esc(r[0])+'</span><b>'+esc(r[1])+'</b></div>';
+  }).join('');
   var old=document.getElementById('nt-modal'); if(old)old.remove();
   var d=document.createElement('div');
-  d.id='nt-modal';
-  d.className='nmask';
-  d.innerHTML='<div class="nbox"><div class="nhead"><b>'+esc(sym)+'</b>'
-    +'<span class="nchain">'+esc(ch.toUpperCase())+'</span><span style="flex:1"></span>'
+  d.id='nt-modal'; d.className='nmask';
+  d.innerHTML='<div class="nbox"><div class="nhead"><b>'+esc(t.symbol||t.name||'')+'</b>'
+    +'<span class="nchain" style="background:rgba(255,255,255,.08);color:'+rec.color+'">'+esc(rec.cname)+'</span>'
+    +'<span style="flex:1"></span>'
     +'<button class="nx" onclick="document.getElementById(\'nt-modal\').remove()">关闭</button></div>'
-    +'<div class="nca">'+esc(ca)+'</div>'+body+'</div>';
+    +'<div class="nca">'+esc(ca)+'</div>'
+    +'<div class="ngrid">'+grid+'</div>'
+    +'<div class="nb" style="margin-top:14px">'
+    +  '<button onclick="ntCopy(\''+esc(ca)+'\',this)">复制合约</button>'
+    +  '<a href="'+esc(debotUrl(rec.chain,ca))+'" target="_blank" rel="noopener">搜链上</a>'
+    +  (t.x_url?('<a href="'+esc(t.x_url)+'" target="_blank" rel="noopener">X 推文</a>'):'')
+    +'</div>'
+    +'<div class="nhint">注：本面板展示的是你流水线抓取到的实时数据（市值/流动性/聪明钱等），不含 AI 生成的长文分析。</div>'
+    +'</div>';
   d.addEventListener('click',function(e){ if(e.target===d) d.remove(); });
   document.body.appendChild(d);
 }
-
 function ntCopy(v,el){ try{copyText(v,el);}catch(e){} }
 
 function buildShell(){
