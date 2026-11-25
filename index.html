@@ -1631,7 +1631,7 @@ function sigData(d){
   return JSON.stringify(c);
 }
 var SECTIONS=[
-  {id:'sec-newtok', sig:function(){return sigData(S.data.bsc)+sigData(S.data.sol)+sigData(S.data.rb)+NT.chain;}, html:htmlNewTok},
+  {id:'sec-newtok', sig:function(){return sigData(S.data.bsc)+sigData(S.data.sol)+sigData(S.data.rb)+NT.chain+NT.days;}, html:htmlNewTok},
   {id:'sec-moves',   sig:function(){return sigData(S.data.bsc)+sigData(S.data.sol)+sigData(S.data.rb);}, html:htmlSmartMoves},
   {id:'sec-dy-trend',sig:function(){var d=S.data.douyin||{};return JSON.stringify(d.trending||[]).length+JSON.stringify(d.rising||[]).length+JSON.stringify((S.wb&&S.wb.data||[]).length);}, html:htmlDyTrend},
   {id:'sec-dy-list', sig:function(){return JSON.stringify(S.dy)+'|'+UI.dyN;}, html:htmlDyList},
@@ -1646,7 +1646,7 @@ var SECTIONS=[
 ];
 var SEEN_SIG={};
 function setHtml(id,html){var n=document.getElementById(id);if(n)n.innerHTML=html;}
-var NT={chain:'all'};
+var NT={chain:'all',days:3};
 function ntChainSet(c){ NT.chain=c; SEEN_SIG['sec-newtok']=null; try{updateSections();}catch(e){} }
 function ntNum(n){
   n=Number(n)||0;
@@ -1655,6 +1655,18 @@ function ntNum(n){
   if(n>=1e3)return (n/1e3).toFixed(1)+'K';
   return n.toFixed(0);
 }
+function ntAgeMin(t){
+  var s=String(t||'');
+  var m=s.match(/(\d+)\s*(分钟|小时|天|周|个月|月)/);
+  if(!m) return 1e9;
+  var n=Number(m[1]), u=m[2];
+  if(u==='分钟') return n;
+  if(u==='小时') return n*60;
+  if(u==='天') return n*1440;
+  if(u==='周') return n*10080;
+  return n*43200;
+}
+function ntDaysSet(d){ NT.days=d; SEEN_SIG['sec-newtok']=null; try{updateSections();}catch(e){} }
 function htmlNewTok(){
   var SRC=[['sol','Solana','#A371FF'],['bsc','BSC','#F0B90B'],['rb','Robinhood','#00C805']];
   var all=[];
@@ -1663,24 +1675,35 @@ function htmlNewTok(){
     if(d&&Array.isArray(d.tokens)){
       d.tokens.forEach(function(t){
         if(!t||!t.ca)return;
-        all.push({t:t,chain:s[0],cname:s[1],color:s[2]});
+        all.push({t:t,chain:s[0],cname:s[1],color:s[2],age:ntAgeMin(t.age_text)});
       });
     }
   });
   var tabs=[['all','全部链','#8b949e']].concat(SRC);
-  var chips=tabs.map(function(c){
+  var chainChips=tabs.map(function(c){
     var on=(NT.chain===c[0]);
     return '<button class="ntab'+(on?' on':'')+'" style="'+(on?('border-color:'+c[2]+';color:'+c[2]):'')+'" onclick="ntChainSet(\''+c[0]+'\')">'+c[1]+'</button>';
   }).join('');
+  var DAYS=[[1,'24 小时'],[3,'3 天'],[7,'7 天'],[0,'全部']];
+  var dayChips=DAYS.map(function(d){
+    var on=(NT.days===d[0]);
+    return '<button class="ntab'+(on?' on':'')+'" onclick="ntDaysSet('+d[0]+')">'+d[1]+'</button>';
+  }).join('');
 
-  var rows=all.filter(function(x){ return NT.chain==='all'||x.chain===NT.chain; });
+  var rows=all.filter(function(x){
+    if(NT.chain!=='all'&&x.chain!==NT.chain) return false;
+    if(NT.days>0&&x.age>NT.days*1440) return false;
+    return true;
+  });
+  if(!rows.length) rows=all.filter(function(x){ return NT.chain==='all'||x.chain===NT.chain; });
   rows.sort(function(a,b){
     return (Number(b.t.smart_count)||0)-(Number(a.t.smart_count)||0)
         || (Number(b.t.market_cap)||0)-(Number(a.t.market_cap)||0);
   });
 
   var h='<div class="card"><div class="sect">🎯 新币投研 · 聪明钱在买什么'+updInfo('trench','每30秒更新')+'</div>'
-      + '<div class="ntabs">'+chips+'</div>';
+      + '<div class="ntabs">'+chainChips+'</div>'
+      + '<div class="ntabs" style="margin-top:-6px">'+dayChips+'</div>';
   if(!rows.length){ return h+'<div class="empty">暂无数据</div></div>'; }
 
   h+=rows.slice(0,20).map(function(x){
