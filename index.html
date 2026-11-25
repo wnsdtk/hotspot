@@ -396,6 +396,17 @@ a{color:var(--blue); text-decoration:none;}
 .nb button,.nb a{font-size:11.5px;padding:5px 10px;border-radius:7px;border:1px solid #262d36;
   background:#1c2330;color:#c9d1d9;cursor:pointer;text-decoration:none}
 .nage{margin-left:auto;font-size:11px;color:#66727f}
+
+.nmask{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:220;display:flex;align-items:center;justify-content:center;padding:16px}
+.nbox{width:100%;max-width:460px;max-height:82vh;overflow:auto;background:#161b22;border:1px solid #262d36;border-radius:14px;padding:16px}
+.nhead{display:flex;align-items:center;gap:8px;font-size:15px;margin-bottom:6px}
+.nchain{font-size:10.5px;padding:1px 8px;border-radius:999px;background:rgba(240,185,11,.18);color:#F0B90B}
+.nx{padding:5px 12px;border-radius:8px;border:0;background:#21262d;color:#c9d1d9;font-size:12px;cursor:pointer}
+.nca{font-size:11px;color:#66727f;word-break:break-all;margin-bottom:10px;font-family:monospace}
+.nsec{margin:12px 0}
+.nsec h4{margin:0 0 5px;font-size:13px;color:#e6edf3}
+.nsec p{margin:0;font-size:12.5px;line-height:1.75;color:#b6c2d2}
+.nsum{font-size:12.5px;line-height:1.75;color:#F0B90B;border-left:2px solid #F0B90B;padding-left:9px;background:rgba(240,185,11,.06);border-radius:6px;padding:9px}
 </style>
 </head>
 <body>
@@ -461,7 +472,7 @@ var WORKER_POLL_MS=30000; // 30 seconds
 var DATA_FILES=[
   ['tweets','tweets.json'],['bsc','trench-bsc.json'],['sol','trench-sol.json'],
   ['rb','trench-rb.json'],
-  ['douyin','douyin.json'],['weibo','weibo.json'],['trending','trending.json'],['tags','tags-halfhour.json'],['daily','summary-daily.json'],
+  ['douyin','douyin.json'],['weibo','weibo.json'],['trending','trending.json'],['narr','narr.json'],['tags','tags-halfhour.json'],['daily','summary-daily.json'],
   ['twsdaily','tweets-daily.json']
 ];
 function dataUrl(f){return DATA_BASE+f+'?t='+Date.now();}
@@ -1712,7 +1723,7 @@ function htmlNewTok(){
     if(t.narrative) tags+='<span class="ntag">'+esc(t.narrative)+'</span>';
     if(t.smart_label) tags+='<span class="ntag">'+esc(t.smart_label)+'</span>';
     var icon=t.icon?('<img class="nicon" src="'+esc(t.icon)+'" onerror="this.style.visibility=\'hidden\'" loading="lazy">'):'<div class="nicon"></div>';
-    return '<div class="ncard" style="border-left-color:'+x.color+'">'
+    return '<div class="ncard" data-ca="'+esc(t.ca)+'" data-ch="'+x.chain+'" style="border-left-color:'+x.color+';cursor:pointer" onclick="ntOpen(event,this)">'
       + '<div class="nh">'+icon
       +   '<div class="nt"><div class="nn">'+esc(t.symbol||t.name||'')+tags+'</div>'
       +   '<div class="nm">市值 '+ntNum(t.market_cap)+' · 流动性 '+ntNum(t.liquidity)+' · 1h量 '+ntNum(t.vol_1h)+'</div></div>'
@@ -1727,6 +1738,34 @@ function htmlNewTok(){
   }).join('');
   return h+'</div>';
 }
+
+function ntOpen(ev,el){
+  if(ev&&ev.target&&ev.target.closest&&ev.target.closest('button,a'))return;
+  var ca=el.getAttribute('data-ca')||'', ch=el.getAttribute('data-ch')||'';
+  var sym=(el.querySelector('.nn')||{}).textContent||'代币';
+  var store=(S.data.narr&&S.data.narr.items)||{};
+  var it=store[String(ca).toLowerCase()];
+  var body;
+  if(it){
+    body=(it.background?'<div class="nsec"><h4>📖 背景来历</h4><p>'+esc(it.background)+'</p></div>':'')
+       +(it.team?'<div class="nsec"><h4>👥 来源与团队</h4><p>'+esc(it.team)+'</p></div>':'')
+       +(it.risk?'<div class="nsec"><h4>⚠️ 风险提示</h4><p>'+esc(it.risk)+'</p></div>':'')
+       +(it.summary?'<div class="nsum">'+esc(it.summary)+'</div>':'');
+  } else {
+    body='<div class="empty" style="padding:18px 4px;line-height:1.7">该币的叙事分析还没生成。<br>系统每 5 分钟自动为新币生成 6 条，稍后再点开看看。</div>';
+  }
+  var old=document.getElementById('nt-modal'); if(old)old.remove();
+  var d=document.createElement('div');
+  d.id='nt-modal';
+  d.className='nmask';
+  d.innerHTML='<div class="nbox"><div class="nhead"><b>'+esc(sym)+'</b>'
+    +'<span class="nchain">'+esc(ch.toUpperCase())+'</span><span style="flex:1"></span>'
+    +'<button class="nx" onclick="document.getElementById(\'nt-modal\').remove()">关闭</button></div>'
+    +'<div class="nca">'+esc(ca)+'</div>'+body+'</div>';
+  d.addEventListener('click',function(e){ if(e.target===d) d.remove(); });
+  document.body.appendChild(d);
+}
+
 function ntCopy(v,el){ try{copyText(v,el);}catch(e){} }
 
 function buildShell(){
