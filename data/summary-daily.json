@@ -1,235 +1,90 @@
 {
-  "date": "2026-11-19",
-  "generated_at": "2026-11-19T22:03:47.843350+08:00",
+  "date": "2026-11-25",
+  "generated_at": "2026-11-25T12:02:36.714274+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
       "themes": [
         {
-          "text": "#新币发行加速",
-          "hits": 12
-        },
-        {
-          "text": "#$DCTY 同名代币",
-          "hits": 8
-        },
-        {
-          "text": "#GTA概念持续发酵",
-          "hits": 4
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "hits": 2
-        },
-        {
           "text": "#动物Meme持续发酵",
           "hits": 2
         },
         {
-          "text": "#$APCY 同名代币",
+          "text": "#新币发行加速",
+          "hits": 2
+        },
+        {
+          "text": "#BSC链新币最密集",
           "hits": 1
         }
       ],
       "coins": [
         {
-          "symbol": "$DCTY",
+          "symbol": "$SI",
           "chain": "bsc",
-          "ca": "0x3b6343089a3d3e13796ffc39a1ab46a544ca7777",
-          "hits": 6
-        },
-        {
-          "symbol": "$DCTY",
-          "chain": "sol",
-          "ca": "6GTDzJNqDfJ7v4kpmbs4aupxQZnVwgRqTD4WFU7fpump",
-          "hits": 4
-        },
-        {
-          "symbol": "$GTAVI",
-          "chain": "sol",
-          "ca": "ERiM8NiCanarGEnWMnURAoxTuTvUXZbtJsPTirnHpump",
-          "hits": 3
-        }
-      ]
-    },
-    "evening": {
-      "themes": [
-        {
-          "text": "#新币发行加速",
-          "hits": 10
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "hits": 9
-        },
-        {
-          "text": "#GTA概念持续发酵",
-          "hits": 4
-        },
-        {
-          "text": "#$BUNC 同名代币",
-          "hits": 2
-        },
-        {
-          "text": "#AI/Agent概念持续发酵",
-          "hits": 2
-        },
-        {
-          "text": "#动物Meme持续发酵",
+          "ca": "0x9d6eaff910ad62ef3dda0120b6c1fd5526b07777",
           "hits": 1
-        }
-      ],
-      "coins": [
-        {
-          "symbol": "$BAGENT",
-          "chain": "bsc",
-          "ca": "0xc5dc1f2aa1d962789f1a06fdb199a25c038d7777",
-          "hits": 3
         },
         {
-          "symbol": "$TAPEX",
+          "symbol": "$b",
           "chain": "bsc",
-          "ca": "0xec3cd8b19c2bddadbbc22e58dbcffa2fb6957777",
-          "hits": 3
+          "ca": "0xc7459ba9ecef1ff4adfc613a2cd52bb2f0da7777",
+          "hits": 1
         },
         {
-          "symbol": "$BUNC",
+          "symbol": "$WORTHLESS",
           "chain": "sol",
-          "ca": "43Z5f8GboUfc6M6wtaGGtFciEhLXixJEwQKv8wBUpump",
-          "hits": 2
+          "ca": "ArTHx2XxPadBjkJw9WacfwPTEoaeG5jMakX26tzEpump",
+          "hits": 1
         }
       ]
     }
   },
   "tags": [
     {
-      "text": "#$gtacat 同名代币",
-      "coin_symbol": "$gtacat",
-      "coin_ca": "DnxrFm5s6phaic1WWrHYgyMZoA72Q5qV97p9x8RpUGTA",
-      "coin_chain": "sol"
-    },
-    {
-      "text": "#$PIPI 同名代币",
-      "coin_symbol": "$PIPI",
-      "coin_ca": "Bd7mSgkiBbMs6jGG2651KXGnUNqFW89u5gTEMieppump",
-      "coin_chain": "sol"
-    },
-    {
-      "text": "#GTA概念持续发酵",
-      "coin_symbol": "$gtacat",
-      "coin_ca": "DnxrFm5s6phaic1WWrHYgyMZoA72Q5qV97p9x8RpUGTA",
-      "coin_chain": "sol"
-    },
-    {
-      "text": "#动物Meme持续发酵",
-      "coin_symbol": "$VEPE",
-      "coin_ca": "ArSKAgzprvekksPaeu1wYjhMVyrcbjMNzXhbT3PWpump",
-      "coin_chain": "sol"
-    },
-    {
       "text": "#BSC链新币最密集",
-      "coin_symbol": "$TAPEX",
-      "coin_ca": "0xec3cd8b19c2bddadbbc22e58dbcffa2fb6957777",
+      "coin_symbol": "$莫达",
+      "coin_ca": "0x2133b903cd4cb46aeece2ab4457e25cff1a87777",
       "coin_chain": "bsc"
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$PIPI",
-      "coin_ca": "Bd7mSgkiBbMs6jGG2651KXGnUNqFW89u5gTEMieppump",
+      "coin_symbol": "$SLITHEEN",
+      "coin_ca": "Bf1GiBiewWCJYgUCc8hLVdXmfPpFstEu5GAmER18pump",
       "coin_chain": "sol"
     }
   ],
   "history": {
-    "2026-11-19": {
+    "2026-11-25": {
       "tags": [
         {
-          "text": "#$gtacat 同名代币",
-          "coin_symbol": "$gtacat",
-          "coin_ca": "DnxrFm5s6phaic1WWrHYgyMZoA72Q5qV97p9x8RpUGTA",
-          "coin_chain": "sol"
-        },
-        {
-          "text": "#$PIPI 同名代币",
-          "coin_symbol": "$PIPI",
-          "coin_ca": "Bd7mSgkiBbMs6jGG2651KXGnUNqFW89u5gTEMieppump",
-          "coin_chain": "sol"
-        },
-        {
-          "text": "#GTA概念持续发酵",
-          "coin_symbol": "$gtacat",
-          "coin_ca": "DnxrFm5s6phaic1WWrHYgyMZoA72Q5qV97p9x8RpUGTA",
-          "coin_chain": "sol"
-        },
-        {
-          "text": "#动物Meme持续发酵",
-          "coin_symbol": "$VEPE",
-          "coin_ca": "ArSKAgzprvekksPaeu1wYjhMVyrcbjMNzXhbT3PWpump",
-          "coin_chain": "sol"
-        },
-        {
           "text": "#BSC链新币最密集",
-          "coin_symbol": "$TAPEX",
-          "coin_ca": "0xec3cd8b19c2bddadbbc22e58dbcffa2fb6957777",
+          "coin_symbol": "$莫达",
+          "coin_ca": "0x2133b903cd4cb46aeece2ab4457e25cff1a87777",
           "coin_chain": "bsc"
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$PIPI",
-          "coin_ca": "Bd7mSgkiBbMs6jGG2651KXGnUNqFW89u5gTEMieppump",
+          "coin_symbol": "$SLITHEEN",
+          "coin_ca": "Bf1GiBiewWCJYgUCc8hLVdXmfPpFstEu5GAmER18pump",
           "coin_chain": "sol"
         }
       ],
       "morning": [
         {
-          "text": "#新币发行加速",
-          "hits": 12
-        },
-        {
-          "text": "#$DCTY 同名代币",
-          "hits": 8
-        },
-        {
-          "text": "#GTA概念持续发酵",
-          "hits": 4
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "hits": 2
-        },
-        {
           "text": "#动物Meme持续发酵",
           "hits": 2
         },
         {
-          "text": "#$APCY 同名代币",
+          "text": "#新币发行加速",
+          "hits": 2
+        },
+        {
+          "text": "#BSC链新币最密集",
           "hits": 1
         }
       ],
-      "evening": [
-        {
-          "text": "#新币发行加速",
-          "hits": 10
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "hits": 9
-        },
-        {
-          "text": "#GTA概念持续发酵",
-          "hits": 4
-        },
-        {
-          "text": "#$BUNC 同名代币",
-          "hits": 2
-        },
-        {
-          "text": "#AI/Agent概念持续发酵",
-          "hits": 2
-        },
-        {
-          "text": "#动物Meme持续发酵",
-          "hits": 1
-        }
-      ]
+      "evening": []
     }
   }
 }
