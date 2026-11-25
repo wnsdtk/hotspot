@@ -1093,7 +1093,9 @@ def maybe_summary_daily(out_dir, state_dir, tags):
     now = now_sh()
     today = now.strftime("%Y-%m-%d")
     hour = now.hour
-    if now.minute >= 6 or hour not in (12, 22):
+    # 窗口放宽到 20 分钟；23 点再做最后一次补生成（避免错过整点导致当天没有日报）
+    in_window = (hour in (12, 22) and now.minute < 20) or (hour == 23)
+    if not in_window:
         return False, "outside 12:00 / 22:00 window"
     existing = load_json(path, None)
     same_day = isinstance(existing, dict) and existing.get("date") == today
