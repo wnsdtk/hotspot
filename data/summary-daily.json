@@ -1,6 +1,6 @@
 {
   "date": "2026-11-26",
-  "generated_at": "2026-11-26T12:00:19.391203+08:00",
+  "generated_at": "2026-11-26T22:03:39.763832+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -34,19 +34,67 @@
           "hits": 2
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 8
+        },
+        {
+          "text": "#$SPACEXLIFE 同名代币",
+          "hits": 1
+        },
+        {
+          "text": "#$SpaceXCoin 同名代币",
+          "hits": 1
+        },
+        {
+          "text": "#$WIENER 同名代币",
+          "hits": 1
+        },
+        {
+          "text": "#$Maru 同名代币",
+          "hits": 1
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$SPACEXLIFE",
+          "chain": "bsc",
+          "ca": "0xfb8b99ff90a33a6d81b0212f0ac80e9339e17777",
+          "hits": 4
+        },
+        {
+          "symbol": "$SpaceXCoin",
+          "chain": "bsc",
+          "ca": "0x7748c676348b542e2f5c0f3b06e2bbab0ef07777",
+          "hits": 4
+        },
+        {
+          "symbol": "$猫猫币",
+          "chain": "bsc",
+          "ca": "0x18c9ac2e7160e6ac735722dd1d67c79e31df7777",
+          "hits": 2
+        }
+      ]
     }
   },
   "tags": [
     {
-      "text": "#BSC链新币最密集",
-      "coin_symbol": "$SPACEXLIFE",
-      "coin_ca": "0xfb8b99ff90a33a6d81b0212f0ac80e9339e17777",
-      "coin_chain": "bsc"
+      "text": "#动物Meme持续发酵",
+      "coin_symbol": "$CI",
+      "coin_ca": "DCgbRLsxYx8hWhPCst7UDywXDbYg5NrE5FSU1rZqpump",
+      "coin_chain": "sol"
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$coin",
-      "coin_ca": "CMmfK9KFjFRPgAEkixMpchNnA5zTz7xYdQkSSc8Upump",
+      "coin_symbol": "$PAIR",
+      "coin_ca": "32rBxcFjCFnyqZ41CEPM5AL67X1dcw8w83vZt6Kxpump",
       "coin_chain": "sol"
     }
   ],
@@ -54,15 +102,15 @@
     "2026-11-26": {
       "tags": [
         {
-          "text": "#BSC链新币最密集",
-          "coin_symbol": "$SPACEXLIFE",
-          "coin_ca": "0xfb8b99ff90a33a6d81b0212f0ac80e9339e17777",
-          "coin_chain": "bsc"
+          "text": "#动物Meme持续发酵",
+          "coin_symbol": "$CI",
+          "coin_ca": "DCgbRLsxYx8hWhPCst7UDywXDbYg5NrE5FSU1rZqpump",
+          "coin_chain": "sol"
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$coin",
-          "coin_ca": "CMmfK9KFjFRPgAEkixMpchNnA5zTz7xYdQkSSc8Upump",
+          "coin_symbol": "$PAIR",
+          "coin_ca": "32rBxcFjCFnyqZ41CEPM5AL67X1dcw8w83vZt6Kxpump",
           "coin_chain": "sol"
         }
       ],
@@ -76,7 +124,32 @@
           "hits": 10
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 8
+        },
+        {
+          "text": "#$SPACEXLIFE 同名代币",
+          "hits": 1
+        },
+        {
+          "text": "#$SpaceXCoin 同名代币",
+          "hits": 1
+        },
+        {
+          "text": "#$WIENER 同名代币",
+          "hits": 1
+        },
+        {
+          "text": "#$Maru 同名代币",
+          "hits": 1
+        }
+      ]
     }
   }
 }
