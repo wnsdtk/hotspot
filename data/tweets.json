@@ -1,6 +1,21 @@
 {
-  "updated_at": "2026-11-26T12:40:45.452152+08:00",
+  "updated_at": "2026-11-26T13:02:04.471558+08:00",
   "tweets": [
+    {
+      "id": "TechMelonCzHeyi_3792",
+      "person": "cz",
+      "name": "赵长鹏",
+      "handle": "@cz_binance",
+      "time": "2026-11-26T13:01:02+08:00",
+      "text": "CZ\n🔶\nGood to know.\nUsers with weak account passwords may be at higher risk to brute-force or dictionary attacks. You can probably do a client-side check (for weak passwords) and notify those users.\nAlso recommend rotate the email logins on most sites, to reduce phishing attempts.",
+      "kind": "reply",
+      "media": [],
+      "url": "https://x.com/cz_binance/status/2125817081052758223",
+      "parent_text": "嗨，CZ！无需更改您的 1Password 帐户密码或您保存在保管库中的任何密码。此次事件中没有客户密码被泄露。我们不会存储您的帐户密码或密钥，并且进入我们的后端系统不会向攻击者提供解密您的保管库的密钥。\n攻击者确实复制了一些客户的帐户信息，包括姓名和电子邮件地址，因此我们建议您留意您意想不到的 1Password 邀请或帐户恢复电子邮件。\n您可以在我们的博客上阅读完整更新：\nhttps://1password.com/blog/update-on-nov-2026-security-incident",
+      "parent_author": "",
+      "parent_handle": "",
+      "text_zh": "CZ\n🔶\n知道了。\n使用弱密码的用户可能面临更高的暴力破解或字典攻击风险。您可能可以在客户端进行检查（检查弱密码），并通知这些用户。\n另建议在大多数网站上轮换电子邮件登录信息，以减少钓鱼攻击的风险。"
+    },
     {
       "id": "TechMelonCzHeyi_3791",
       "person": "heyi",
@@ -2140,26 +2155,6 @@
       "parent_author": "",
       "parent_handle": "",
       "text_zh": "!!"
-    },
-    {
-      "id": "TechMelonCzHeyi_3762",
-      "person": "heyi",
-      "name": "何一",
-      "handle": "@heyibinance",
-      "time": "2026-11-24T13:01:09+08:00",
-      "text": "正常司法流程，是从冻结地址没收，不是从币安没收\n🤣\n🤣\n🤣",
-      "kind": "reply",
-      "media": [
-        {
-          "url": "https://cdn4.telesco.pe/file/BE6Mi6rMbpMlDommojXayMHPHMuTXSjfKz5t7E6i-a5MX2TgCSbfH__sGRFt15knaBP2raKoCSL4mRWuiipb4DTVYXrhqRPSK7X_QA8eYGoCoJvf9UJXhVCKkE6s67tCpPrI3bqBeUmrKpTOu0xm7uQLVF0mCpgnw2M5Ugqm2FexLSgZkVjPxQDynWQiShQCeK_4_QjR1gX4c5PQX7N3l4efl2E8ql7gLBc_u6noiNXDjO8JKbnhj6pDRpAV85kMABuMJsL9LLJ2SPtq0LocjbZa0MzLsApPQbaMiElMdGja8DjVstYg6sNZw_MFoGVDsJzJmOzpCI4QAVTMEEgqoQ.jpg",
-          "type": "img"
-        }
-      ],
-      "url": "https://x.com/heyibinance/status/2125092333612126545",
-      "parent_text": "果然揣兜里的不可能给你拿出来了。",
-      "parent_author": "陳威廉",
-      "parent_handle": "williamlab",
-      "text_zh": ""
     }
   ]
 }
