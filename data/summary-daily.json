@@ -1,76 +1,36 @@
 {
-  "date": "2026-11-25",
-  "generated_at": "2026-11-25T22:05:08.906170+08:00",
+  "date": "2026-11-26",
+  "generated_at": "2026-11-26T12:00:19.391203+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
       "themes": [
         {
           "text": "#动物Meme持续发酵",
-          "hits": 2
-        },
-        {
-          "text": "#新币发行加速",
-          "hits": 2
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "hits": 1
-        }
-      ],
-      "coins": [
-        {
-          "symbol": "$SI",
-          "chain": "bsc",
-          "ca": "0x9d6eaff910ad62ef3dda0120b6c1fd5526b07777",
-          "hits": 1
-        },
-        {
-          "symbol": "$b",
-          "chain": "bsc",
-          "ca": "0xc7459ba9ecef1ff4adfc613a2cd52bb2f0da7777",
-          "hits": 1
-        },
-        {
-          "symbol": "$WORTHLESS",
-          "chain": "sol",
-          "ca": "ArTHx2XxPadBjkJw9WacfwPTEoaeG5jMakX26tzEpump",
-          "hits": 1
-        }
-      ]
-    },
-    "evening": {
-      "themes": [
-        {
-          "text": "#新币发行加速",
           "hits": 10
         },
         {
-          "text": "#BSC链新币最密集",
-          "hits": 8
-        },
-        {
-          "text": "#动物Meme持续发酵",
-          "hits": 1
+          "text": "#新币发行加速",
+          "hits": 10
         }
       ],
       "coins": [
         {
-          "symbol": "$BASKET",
+          "symbol": "$CI",
           "chain": "sol",
-          "ca": "3Tg6YnNrfPdFfsY14MaNsDMWLseAyrUDS3myJtbaJN6f",
-          "hits": 2
+          "ca": "DCgbRLsxYx8hWhPCst7UDywXDbYg5NrE5FSU1rZqpump",
+          "hits": 7
         },
         {
-          "symbol": "$小人物",
+          "symbol": "$KuroCat",
           "chain": "bsc",
-          "ca": "0x491fc2b4873997bde15a934041c42abc15517777",
-          "hits": 2
+          "ca": "0xf36bed74c02baacb6be2ea769b5eb4f6d9387777",
+          "hits": 4
         },
         {
-          "symbol": "$HELIORA",
+          "symbol": "$Zero",
           "chain": "sol",
-          "ca": "96qfge1RkUWhSsv8i9V4QZFANGypKEe1u7pzCDGGpump",
+          "ca": "DTSkmo3sCCKLCh91dJLiWCpwcKtK3yDBZMqZGSV1pump",
           "hits": 2
         }
       ]
@@ -78,74 +38,45 @@
   },
   "tags": [
     {
-      "text": "#动物Meme持续发酵",
-      "coin_symbol": "$KuroCat",
-      "coin_ca": "0xf36bed74c02baacb6be2ea769b5eb4f6d9387777",
-      "coin_chain": "bsc"
-    },
-    {
       "text": "#BSC链新币最密集",
-      "coin_symbol": "$BOOSTER",
-      "coin_ca": "0xf201271e63b4e7831947b64a159ea46d8dc4ffff",
+      "coin_symbol": "$SPACEXLIFE",
+      "coin_ca": "0xfb8b99ff90a33a6d81b0212f0ac80e9339e17777",
       "coin_chain": "bsc"
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$BOOSTER",
-      "coin_ca": "0xf201271e63b4e7831947b64a159ea46d8dc4ffff",
-      "coin_chain": "bsc"
+      "coin_symbol": "$coin",
+      "coin_ca": "CMmfK9KFjFRPgAEkixMpchNnA5zTz7xYdQkSSc8Upump",
+      "coin_chain": "sol"
     }
   ],
   "history": {
-    "2026-11-25": {
+    "2026-11-26": {
       "tags": [
         {
-          "text": "#动物Meme持续发酵",
-          "coin_symbol": "$KuroCat",
-          "coin_ca": "0xf36bed74c02baacb6be2ea769b5eb4f6d9387777",
-          "coin_chain": "bsc"
-        },
-        {
           "text": "#BSC链新币最密集",
-          "coin_symbol": "$BOOSTER",
-          "coin_ca": "0xf201271e63b4e7831947b64a159ea46d8dc4ffff",
+          "coin_symbol": "$SPACEXLIFE",
+          "coin_ca": "0xfb8b99ff90a33a6d81b0212f0ac80e9339e17777",
           "coin_chain": "bsc"
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$BOOSTER",
-          "coin_ca": "0xf201271e63b4e7831947b64a159ea46d8dc4ffff",
-          "coin_chain": "bsc"
+          "coin_symbol": "$coin",
+          "coin_ca": "CMmfK9KFjFRPgAEkixMpchNnA5zTz7xYdQkSSc8Upump",
+          "coin_chain": "sol"
         }
       ],
       "morning": [
         {
           "text": "#动物Meme持续发酵",
-          "hits": 2
-        },
-        {
-          "text": "#新币发行加速",
-          "hits": 2
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "hits": 1
-        }
-      ],
-      "evening": [
-        {
-          "text": "#新币发行加速",
           "hits": 10
         },
         {
-          "text": "#BSC链新币最密集",
-          "hits": 8
-        },
-        {
-          "text": "#动物Meme持续发酵",
-          "hits": 1
+          "text": "#新币发行加速",
+          "hits": 10
         }
-      ]
+      ],
+      "evening": []
     }
   }
 }
