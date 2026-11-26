@@ -1,66 +1,66 @@
 {
- "updated_at": "2026-11-27T04:47:00.967+08:00",
+ "updated_at": "2026-11-27T05:22:19.688+08:00",
  "chains": {
   "BSC": [
    {
     "symbol": "PIEVERSE",
     "name": "PIEVERSE / USDT 0.007%",
     "ca": "0x0e63b9c287e32a05e6b9ab8ee8df88a2760225a9",
-    "price": 3.95013348418091,
-    "chg24": 7.87,
-    "vol24": 37965066.9389739,
-    "mcap": 358146600.539143,
+    "price": 3.91830017261348,
+    "chg24": 8.04,
+    "vol24": 37556148.4751913,
+    "mcap": 355260370.901829,
     "url": ""
    },
    {
     "symbol": "AKE",
     "name": "AKE / WBNB 0.01%",
     "ca": "0x2c3a8ee94ddd97244a93bc48298f97d2c412f7db",
-    "price": 0.00170542012234652,
-    "chg24": 1.194,
-    "vol24": 5251845.71962992,
-    "mcap": 170542012.121074,
+    "price": 0.00150889865380247,
+    "chg24": -10.719,
+    "vol24": 5611397.99764085,
+    "mcap": 150889865.330169,
     "url": ""
    },
    {
     "symbol": "AIOT",
     "name": "AIOT / WBNB 0.01%",
     "ca": "0x55ad16bd573b3365f43a9daeb0cc66a73821b4a5",
-    "price": 0.11108930184137,
-    "chg24": 23.057,
-    "vol24": 4611726.63857827,
-    "mcap": 111089301.785722,
+    "price": 0.109631719413293,
+    "chg24": 19.502,
+    "vol24": 4650939.63860835,
+    "mcap": 109631719.385909,
     "url": ""
    },
    {
     "symbol": "EVAA",
     "name": "EVAA / USDT 0.01%",
     "ca": "0xaa036928c9c0df07d525b55ea8ee690bb5a628c1",
-    "price": 2.42834408174009,
-    "chg24": -9.488,
-    "vol24": 4144203.52474419,
-    "mcap": 72850322.4189651,
-    "url": ""
-   },
-   {
-    "symbol": "COLLECT",
-    "name": "COLLECT / BNB 0.007%",
-    "ca": "0x4b3d30992f003c8167699735f5ab2831b2a087d3",
-    "price": 0.0300570219826351,
-    "chg24": 8.054,
-    "vol24": 2892189.85201143,
-    "mcap": 90171065.9197277,
+    "price": 2.4306167425218,
+    "chg24": -12.347,
+    "vol24": 4178212.51970123,
+    "mcap": 72918502.2429351,
     "url": ""
    },
    {
     "symbol": "BULLA",
     "name": "BULLA / USDT 1%",
     "ca": "0x595e21b20e78674f8a64c1566a20b2b316bc3511",
-    "price": 0.0310239969469065,
-    "chg24": -1.124,
-    "vol24": 676344.141798904,
-    "mcap": 31023996.8725045,
+    "price": 0.042907131771712,
+    "chg24": 26.025,
+    "vol24": 739631.823489711,
+    "mcap": 43097488.2123458,
     "url": ""
+   },
+   {
+    "symbol": "SpaceXCoin",
+    "name": "SpaceXCoin",
+    "ca": "0x219c3Fc73909F33f254d509B739b749C03A87777",
+    "price": 0.0001442,
+    "chg24": 1341,
+    "vol24": 54861.99,
+    "mcap": 144223,
+    "url": "https://dexscreener.com/bsc/0xedef79ff8b5b55a5526817aee052241b32e69c6b"
    }
   ],
   "Solana": [
@@ -68,10 +68,10 @@
     "symbol": "NORFEATH",
     "name": "Norfeather",
     "ca": "3gmFG4sFDJErDV8pacFrL2uUPXeGJTYLjfRy4hFypump",
-    "price": 0.000001607,
-    "chg24": -96.5,
-    "vol24": 2719486.34,
-    "mcap": 1607,
+    "price": 0.00000167,
+    "chg24": -99.26,
+    "vol24": 2565698.24,
+    "mcap": 1671,
     "url": "https://dexscreener.com/solana/fuzscatzzst9rzmtt2pcdlppj1ikyc5lgdnjytfwyqdj"
    },
    {
@@ -85,16 +85,6 @@
     "url": "https://dexscreener.com/solana/7wnxyps79whx7vx8ncrkdhqafiyvbqzbbuqrrdkmrbve"
    },
    {
-    "symbol": "JIMMY",
-    "name": "Jimmy Rustles",
-    "ca": "38M2z4UCfZEkUHFzD48vhKQhFhNyRGto8pZbLjNipump",
-    "price": 0.0005781,
-    "chg24": -48.58,
-    "vol24": 1715660.66,
-    "mcap": 539868,
-    "url": "https://dexscreener.com/solana/fnhwfv49ywctgcdtyf34avn8bixxcgxukqlctkrkp1gq"
-   },
-   {
     "symbol": "UHI",
     "name": "Universal High Income",
     "ca": "Bnw5JRPek5JvJhzUiB9yrs2cmzt4bLeFqSRzDzSppump",
@@ -105,44 +95,54 @@
     "url": "https://dexscreener.com/solana/g9xgqagycgf5qkkjvc4bvtltaosv4kr2taymchfwfstl"
    },
    {
+    "symbol": "JIMMY",
+    "name": "Jimmy Rustles",
+    "ca": "38M2z4UCfZEkUHFzD48vhKQhFhNyRGto8pZbLjNipump",
+    "price": 0.0005792,
+    "chg24": -39.34,
+    "vol24": 1573697.57,
+    "mcap": 540885,
+    "url": "https://dexscreener.com/solana/fnhwfv49ywctgcdtyf34avn8bixxcgxukqlctkrkp1gq"
+   },
+   {
     "symbol": "BRUH",
     "name": "The Bruhvengers",
     "ca": "PgFtGGquvnv2zEkjG2N2QPvBTBrafuExGYEqahRpump",
-    "price": 0.008538,
-    "chg24": 21.88,
-    "vol24": 1445988.81,
-    "mcap": 8453351,
+    "price": 0.008366,
+    "chg24": 18.13,
+    "vol24": 1454154.5,
+    "mcap": 8283263,
     "url": "https://dexscreener.com/solana/ehpzesdxtymvwz1iy5nt3lrnjy1xbc1kgqspl1kqnyiv"
    },
    {
     "symbol": "DIGS",
     "name": "AiDiglet",
     "ca": "9QT8K685Hrae4k11dhGXirdtpfAaimExtyfwt8cPpump",
-    "price": 0.0002499,
-    "chg24": -7.64,
-    "vol24": 889823.33,
-    "mcap": 238243,
+    "price": 0.0002557,
+    "chg24": -4.81,
+    "vol24": 888509.36,
+    "mcap": 243811,
     "url": "https://dexscreener.com/solana/3mxdjdz1gae5hzic4dj4unldxj5dbcc9jssyq55mfykg"
+   },
+   {
+    "symbol": "Hoppy",
+    "name": "Hoppy",
+    "ca": "CFX1gH7CKYwqYXrfDkS2MUxJcEhs8PT63DyRA1chpump",
+    "price": 0.001309,
+    "chg24": 3231,
+    "vol24": 676229.8,
+    "mcap": 1309143,
+    "url": "https://dexscreener.com/solana/2yyjypqsn3hrpsmyow81e2st478zpbnp2ergyawjqyt3"
    },
    {
     "symbol": "George",
     "name": "ジョージ",
     "ca": "FvitVJ528ZCyuy695DoqEGy816rFVafbZ2MSgMw3pump",
-    "price": 0.000001579,
-    "chg24": -95.98,
-    "vol24": 577643.65,
-    "mcap": 1580,
+    "price": 0.000001598,
+    "chg24": -95.93,
+    "vol24": 577659.2,
+    "mcap": 1599,
     "url": "https://dexscreener.com/solana/9jegz9zoejks75u3bexjvu3j4qemhj5lgwt42fdfufdz"
-   },
-   {
-    "symbol": "Dogeball",
-    "name": "Dogeball",
-    "ca": "EMhHvdxs3L1T38pV1yNe9JXF6KfkxFTShNLaxL7rpump",
-    "price": 0.000001336,
-    "chg24": -96.26,
-    "vol24": 426074.15,
-    "mcap": 1337,
-    "url": "https://dexscreener.com/solana/dxwxfe5xwpzy9xfa81qar1rgltnewmmjj3gtfkk9szan"
    }
   ],
   "Ethereum": [
@@ -150,10 +150,10 @@
     "symbol": "KURO",
     "name": "KURO",
     "ca": "0xc2E886422182D778FB05495EA22399e3Aa2E2Ec3",
-    "price": 0.000412,
-    "chg24": 17628,
-    "vol24": 1057342.66,
-    "mcap": 412092,
+    "price": 0.0003208,
+    "chg24": 13705,
+    "vol24": 1100995.72,
+    "mcap": 320893,
     "url": "https://dexscreener.com/ethereum/0xe898877656f0579ffc4cafd335134a38e8e270e4"
    },
    {
@@ -170,20 +170,20 @@
     "symbol": "Kuro",
     "name": "KuroCoin",
     "ca": "0x0f286934B3edA6f4863df62E3AC25b1928f2104A",
-    "price": 0.00319,
-    "chg24": 260213,
-    "vol24": 288217.67,
-    "mcap": 3190575,
+    "price": 0.00296,
+    "chg24": 241473,
+    "vol24": 318021.15,
+    "mcap": 2960886,
     "url": "https://dexscreener.com/ethereum/0xe9bbb07d23422835eb823e9efe0a44f57b651da0"
    },
    {
     "symbol": "INVESTOR",
     "name": "OUR LITTLE INVESTOR",
     "ca": "0x4565e014B1aA59E3D25b1AABcD7b47b1bd8303dd",
-    "price": 0.00002571,
-    "chg24": 49.25,
-    "vol24": 25511.07,
-    "mcap": 2571,
+    "price": 0.00003688,
+    "chg24": 114,
+    "vol24": 26452.31,
+    "mcap": 3688,
     "url": "https://dexscreener.com/ethereum/0x1d3974ed832f25fcf5a0f847caed8452e0322c31"
    }
   ]
