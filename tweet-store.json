@@ -7888,5 +7888,45 @@
     "parent_author": "sourcery",
     "parent_handle": "sourceryy",
     "text_zh": "准确的"
+  },
+  "TechMelonElonMusk_12952": {
+    "id": "TechMelonElonMusk_12952",
+    "person": "elon",
+    "name": "马斯克",
+    "handle": "@elonmusk",
+    "time": "2026-11-28T02:58:39+08:00",
+    "text": "我们最近运行的模型预测了星舰的发射以及未来几年的估计货物分配。  很难想象每年发射 10,000 次以上，但如果考虑到每年 100 万次以上的货船（船）旅行或 3500 万次以上的航空公司航班，这只是杯水车薪。",
+    "kind": "retweet",
+    "media": [
+      {
+        "url": "https://cdn4.telesco.pe/file/ee38e957f8.mp4?token=BEVFcl7YPp4vNbxwqMBY46fPBKvXU4h7Ysz8y8NB620GygvGjAQuot2RcKhfE3tVT8-ZWQeNnkMYL654Emi_qUqFIrvvEQ6gPFMcFp59qpqEAPc_xBd68mLyfYuA8WQDZNsZ8Z1zmK6ON8KsWBDFgHza4D7ONiv5Up7JxRlZ9nWaPL0HybNNOc_Cn91FAY-U4dvSXjN404lZRldwtneunLWY4n7fewp_qk_HG7qztHy3C_wJQpVu71JalPsK6JoryioWRbYehiWl2-VhsYMXiIuMo_M_5ec2gXEI-lPflQgFKF43emCoNKeRNPxj4CCVTqPcD4xTtDoXFZmD4hDFWA",
+        "type": "img"
+      }
+    ],
+    "url": "https://x.com/aaronburnett/status/2126102687053746276",
+    "parent_text": "我们最近运行的模型预测了星舰的发射以及未来几年的估计货物分配。  很难想象每年发射 10,000 次以上，但如果考虑到每年 100 万次以上的货船（船）旅行或 3500 万次以上的航空公司航班，这只是杯水车薪。",
+    "parent_author": "Aaron Burnett",
+    "parent_handle": "aaronburnett",
+    "text_zh": ""
+  },
+  "TechMelonElonMusk_12953": {
+    "id": "TechMelonElonMusk_12953",
+    "person": "elon",
+    "name": "马斯克",
+    "handle": "@elonmusk",
+    "time": "2026-11-28T03:00:24+08:00",
+    "text": "Grok Build upgrades",
+    "kind": "quote",
+    "media": [
+      {
+        "url": "https://cdn4.telesco.pe/file/t6-Kbf9Q30Aq6OpGtLZbvMdsEReKvxoZl2OeLoZzIdUarIC9V8ksBW29Zhzro0bxqMsQmKMblHzei2hJXdpiOuYDBAR8TKNnFo4K7ccdpfN2uCQoCMA_svyKwFj1KZAopjdZ92pSsZcOvF186FVasqOAlJaFADqq96kN2g0ss0v12OVvC0JoSjAssEkpama8D0AnjKx_smyr0fy1Xki1XZwckwdpo3XsoNE15ev1eJeqvlOmP_tqtc4Vnx4QriSS1HgIv7R2JnuY5N4MvHy4wnPNtPnyDWE9nuy2S65sfoGFImNRMOTXdVbzJxeZK4DXR-Q56_Ypt9LDaXkGGe0PzQ.jpg",
+        "type": "img"
+      }
+    ],
+    "url": "https://x.com/elonmusk/status/2126390700660920546",
+    "parent_text": "Grok Build 刚刚对无头代理、MCP 集成和远程终端工作流程进行了全面升级\n无头会话现在可以包含 MCP 工具在流和 JSON 输出中返回的图像，位置提示在没有可用的交互式终端时自动运行无头，并且本地文件链接直接从响应打开\n长时间运行的无头任务还可以获得更好的可靠性，五分钟的不活动超时可以防止会话无限期挂起。图像粘贴现在通过远程 tmux 和嵌套终端包装器进行工作，而会话恢复和挂钩检查更加可靠\n当 Grok 只需要跟踪当前的 Git 分支时，还有一个性能改进，可以消除不必要的目录监视\n发行说明：v1.0.92\n特点：\n• 不带“-p”的位置提示现在无头运行，并在进程没有 TUI 终端时打印其回复\n• 包含图像的 MCP 工具结果现在包括无头流和 JSON 输出中的这些图像\n• 指向本地文件的可点击“file://”链接现在以与裸路径相同的方式打开文件\n错误修复：\n• 最小模式下的问题卡现在保持第一个选项可见，而不是将其滚动到屏幕外\n• 无头运行（`grok -p`）现在在 5 分钟无模型输出后停止，而不是无限期挂起\n• 会话恢复错误现在在每条路线上提供相同的有用...\n[\n⬇️\n译文过长已截断]",
+    "parent_author": "X Freeze",
+    "parent_handle": "XFreeze",
+    "text_zh": "Grok 构建升级"
   }
 }
