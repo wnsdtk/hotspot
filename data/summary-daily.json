@@ -1,84 +1,52 @@
 {
-  "date": "2026-11-26",
-  "generated_at": "2026-11-26T22:03:39.763832+08:00",
+  "date": "2026-11-27",
+  "generated_at": "2026-11-27T12:02:14.807159+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
       "themes": [
         {
-          "text": "#动物Meme持续发酵",
-          "hits": 10
-        },
-        {
           "text": "#新币发行加速",
-          "hits": 10
-        }
-      ],
-      "coins": [
-        {
-          "symbol": "$CI",
-          "chain": "sol",
-          "ca": "DCgbRLsxYx8hWhPCst7UDywXDbYg5NrE5FSU1rZqpump",
-          "hits": 7
-        },
-        {
-          "symbol": "$KuroCat",
-          "chain": "bsc",
-          "ca": "0xf36bed74c02baacb6be2ea769b5eb4f6d9387777",
-          "hits": 4
-        },
-        {
-          "symbol": "$Zero",
-          "chain": "sol",
-          "ca": "DTSkmo3sCCKLCh91dJLiWCpwcKtK3yDBZMqZGSV1pump",
-          "hits": 2
-        }
-      ]
-    },
-    "evening": {
-      "themes": [
-        {
-          "text": "#新币发行加速",
-          "hits": 10
+          "hits": 12
         },
         {
           "text": "#BSC链新币最密集",
-          "hits": 8
+          "hits": 6
         },
         {
-          "text": "#$SPACEXLIFE 同名代币",
+          "text": "#动物Meme持续发酵",
+          "hits": 4
+        },
+        {
+          "text": "#$Kuro 同名代币",
+          "hits": 3
+        },
+        {
+          "text": "#$BunBun 同名代币",
           "hits": 1
         },
         {
-          "text": "#$SpaceXCoin 同名代币",
-          "hits": 1
-        },
-        {
-          "text": "#$WIENER 同名代币",
-          "hits": 1
-        },
-        {
-          "text": "#$Maru 同名代币",
+          "text": "#$TRUMP 同名代币",
           "hits": 1
         }
       ],
       "coins": [
         {
-          "symbol": "$SPACEXLIFE",
+          "symbol": "$Kuro",
           "chain": "bsc",
-          "ca": "0xfb8b99ff90a33a6d81b0212f0ac80e9339e17777",
-          "hits": 4
+          "ca": "0x7d52095e844251c504c14fc1382d031b66217777",
+          "hits": 8
         },
         {
-          "symbol": "$SpaceXCoin",
+          "symbol": "$BunBun",
           "chain": "bsc",
-          "ca": "0x7748c676348b542e2f5c0f3b06e2bbab0ef07777",
-          "hits": 4
+          "ca": "0x757d072b8083589ce124f80a49fe5e99e30c7777",
+          "hits": 2
         },
         {
-          "symbol": "$猫猫币",
-          "chain": "bsc",
-          "ca": "0x18c9ac2e7160e6ac735722dd1d67c79e31df7777",
+          "symbol": "$TRUMP",
+          "chain": "sol",
+          "ca": "AtmZQTxVHZN7yk7a2yodSmQhXgFT4jTPYXd5FrmY5v2t",
           "hits": 2
         }
       ]
@@ -86,70 +54,73 @@
   },
   "tags": [
     {
-      "text": "#动物Meme持续发酵",
-      "coin_symbol": "$CI",
-      "coin_ca": "DCgbRLsxYx8hWhPCst7UDywXDbYg5NrE5FSU1rZqpump",
+      "text": "#$DragonRiders 同名代币",
+      "coin_symbol": "$DragonRiders",
+      "coin_ca": "5xrT8y2KU2YwzipwCMNxxTc8KAGQd4wjtGTc2WyJJCMh",
       "coin_chain": "sol"
     },
     {
+      "text": "#BSC链新币最密集",
+      "coin_symbol": "$坐以待币",
+      "coin_ca": "0xed163b9b576050d0debb94338ae3219664c17777",
+      "coin_chain": "bsc"
+    },
+    {
       "text": "#新币发行加速",
-      "coin_symbol": "$PAIR",
-      "coin_ca": "32rBxcFjCFnyqZ41CEPM5AL67X1dcw8w83vZt6Kxpump",
+      "coin_symbol": "$DragonRiders",
+      "coin_ca": "5xrT8y2KU2YwzipwCMNxxTc8KAGQd4wjtGTc2WyJJCMh",
       "coin_chain": "sol"
     }
   ],
   "history": {
-    "2026-11-26": {
+    "2026-11-27": {
       "tags": [
         {
-          "text": "#动物Meme持续发酵",
-          "coin_symbol": "$CI",
-          "coin_ca": "DCgbRLsxYx8hWhPCst7UDywXDbYg5NrE5FSU1rZqpump",
+          "text": "#$DragonRiders 同名代币",
+          "coin_symbol": "$DragonRiders",
+          "coin_ca": "5xrT8y2KU2YwzipwCMNxxTc8KAGQd4wjtGTc2WyJJCMh",
           "coin_chain": "sol"
         },
         {
+          "text": "#BSC链新币最密集",
+          "coin_symbol": "$坐以待币",
+          "coin_ca": "0xed163b9b576050d0debb94338ae3219664c17777",
+          "coin_chain": "bsc"
+        },
+        {
           "text": "#新币发行加速",
-          "coin_symbol": "$PAIR",
-          "coin_ca": "32rBxcFjCFnyqZ41CEPM5AL67X1dcw8w83vZt6Kxpump",
+          "coin_symbol": "$DragonRiders",
+          "coin_ca": "5xrT8y2KU2YwzipwCMNxxTc8KAGQd4wjtGTc2WyJJCMh",
           "coin_chain": "sol"
         }
       ],
       "morning": [
         {
-          "text": "#动物Meme持续发酵",
-          "hits": 10
-        },
-        {
           "text": "#新币发行加速",
-          "hits": 10
-        }
-      ],
-      "evening": [
-        {
-          "text": "#新币发行加速",
-          "hits": 10
+          "hits": 12
         },
         {
           "text": "#BSC链新币最密集",
-          "hits": 8
+          "hits": 6
         },
         {
-          "text": "#$SPACEXLIFE 同名代币",
+          "text": "#动物Meme持续发酵",
+          "hits": 4
+        },
+        {
+          "text": "#$Kuro 同名代币",
+          "hits": 3
+        },
+        {
+          "text": "#$BunBun 同名代币",
           "hits": 1
         },
         {
-          "text": "#$SpaceXCoin 同名代币",
-          "hits": 1
-        },
-        {
-          "text": "#$WIENER 同名代币",
-          "hits": 1
-        },
-        {
-          "text": "#$Maru 同名代币",
+          "text": "#$TRUMP 同名代币",
           "hits": 1
         }
-      ]
+      ],
+      "evening": []
     }
   }
 }
