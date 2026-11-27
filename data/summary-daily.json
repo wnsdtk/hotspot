@@ -1,6 +1,6 @@
 {
   "date": "2026-11-27",
-  "generated_at": "2026-11-27T12:02:14.807159+08:00",
+  "generated_at": "2026-11-27T22:03:12.302330+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
@@ -50,25 +50,67 @@
           "hits": 2
         }
       ]
+    },
+    "evening": {
+      "themes": [
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 10
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#$DragonRiders 同名代币",
+          "hits": 5
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 5
+        },
+        {
+          "text": "#$Suki 同名代币",
+          "hits": 2
+        },
+        {
+          "text": "#人物概念持续发酵",
+          "hits": 2
+        }
+      ],
+      "coins": [
+        {
+          "symbol": "$mihao",
+          "chain": "bsc",
+          "ca": "0xebe0f167b6bbac37f68ab7b9930b30799f487777",
+          "hits": 7
+        },
+        {
+          "symbol": "$DragonRiders",
+          "chain": "sol",
+          "ca": "5xrT8y2KU2YwzipwCMNxxTc8KAGQd4wjtGTc2WyJJCMh",
+          "hits": 6
+        },
+        {
+          "symbol": "$BSC",
+          "chain": "bsc",
+          "ca": "0x1197d3323a09007be4a01f193b5bdb569f027777",
+          "hits": 6
+        }
+      ]
     }
   },
   "tags": [
     {
-      "text": "#$DragonRiders 同名代币",
-      "coin_symbol": "$DragonRiders",
-      "coin_ca": "5xrT8y2KU2YwzipwCMNxxTc8KAGQd4wjtGTc2WyJJCMh",
-      "coin_chain": "sol"
-    },
-    {
-      "text": "#BSC链新币最密集",
-      "coin_symbol": "$坐以待币",
-      "coin_ca": "0xed163b9b576050d0debb94338ae3219664c17777",
+      "text": "#动物Meme持续发酵",
+      "coin_symbol": "$mihao",
+      "coin_ca": "0xebe0f167b6bbac37f68ab7b9930b30799f487777",
       "coin_chain": "bsc"
     },
     {
       "text": "#新币发行加速",
-      "coin_symbol": "$DragonRiders",
-      "coin_ca": "5xrT8y2KU2YwzipwCMNxxTc8KAGQd4wjtGTc2WyJJCMh",
+      "coin_symbol": "$WINSTON",
+      "coin_ca": "7Y2CVbnqZRvR5RUvEJ9RQ73fZEfv7ybNcysytAepump",
       "coin_chain": "sol"
     }
   ],
@@ -76,21 +118,15 @@
     "2026-11-27": {
       "tags": [
         {
-          "text": "#$DragonRiders 同名代币",
-          "coin_symbol": "$DragonRiders",
-          "coin_ca": "5xrT8y2KU2YwzipwCMNxxTc8KAGQd4wjtGTc2WyJJCMh",
-          "coin_chain": "sol"
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "coin_symbol": "$坐以待币",
-          "coin_ca": "0xed163b9b576050d0debb94338ae3219664c17777",
+          "text": "#动物Meme持续发酵",
+          "coin_symbol": "$mihao",
+          "coin_ca": "0xebe0f167b6bbac37f68ab7b9930b30799f487777",
           "coin_chain": "bsc"
         },
         {
           "text": "#新币发行加速",
-          "coin_symbol": "$DragonRiders",
-          "coin_ca": "5xrT8y2KU2YwzipwCMNxxTc8KAGQd4wjtGTc2WyJJCMh",
+          "coin_symbol": "$WINSTON",
+          "coin_ca": "7Y2CVbnqZRvR5RUvEJ9RQ73fZEfv7ybNcysytAepump",
           "coin_chain": "sol"
         }
       ],
@@ -120,7 +156,32 @@
           "hits": 1
         }
       ],
-      "evening": []
+      "evening": [
+        {
+          "text": "#BSC链新币最密集",
+          "hits": 10
+        },
+        {
+          "text": "#新币发行加速",
+          "hits": 10
+        },
+        {
+          "text": "#$DragonRiders 同名代币",
+          "hits": 5
+        },
+        {
+          "text": "#动物Meme持续发酵",
+          "hits": 5
+        },
+        {
+          "text": "#$Suki 同名代币",
+          "hits": 2
+        },
+        {
+          "text": "#人物概念持续发酵",
+          "hits": 2
+        }
+      ]
     }
   }
 }
