@@ -1,15 +1,35 @@
 {
- "updated_at": "2026-11-27T21:57:56.029+08:00",
+ "updated_at": "2026-11-27T22:28:10.375+08:00",
  "chains": {
   "BSC": [
+   {
+    "symbol": "4Cats",
+    "name": "Four Cats",
+    "ca": "0x68c7a3BC173e53eD56F7807b4ad39b1B2a33FfFF",
+    "price": 0.00007192,
+    "chg24": 46.64,
+    "vol24": 156409.61,
+    "mcap": 71922,
+    "url": "https://dexscreener.com/bsc/0xe42f8eced84de2bd46f98bb6bfc5914b58db0580"
+   },
+   {
+    "symbol": "FIONA",
+    "name": "Fiona the Hippo",
+    "ca": "0x6345cc8066fa47F785A14e7c80461F4243BF6666",
+    "price": 0.0000585,
+    "chg24": -33.04,
+    "vol24": 62355.88,
+    "mcap": 58503,
+    "url": "https://dexscreener.com/bsc/0xf01a135cd482e793e0590beb5711b129a72ba8b0"
+   },
    {
     "symbol": "BREW",
     "name": "BREW",
     "ca": "0xfa6D9B504848606Eb9aeC04CCc161D169B3f2159",
-    "price": 0.0006674,
-    "chg24": -11.4,
-    "vol24": 47755.28,
-    "mcap": 603364,
+    "price": 0.000668,
+    "chg24": -8.46,
+    "vol24": 46252.62,
+    "mcap": 603912,
     "url": "https://dexscreener.com/bsc/0x3ea3f9a7b7edbfe0ba3568bfc0f30ba870b7553d"
    },
    {
@@ -37,8 +57,8 @@
     "name": "Short Roast",
     "ca": "0x2f64389b15EdEA0590B74b6F15719adC142dDF7e",
     "price": 0.000008042,
-    "chg24": 3.07,
-    "vol24": 21.87,
+    "chg24": -3.91,
+    "vol24": 20.17,
     "mcap": 7427,
     "url": "https://dexscreener.com/bsc/0xdbdc7112ec589fc810adb40c5141deff416d0e96"
    },
@@ -46,10 +66,10 @@
     "symbol": "Relax",
     "name": "Relax Cat",
     "ca": "0xDF2ab0fb102ca8BE1C0C16EAA0be18148709E8e6",
-    "price": 6.207e-7,
-    "chg24": -0.38,
-    "vol24": 9.62,
-    "mcap": 600,
+    "price": 6.173e-7,
+    "chg24": -8.43,
+    "vol24": 9.5,
+    "mcap": 597,
     "url": "https://dexscreener.com/bsc/0x772d2899878e1415f92221b43fcda6a0d49e3f62"
    },
    {
@@ -61,26 +81,6 @@
     "vol24": 4.43,
     "mcap": 260,
     "url": "https://dexscreener.com/bsc/0x875f16271103770cfb717b307330c66d321413f6"
-   },
-   {
-    "symbol": "Arb Inc",
-    "name": "Arbitrage Inception",
-    "ca": "0x5EE54869Ecd5E752C31aF095187326D4A4D50e1c",
-    "price": 0.000003081,
-    "chg24": 7.91,
-    "vol24": 3.4,
-    "mcap": 3077,
-    "url": "https://dexscreener.com/bsc/0xd4fa516fab1648fc8ecffba5f6df9a88809d6b38"
-   },
-   {
-    "symbol": "P2PZ",
-    "name": "P2PZCoin",
-    "ca": "0xd8003FFa422883346E0F45c5171595401C024444",
-    "price": 0.00001685,
-    "chg24": 0.14,
-    "vol24": 0.08,
-    "mcap": 16845,
-    "url": "https://dexscreener.com/bsc/0xd8fa7f9709a6eb87988a5ab8bd66d999ed6628f2"
    }
   ],
   "Solana": [
@@ -98,71 +98,71 @@
     "symbol": "WOOPY",
     "name": "Woopy Dog",
     "ca": "2va3NUJtEcPemDYg2N1RgA79rPKGTGGJKo3gTY5zpump",
-    "price": 0.0006939,
-    "chg24": 9530,
-    "vol24": 1224064.13,
-    "mcap": 693191,
+    "price": 0.0007319,
+    "chg24": 10058,
+    "vol24": 1238363.42,
+    "mcap": 731157,
     "url": "https://dexscreener.com/solana/b9xksbd9cjvtdiaqscstckzp9e777y64kuwtlixgad6c"
    },
    {
     "symbol": "BRUH",
     "name": "The Bruhvengers",
     "ca": "PgFtGGquvnv2zEkjG2N2QPvBTBrafuExGYEqahRpump",
-    "price": 0.005492,
-    "chg24": -37.53,
-    "vol24": 1117167.19,
-    "mcap": 5438322,
+    "price": 0.005266,
+    "chg24": -38.65,
+    "vol24": 1069314.7,
+    "mcap": 5214164,
     "url": "https://dexscreener.com/solana/ehpzesdxtymvwz1iy5nt3lrnjy1xbc1kgqspl1kqnyiv"
    },
    {
     "symbol": "WINSTON",
     "name": "Winstoncoin",
     "ca": "7Y2CVbnqZRvR5RUvEJ9RQ73fZEfv7ybNcysytAepump",
-    "price": 0.0001653,
-    "chg24": 447,
-    "vol24": 566350.7,
-    "mcap": 165048,
+    "price": 0.0002135,
+    "chg24": 606,
+    "vol24": 758196.6,
+    "mcap": 213136,
     "url": "https://dexscreener.com/solana/aso1pdfe7jqwlt2vdt4ry1qwubitduqhwrwtsd2vv2ps"
+   },
+   {
+    "symbol": "TWORBIT",
+    "name": "Tworbit",
+    "ca": "GXpQZkap4ExgQTTX4SXfETV7nt1YZKEZSakqos3hpump",
+    "price": 0.0005043,
+    "chg24": 964,
+    "vol24": 618391.29,
+    "mcap": 504305,
+    "url": "https://dexscreener.com/solana/4hhnr5sxjs5qpetmebntrroq7fz3fsp517e9sgq1xvle"
    },
    {
     "symbol": "VOLALITY",
     "name": "VOLALITY",
     "ca": "4tPsVjDAqgDjb5TzGazEDMvM2GK2xDvCG2LxpX8opump",
-    "price": 0.000002128,
-    "chg24": -92.97,
-    "vol24": 546374.81,
-    "mcap": 2124,
+    "price": 0.000002108,
+    "chg24": -93.03,
+    "vol24": 546417.77,
+    "mcap": 2105,
     "url": "https://dexscreener.com/solana/7bt3ov8ssmxbsb36uj1bcc1snkrtavu7w516orx52nwx"
    },
    {
     "symbol": "ChokingCat",
     "name": "Choking Cat",
     "ca": "ExpdNM5YykDnGTmyxCH5B3s7mdWi1cEreDvK6ic8pump",
-    "price": 0.000001513,
-    "chg24": -95.06,
-    "vol24": 420507.57,
-    "mcap": 1511,
+    "price": 0.000001497,
+    "chg24": -95.11,
+    "vol24": 420515.25,
+    "mcap": 1495,
     "url": "https://dexscreener.com/solana/9wjy7e5wtrnbtcregnht9o8j8jmquwzsskzmdg7fhdet"
    },
    {
     "symbol": "JOB",
     "name": "DogWifJob",
     "ca": "9Pq7aLAbhDG2tTnS22cm6kuysZVcZpLFE368HWuypump",
-    "price": 0.001731,
-    "chg24": 2.41,
-    "vol24": 406801.23,
-    "mcap": 1687079,
+    "price": 0.001784,
+    "chg24": 3.85,
+    "vol24": 401563.42,
+    "mcap": 1738337,
     "url": "https://dexscreener.com/solana/hauvbmnthcfmg9srxmvz1gaxnpu955hkpdsasc2cx4c8"
-   },
-   {
-    "symbol": "TWORBIT",
-    "name": "Tworbit",
-    "ca": "GXpQZkap4ExgQTTX4SXfETV7nt1YZKEZSakqos3hpump",
-    "price": 0.0003198,
-    "chg24": 575,
-    "vol24": 388441.61,
-    "mcap": 319847,
-    "url": "https://dexscreener.com/solana/4hhnr5sxjs5qpetmebntrroq7fz3fsp517e9sgq1xvle"
    }
   ],
   "Ethereum": [
@@ -170,30 +170,30 @@
     "symbol": "RHINODINOS",
     "name": "Paraceratherium",
     "ca": "0xc36cdbFBfFBdEC4EA19a2b03A8E4945Bf80Fa90a",
-    "price": 0.0002803,
-    "chg24": 15149,
-    "vol24": 209023.14,
-    "mcap": 280350,
+    "price": 0.000001725,
+    "chg24": -6.16,
+    "vol24": 283548.08,
+    "mcap": 1725,
     "url": "https://dexscreener.com/ethereum/0x13400910d18175e278ae9ed52fd35c89d9c79508"
    },
    {
     "symbol": "Paraceratherium",
     "name": "Paraceratherium",
     "ca": "0x2D13bBc158644c5ef677eDFDd1f73d34610EeFbE",
-    "price": 0.00005651,
-    "chg24": 2677,
-    "vol24": 115600.18,
-    "mcap": 56520,
+    "price": 0.00004285,
+    "chg24": 2005,
+    "vol24": 134071.39,
+    "mcap": 42854,
     "url": "https://dexscreener.com/ethereum/0x2490ac129dbdb5a04dd8fb7ab65991493e96ca2d"
    },
    {
     "symbol": "PARACERATHERIUM",
     "name": "Paraceratherium",
     "ca": "0x124394dab26c3491732575e28914a3bBBeF2e9C9",
-    "price": 0.0002749,
-    "chg24": 1325,
-    "vol24": 79715.51,
-    "mcap": 27490,
+    "price": 0.0002816,
+    "chg24": 1360,
+    "vol24": 90914.72,
+    "mcap": 28161,
     "url": "https://dexscreener.com/ethereum/0x86e4cb578bb41b02b36e8d7342be60075e00a9c9"
    },
    {
