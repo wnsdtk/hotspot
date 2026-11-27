@@ -1,15 +1,15 @@
 {
- "updated_at": "2026-11-28T00:30:22.047+08:00",
+ "updated_at": "2026-11-28T01:00:49.356+08:00",
  "chains": {
   "BSC": [
    {
     "symbol": "BREW",
     "name": "BREW",
     "ca": "0xfa6D9B504848606Eb9aeC04CCc161D169B3f2159",
-    "price": 0.0006521,
-    "chg24": -13.46,
-    "vol24": 46363,
-    "mcap": 589611,
+    "price": 0.0006398,
+    "chg24": -15.42,
+    "vol24": 49654.72,
+    "mcap": 578429,
     "url": "https://dexscreener.com/bsc/0x3ea3f9a7b7edbfe0ba3568bfc0f30ba870b7553d"
    },
    {
@@ -66,20 +66,20 @@
     "symbol": "Arb Inc",
     "name": "Arbitrage Inception",
     "ca": "0x5EE54869Ecd5E752C31aF095187326D4A4D50e1c",
-    "price": 0.000003081,
-    "chg24": 8.63,
-    "vol24": 2.95,
-    "mcap": 3077,
+    "price": 0.000002913,
+    "chg24": 2.71,
+    "vol24": 3.56,
+    "mcap": 2909,
     "url": "https://dexscreener.com/bsc/0xd4fa516fab1648fc8ecffba5f6df9a88809d6b38"
    },
    {
     "symbol": "P2PZ",
     "name": "P2PZCoin",
     "ca": "0xd8003FFa422883346E0F45c5171595401C024444",
-    "price": 0.00001685,
-    "chg24": 0.14,
+    "price": 0.00001663,
+    "chg24": -1.15,
     "vol24": 0.08,
-    "mcap": 16845,
+    "mcap": 16629,
     "url": "https://dexscreener.com/bsc/0xd8fa7f9709a6eb87988a5ab8bd66d999ed6628f2"
    }
   ],
@@ -98,11 +98,21 @@
     "symbol": "WOOPY",
     "name": "Woopy Dog",
     "ca": "2va3NUJtEcPemDYg2N1RgA79rPKGTGGJKo3gTY5zpump",
-    "price": 0.000003361,
-    "chg24": -96.96,
-    "vol24": 1225439.03,
-    "mcap": 3358,
+    "price": 0.000004231,
+    "chg24": -96.38,
+    "vol24": 1069141.14,
+    "mcap": 4227,
     "url": "https://dexscreener.com/solana/b9xksbd9cjvtdiaqscstckzp9e777y64kuwtlixgad6c"
+   },
+   {
+    "symbol": "Fireball",
+    "name": "Fireball",
+    "ca": "B9wbjDJ4FbHMsZmoXAkJSTAwuePaJUKbySvnK5zApump",
+    "price": 0.0007296,
+    "chg24": 2032,
+    "vol24": 568819.56,
+    "mcap": 729683,
+    "url": "https://dexscreener.com/solana/dnxt5j7r1atknh23rsbwyuuc9neixsxbgfrlbmbnmks2"
    },
    {
     "symbol": "VOLALITY",
@@ -115,54 +125,44 @@
     "url": "https://dexscreener.com/solana/7bt3ov8ssmxbsb36uj1bcc1snkrtavu7w516orx52nwx"
    },
    {
-    "symbol": "Fireball",
-    "name": "Fireball",
-    "ca": "B9wbjDJ4FbHMsZmoXAkJSTAwuePaJUKbySvnK5zApump",
-    "price": 0.0008303,
-    "chg24": 2326,
-    "vol24": 478188.83,
-    "mcap": 830385,
-    "url": "https://dexscreener.com/solana/dnxt5j7r1atknh23rsbwyuuc9neixsxbgfrlbmbnmks2"
+    "symbol": "67",
+    "name": "Six Seven",
+    "ca": "8ob6WB1VTJasK2r6EjzbMyJ5Zv8bd6jDsTtahvxunyLV",
+    "price": 0.0001397,
+    "chg24": 229,
+    "vol24": 542514.84,
+    "mcap": 139730,
+    "url": "https://dexscreener.com/solana/6weshnj3pe5uzjydfh9fohqz2ywur5vcm4pjvywtjd58"
+   },
+   {
+    "symbol": "Meme",
+    "name": "Memecoin",
+    "ca": "CV1NPi8L2PSYMfALBh7GCfUwELZzG3DrLUUjCkeapump",
+    "price": 0.0006911,
+    "chg24": 1404,
+    "vol24": 538385.21,
+    "mcap": 690816,
+    "url": "https://dexscreener.com/solana/appde7tsms1zzrw4hwq1rwypdeua1wzhqjjp4ny6esva"
    },
    {
     "symbol": "KITT",
     "name": "Kitt",
     "ca": "F5LxbqJxAMrvfxLbqPckErmqNyiPzDJMUXnX8vrhpump",
-    "price": 0.0001236,
-    "chg24": 302,
-    "vol24": 381541.01,
-    "mcap": 123626,
+    "price": 0.0001031,
+    "chg24": 236,
+    "vol24": 450483.36,
+    "mcap": 103199,
     "url": "https://dexscreener.com/solana/cn4he1ujaoj3sxtwy1wx9rgjj1qqzgh5w34sfho2cedv"
    },
    {
-    "symbol": "CBUCKS",
-    "name": "Cartoon Money",
-    "ca": "DtcicPCKTKeAh7TDEzTym3hXeoHAoMiBdYJhMYxZpump",
-    "price": 0.007194,
-    "chg24": 20.28,
-    "vol24": 368302.02,
-    "mcap": 6780123,
-    "url": "https://dexscreener.com/solana/b4cp45pgifvm5faxfh6aev8qz3eunqnqgbw7kuc7mhnb"
-   },
-   {
-    "symbol": "Sheeb",
-    "name": "Sheebcoin",
-    "ca": "5rRxk9FC3ma11neg8BGLwTWxt4PokH19Y92sERwa2PJ3",
-    "price": 0.000003858,
-    "chg24": -86.74,
-    "vol24": 299488.11,
-    "mcap": 3858,
-    "url": "https://dexscreener.com/solana/daf5kusan24nppaugj9ptapzl9xejr3mfb6m4vbmo661"
-   },
-   {
-    "symbol": "COMPUTE",
-    "name": "ComputeCoin",
-    "ca": "54jKBorvDP4eB7vZnWy1HJfhm4X17pSJCE6o2Lshpump",
-    "price": 0.000001442,
-    "chg24": -95.18,
-    "vol24": 295288.02,
-    "mcap": 1441,
-    "url": "https://dexscreener.com/solana/dkvhwht4vb8ycdwzjcdnuj1jmonicgv5maujv9656hl1"
+    "symbol": "NBA",
+    "name": "Never Broke Again",
+    "ca": "AjucUKL3i8wh7SvFL9h5cZbWkd3M9JibLkdvRJKppump",
+    "price": 0.0008293,
+    "chg24": 1899,
+    "vol24": 446922.69,
+    "mcap": 829378,
+    "url": "https://dexscreener.com/solana/slwhcaqnl6ucvfkcllygrwgxdbgknhtqphbwh3uey2r"
    }
   ],
   "Ethereum": [
@@ -170,50 +170,50 @@
     "symbol": "KURO",
     "name": "KURO / WETH",
     "ca": "0xc2e886422182d778fb05495ea22399e3aa2e2ec3",
-    "price": 0.0000609121707850854,
-    "chg24": -79.297,
-    "vol24": 1123141.18697371,
-    "mcap": 60912.17079,
+    "price": 0.000079895982220598,
+    "chg24": -79.82,
+    "vol24": 1067140.52017651,
+    "mcap": 79895.98222,
     "url": ""
    },
    {
     "symbol": "PEPE",
     "name": "PEPE / WETH",
     "ca": "0x6982508145454ce325ddbe47a25d4ec3d2311933",
-    "price": 0.00000348258066654995,
-    "chg24": 0.693,
-    "vol24": 832697.30583686,
-    "mcap": 1449852707.37271,
+    "price": 0.0000035054808837416,
+    "chg24": 0.315,
+    "vol24": 849591.793400289,
+    "mcap": 1450471041.72924,
     "url": ""
    },
    {
     "symbol": "ATOS",
     "name": "ATOS / WETH 1%",
     "ca": "0x4d0528598f916fd1d8dc80e5f54a8feedcfd4b18",
-    "price": 0.0078722566706807,
-    "chg24": -71.378,
-    "vol24": 704571.767363236,
-    "mcap": 786763699.364681,
+    "price": 0.0073207732986568,
+    "chg24": -73.367,
+    "vol24": 744122.086604649,
+    "mcap": 732076921.93967,
     "url": ""
    },
    {
-    "symbol": "ANON",
-    "name": "Anon",
-    "ca": "0xd543Bd91893FC0dC3edfDEe9089964bBec3c1942",
-    "price": 0.001028,
-    "chg24": 947,
-    "vol24": 493339.61,
-    "mcap": 263288,
-    "url": "https://dexscreener.com/ethereum/0x66023c99b094aefb60152c2d6490ca8ebadc224bde5847042c3b9f1a15cf0382"
+    "symbol": "TAC",
+    "name": "TAC / SPX",
+    "ca": "0xa1313eb9f3a445606d9583bcac3ebeb56a858279",
+    "price": 0.751573511698783,
+    "chg24": 5.511,
+    "vol24": 168141.453522059,
+    "mcap": 3874832.21247647,
+    "url": ""
    },
    {
     "symbol": "PARACERATHERIUM",
     "name": "Paraceratherium",
     "ca": "0x124394dab26c3491732575e28914a3bBBeF2e9C9",
-    "price": 0.0002857,
-    "chg24": 1381,
-    "vol24": 103691.16,
-    "mcap": 28576,
+    "price": 0.000158,
+    "chg24": 719,
+    "vol24": 106091.76,
+    "mcap": 15804,
     "url": "https://dexscreener.com/ethereum/0x86e4cb578bb41b02b36e8d7342be60075e00a9c9"
    },
    {
