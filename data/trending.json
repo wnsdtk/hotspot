@@ -1,24 +1,34 @@
 {
- "updated_at": "2026-11-28T05:38:33.330+08:00",
+ "updated_at": "2026-11-28T06:08:55.301+08:00",
  "chains": {
   "BSC": [
    {
     "symbol": "BREW",
     "name": "BREW",
     "ca": "0xfa6D9B504848606Eb9aeC04CCc161D169B3f2159",
-    "price": 0.000659,
-    "chg24": -11.87,
-    "vol24": 47628.94,
-    "mcap": 595852,
+    "price": 0.0006546,
+    "chg24": -15.04,
+    "vol24": 46677.28,
+    "mcap": 591835,
     "url": "https://dexscreener.com/bsc/0x3ea3f9a7b7edbfe0ba3568bfc0f30ba870b7553d"
+   },
+   {
+    "symbol": "DragonRiders",
+    "name": "DragonRiders",
+    "ca": "0x6A23d2B1aF9C4ff58c481e141748612880Dc7777",
+    "price": 0.00005572,
+    "chg24": 457,
+    "vol24": 15441.51,
+    "mcap": 55721,
+    "url": "https://dexscreener.com/bsc/0xb67fd81f31eb695539480899d2202e1483f724a6"
    },
    {
     "symbol": "HE",
     "name": "HEBREW",
     "ca": "0xeDD35445fb50ee4fB093F4cb002cE5fB3bac778F",
     "price": 0.00000209,
-    "chg24": -2.25,
-    "vol24": 231.62,
+    "chg24": 4.17,
+    "vol24": 221.97,
     "mcap": 1892,
     "url": "https://dexscreener.com/bsc/0x54f74ad942b4b763f6b01ed77c0ea18d5462319e"
    },
@@ -71,16 +81,6 @@
     "vol24": 9.74,
     "mcap": 580,
     "url": "https://dexscreener.com/bsc/0x772d2899878e1415f92221b43fcda6a0d49e3f62"
-   },
-   {
-    "symbol": "Blend",
-    "name": "House Blend",
-    "ca": "0xB46cD73bdC6d88746B92938C6FFDd2bD22047Cd9",
-    "price": 2.597e-7,
-    "chg24": -10.61,
-    "vol24": 4.43,
-    "mcap": 260,
-    "url": "https://dexscreener.com/bsc/0x875f16271103770cfb717b307330c66d321413f6"
    }
   ],
   "Solana": [
@@ -88,10 +88,10 @@
     "symbol": "MoonBoy",
     "name": "MoonBoy",
     "ca": "GXjSWDoMQkDEbhon9ALxz8chUUsVKg3x8V3NajjDpump",
-    "price": 0.0005785,
-    "chg24": 1198,
-    "vol24": 2550271.07,
-    "mcap": 577508,
+    "price": 0.0003781,
+    "chg24": 749,
+    "vol24": 2843826.98,
+    "mcap": 377516,
     "url": "https://dexscreener.com/solana/dknjboh2kngpnumx5bdeakmpx2fypnu57xzfn6c2dre1"
    },
    {
@@ -105,63 +105,63 @@
     "url": "https://dexscreener.com/solana/fbjukdyu6dedknkum4djqktz5y6u6939xbwwozdqqfzz"
    },
    {
+    "symbol": "MAYA",
+    "name": "Maya The Samoyed",
+    "ca": "H2PjSbA2365uxBUJ3EBePSm67AYPuRMgcyswBnrVpump",
+    "price": 0.001353,
+    "chg24": 3320,
+    "vol24": 1073855.67,
+    "mcap": 1353898,
+    "url": "https://dexscreener.com/solana/cdwpvwthmm9bxmwjrv3bh17trbt1tuloytcx86xny1wb"
+   },
+   {
     "symbol": "WOOPY",
     "name": "Woopy Dog",
     "ca": "2va3NUJtEcPemDYg2N1RgA79rPKGTGGJKo3gTY5zpump",
-    "price": 0.000003056,
-    "chg24": -98.42,
-    "vol24": 1048176.99,
-    "mcap": 3053,
+    "price": 0.000003944,
+    "chg24": -97.9,
+    "vol24": 1049198.12,
+    "mcap": 3941,
     "url": "https://dexscreener.com/solana/b9xksbd9cjvtdiaqscstckzp9e777y64kuwtlixgad6c"
    },
    {
     "symbol": "Fireball",
     "name": "Fireball",
     "ca": "B9wbjDJ4FbHMsZmoXAkJSTAwuePaJUKbySvnK5zApump",
-    "price": 0.0007054,
-    "chg24": 1961,
-    "vol24": 873602.7,
-    "mcap": 705416,
+    "price": 0.000818,
+    "chg24": 2290,
+    "vol24": 903180.34,
+    "mcap": 818085,
     "url": "https://dexscreener.com/solana/dnxt5j7r1atknh23rsbwyuuc9neixsxbgfrlbmbnmks2"
    },
    {
-    "symbol": "MAYA",
-    "name": "Maya The Samoyed",
-    "ca": "H2PjSbA2365uxBUJ3EBePSm67AYPuRMgcyswBnrVpump",
-    "price": 0.0009278,
-    "chg24": 2244,
-    "vol24": 814359.13,
-    "mcap": 927894,
-    "url": "https://dexscreener.com/solana/cdwpvwthmm9bxmwjrv3bh17trbt1tuloytcx86xny1wb"
+    "symbol": "ZERO",
+    "name": "Zerocoin",
+    "ca": "3WsqUNArNSh5pYt6eTKbQ7uUJDgkPtFEA2XFvdEWpump",
+    "price": 0.0007403,
+    "chg24": 1919,
+    "vol24": 571895.78,
+    "mcap": 740248,
+    "url": "https://dexscreener.com/solana/3tfrhruefajbj1iah2alyye7xe89wzqm8ix32d63bgyz"
    },
    {
     "symbol": "VOLALITY",
     "name": "VOLALITY",
     "ca": "4tPsVjDAqgDjb5TzGazEDMvM2GK2xDvCG2LxpX8opump",
-    "price": 0.000002034,
-    "chg24": -93.28,
-    "vol24": 546486.31,
-    "mcap": 2031,
+    "price": 0.000002019,
+    "chg24": -93.33,
+    "vol24": 546492.8,
+    "mcap": 2015,
     "url": "https://dexscreener.com/solana/7bt3ov8ssmxbsb36uj1bcc1snkrtavu7w516orx52nwx"
-   },
-   {
-    "symbol": "Fullball",
-    "name": "Fullball",
-    "ca": "GdDpHWwrRLDHR2soP75sEtqzDzY1rkATuVszAHv5pump",
-    "price": 0.00004946,
-    "chg24": 65.59,
-    "vol24": 534957.66,
-    "mcap": 49365,
-    "url": "https://dexscreener.com/solana/8rut8onctoubsjz3zqcnnsm5n9mwn99lf3zkgpzkqmv7"
    },
    {
     "symbol": "KITT",
     "name": "Kitt",
     "ca": "F5LxbqJxAMrvfxLbqPckErmqNyiPzDJMUXnX8vrhpump",
-    "price": 0.000002008,
+    "price": 0.000002006,
     "chg24": -93.47,
-    "vol24": 507689.15,
-    "mcap": 2009,
+    "vol24": 507691.91,
+    "mcap": 2006,
     "url": "https://dexscreener.com/solana/cn4he1ujaoj3sxtwy1wx9rgjj1qqzgh5w34sfho2cedv"
    }
   ],
@@ -170,30 +170,40 @@
     "symbol": "PEPE",
     "name": "PEPE / WETH",
     "ca": "0x6982508145454ce325ddbe47a25d4ec3d2311933",
-    "price": 0.00000352181501017716,
-    "chg24": 0.223,
-    "vol24": 987648.455468108,
-    "mcap": 1457229651.32917,
+    "price": 0.00000354008429573924,
+    "chg24": 1.345,
+    "vol24": 991587.418813389,
+    "mcap": 1464788976.61804,
     "url": ""
    },
    {
     "symbol": "ATOS",
     "name": "ATOS / WETH 1%",
     "ca": "0x4d0528598f916fd1d8dc80e5f54a8feedcfd4b18",
-    "price": 0.00390879606503377,
-    "chg24": -85.453,
-    "vol24": 873487.360681868,
-    "mcap": 390879388.676873,
+    "price": 0.00474322551349304,
+    "chg24": -82.348,
+    "vol24": 882403.344411965,
+    "mcap": 474322286.977125,
     "url": ""
    },
    {
     "symbol": "KURO",
     "name": "KURO / WETH",
     "ca": "0xc2e886422182d778fb05495ea22399e3aa2e2ec3",
-    "price": 0.0000678432859877098,
-    "chg24": -78.17,
-    "vol24": 441376.592739558,
-    "mcap": 67843.28599,
+    "price": 0.000128122476557375,
+    "chg24": -58.965,
+    "vol24": 436345.375104947,
+    "mcap": 121618.1398,
+    "url": ""
+   },
+   {
+    "symbol": "TAC",
+    "name": "TAC / SPX",
+    "ca": "0xa1313eb9f3a445606d9583bcac3ebeb56a858279",
+    "price": 0.751976368456598,
+    "chg24": 2.804,
+    "vol24": 113088.140357533,
+    "mcap": 3976848.39652398,
     "url": ""
    },
    {
@@ -210,21 +220,11 @@
     "symbol": "POPO",
     "name": "POPO / WETH",
     "ca": "0x7b43495c05581bd2d9326fe9c1c18c62c63dd2fc",
-    "price": 2.02910837908334e-10,
-    "chg24": 14.913,
-    "vol24": 30007.6176226569,
-    "mcap": 85325.8228138352,
+    "price": 2.0938824007992e-10,
+    "chg24": 13.586,
+    "vol24": 29971.8090515127,
+    "mcap": 88049.6283933259,
     "url": ""
-   },
-   {
-    "symbol": "SNOWPEPE",
-    "name": "Snow Pepe",
-    "ca": "0xF3433cd4483aF37190AA2496686c09543F62DE61",
-    "price": 0.000001674,
-    "chg24": -5.57,
-    "vol24": 7774.45,
-    "mcap": 1674,
-    "url": "https://dexscreener.com/ethereum/0x0c016b36b128515ecded6524585ffed9f4f1e754cceb278e093190111d2e1bde"
    }
   ]
  }
