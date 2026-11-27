@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-11-28T06:44:21.731131+08:00",
+  "updated_at": "2026-11-28T06:49:24.266197+08:00",
   "chains": [
     {
       "chain": "BSC",
-      "net_inflow": 20881.675437506346,
+      "net_inflow": 20881.675437506405,
       "metrics": {
-        "volume": 585747.1210916382,
-        "buy_volume": 303314.39826457226,
-        "sell_volume": 282432.7228270659,
+        "volume": 585747.1210916383,
+        "buy_volume": 303314.3982645724,
+        "sell_volume": 282432.72282706597,
         "wallet_count": 3877.0,
         "token_count": 625.0,
         "token_created_count": 133.0,
@@ -20,11 +20,11 @@
     },
     {
       "chain": "Solana",
-      "net_inflow": 31854.27831258718,
+      "net_inflow": 31854.278312586248,
       "metrics": {
-        "volume": 13375902.368217781,
+        "volume": 13375902.368217783,
         "buy_volume": 6703878.323265185,
-        "sell_volume": 6672024.0449525975,
+        "sell_volume": 6672024.044952598,
         "wallet_count": 57556.0,
         "token_count": 5298.0,
         "token_created_count": 2205.0,
@@ -37,11 +37,11 @@
     },
     {
       "chain": "Robinhood",
-      "net_inflow": 38758.42311378149,
+      "net_inflow": 38758.42311378167,
       "metrics": {
         "volume": 1049543.9586034422,
-        "buy_volume": 544151.1908586118,
-        "sell_volume": 505392.76774483034,
+        "buy_volume": 544151.190858612,
+        "sell_volume": 505392.7677448303,
         "wallet_count": 3887.0,
         "token_count": 398.0,
         "token_created_count": 80.0,
@@ -71,10 +71,10 @@
     },
     {
       "chain": "Base",
-      "net_inflow": 5638.158854245106,
+      "net_inflow": 5638.158854245099,
       "metrics": {
-        "volume": 64242.09415959014,
-        "buy_volume": 34940.12650691762,
+        "volume": 64242.09415959013,
+        "buy_volume": 34940.126506917615,
         "sell_volume": 29301.967652672516,
         "wallet_count": 408.0,
         "token_count": 189.0,
@@ -88,10 +88,10 @@
     },
     {
       "chain": "Arc",
-      "net_inflow": 1835.5785963621151,
+      "net_inflow": 1835.5785963621156,
       "metrics": {
-        "volume": 3574.6368933075096,
-        "buy_volume": 2705.1077448348124,
+        "volume": 3574.63689330751,
+        "buy_volume": 2705.107744834813,
         "sell_volume": 869.5291484726973,
         "wallet_count": 71.0,
         "token_count": 12.0,
