@@ -1,81 +1,33 @@
 {
-  "date": "2026-11-27",
-  "generated_at": "2026-11-27T22:03:12.302330+08:00",
+  "date": "2026-11-28",
+  "generated_at": "2026-11-28T12:03:04.198995+08:00",
   "source": "tag-log",
   "periods": {
     "morning": {
       "themes": [
         {
           "text": "#新币发行加速",
-          "hits": 12
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "hits": 6
+          "hits": 11
         },
         {
           "text": "#动物Meme持续发酵",
-          "hits": 4
-        },
-        {
-          "text": "#$Kuro 同名代币",
-          "hits": 3
-        },
-        {
-          "text": "#$BunBun 同名代币",
-          "hits": 1
-        },
-        {
-          "text": "#$TRUMP 同名代币",
-          "hits": 1
-        }
-      ],
-      "coins": [
-        {
-          "symbol": "$Kuro",
-          "chain": "bsc",
-          "ca": "0x7d52095e844251c504c14fc1382d031b66217777",
           "hits": 8
         },
         {
-          "symbol": "$BunBun",
-          "chain": "bsc",
-          "ca": "0x757d072b8083589ce124f80a49fe5e99e30c7777",
-          "hits": 2
-        },
-        {
-          "symbol": "$TRUMP",
-          "chain": "sol",
-          "ca": "AtmZQTxVHZN7yk7a2yodSmQhXgFT4jTPYXd5FrmY5v2t",
-          "hits": 2
-        }
-      ]
-    },
-    "evening": {
-      "themes": [
-        {
           "text": "#BSC链新币最密集",
-          "hits": 10
-        },
-        {
-          "text": "#新币发行加速",
-          "hits": 10
-        },
-        {
-          "text": "#$DragonRiders 同名代币",
           "hits": 5
         },
         {
-          "text": "#动物Meme持续发酵",
-          "hits": 5
-        },
-        {
-          "text": "#$Suki 同名代币",
+          "text": "#$67 同名代币",
           "hits": 2
         },
         {
-          "text": "#人物概念持续发酵",
-          "hits": 2
+          "text": "#$Meme 同名代币",
+          "hits": 1
+        },
+        {
+          "text": "#$Sheeb 同名代币",
+          "hits": 1
         }
       ],
       "coins": [
@@ -83,19 +35,19 @@
           "symbol": "$mihao",
           "chain": "bsc",
           "ca": "0xebe0f167b6bbac37f68ab7b9930b30799f487777",
-          "hits": 7
+          "hits": 8
         },
         {
-          "symbol": "$DragonRiders",
-          "chain": "sol",
-          "ca": "5xrT8y2KU2YwzipwCMNxxTc8KAGQd4wjtGTc2WyJJCMh",
-          "hits": 6
-        },
-        {
-          "symbol": "$BSC",
+          "symbol": "$67",
           "chain": "bsc",
-          "ca": "0x1197d3323a09007be4a01f193b5bdb569f027777",
-          "hits": 6
+          "ca": "0xb929cd716d4ce142bbfd80255039946f35b87777",
+          "hits": 3
+        },
+        {
+          "symbol": "$Meme",
+          "chain": "sol",
+          "ca": "DYqEWnpbqYg4XcwPcRyAyd35U3HbY2xJotbLrUijZphz",
+          "hits": 2
         }
       ]
     }
@@ -108,14 +60,20 @@
       "coin_chain": "bsc"
     },
     {
+      "text": "#BSC链新币最密集",
+      "coin_symbol": "$小猫仙人",
+      "coin_ca": "0x0e45c50e8eb74382f8c985fd56829e2568807777",
+      "coin_chain": "bsc"
+    },
+    {
       "text": "#新币发行加速",
-      "coin_symbol": "$WINSTON",
-      "coin_ca": "7Y2CVbnqZRvR5RUvEJ9RQ73fZEfv7ybNcysytAepump",
+      "coin_symbol": "$DCTY",
+      "coin_ca": "FKzLbmXpyk3qxY4j3CbxqwjdtbCWb1HZZttok9AD5dio",
       "coin_chain": "sol"
     }
   ],
   "history": {
-    "2026-11-27": {
+    "2026-11-28": {
       "tags": [
         {
           "text": "#动物Meme持续发酵",
@@ -124,64 +82,45 @@
           "coin_chain": "bsc"
         },
         {
+          "text": "#BSC链新币最密集",
+          "coin_symbol": "$小猫仙人",
+          "coin_ca": "0x0e45c50e8eb74382f8c985fd56829e2568807777",
+          "coin_chain": "bsc"
+        },
+        {
           "text": "#新币发行加速",
-          "coin_symbol": "$WINSTON",
-          "coin_ca": "7Y2CVbnqZRvR5RUvEJ9RQ73fZEfv7ybNcysytAepump",
+          "coin_symbol": "$DCTY",
+          "coin_ca": "FKzLbmXpyk3qxY4j3CbxqwjdtbCWb1HZZttok9AD5dio",
           "coin_chain": "sol"
         }
       ],
       "morning": [
         {
           "text": "#新币发行加速",
-          "hits": 12
-        },
-        {
-          "text": "#BSC链新币最密集",
-          "hits": 6
+          "hits": 11
         },
         {
           "text": "#动物Meme持续发酵",
-          "hits": 4
+          "hits": 8
         },
         {
-          "text": "#$Kuro 同名代币",
-          "hits": 3
+          "text": "#BSC链新币最密集",
+          "hits": 5
         },
         {
-          "text": "#$BunBun 同名代币",
+          "text": "#$67 同名代币",
+          "hits": 2
+        },
+        {
+          "text": "#$Meme 同名代币",
           "hits": 1
         },
         {
-          "text": "#$TRUMP 同名代币",
+          "text": "#$Sheeb 同名代币",
           "hits": 1
         }
       ],
-      "evening": [
-        {
-          "text": "#BSC链新币最密集",
-          "hits": 10
-        },
-        {
-          "text": "#新币发行加速",
-          "hits": 10
-        },
-        {
-          "text": "#$DragonRiders 同名代币",
-          "hits": 5
-        },
-        {
-          "text": "#动物Meme持续发酵",
-          "hits": 5
-        },
-        {
-          "text": "#$Suki 同名代币",
-          "hits": 2
-        },
-        {
-          "text": "#人物概念持续发酵",
-          "hits": 2
-        }
-      ]
+      "evening": []
     }
   }
 }
